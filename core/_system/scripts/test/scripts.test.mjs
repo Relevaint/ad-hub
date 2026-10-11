@@ -127,3 +127,42 @@ test("real hub: skills pass the structural check", () => {
   const r = run("route.mjs", "--check");
   assert.equal(r.code, 0, r.out);
 });
+
+test("regression cases: complete, named after real skills, and consistent with the schemas", async () => {
+  const { readdirSync, readFileSync, existsSync } = await import("node:fs");
+  const { taskTable } = await import("../lib.mjs");
+  const hub = path.resolve(here, "../../../..");
+  const dir = path.join(hub, "core/_system/regression");
+  const skills = taskTable(hub).map((r) => r.skill);
+  const index = readFileSync(path.join(dir, "README.md"), "utf8");
+  const cases = readdirSync(dir).filter((d) => /^\d\d-/.test(d));
+  assert.equal(cases.length, 5);
+  for (const c of cases) {
+    const at = (p) => path.join(dir, c, p);
+    assert.ok(index.includes(`(${c}/evaluate.md)`), `${c} missing from the regression README`);
+    assert.ok(existsSync(at("business/README.md")), `${c}: business/README.md missing`);
+    assert.ok(!existsSync(at("business/evaluate.md")), `${c}: evaluate.md must stay outside business/`);
+    const ev = readFileSync(at("evaluate.md"), "utf8");
+    const requests = ev.split(/^## Requests\s*$/m)[1];
+    assert.ok(requests, `${c}: no Requests section`);
+    const named = [...requests.matchAll(/^### ([a-z-]+)/gm)].map((m) => m[1]);
+    assert.ok(named.length >= 3, `${c}: fewer than three requests`);
+    for (const s of named) assert.ok(skills.includes(s), `${c}: request for unknown skill ${s}`);
+    const offersDir = at("business/ads/offers");
+    const offers = existsSync(offersDir) ? readdirSync(offersDir).map((f) => f.replace(/\.md$/, "")) : [];
+    for (const o of offers) {
+      assert.match(readFileSync(path.join(offersDir, `${o}.md`), "utf8"), new RegExp(`^offer: ${o}$`, "m"), `${c}: offer slug does not match file name`);
+    }
+    if (existsSync(at("business/ads/ledger.md"))) {
+      const rows = readFileSync(at("business/ads/ledger.md"), "utf8").split("\n").filter((l) => /^\| [a-z0-9-]+-\d{4}-\d{3}/.test(l));
+      assert.ok(rows.length, `${c}: ledger has no rows`);
+      for (const r of rows) {
+        const [id, offer] = r.split("|").slice(1, 3).map((s) => s.trim());
+        assert.ok(offers.includes(offer), `${c}: ledger offer ${offer} has no offer file`);
+        assert.match(id, new RegExp(`^${offer}-\\d{4}-\\d{3}(-v\\d+)?$`), `${c}: ad ID ${id} does not follow the format`);
+      }
+    }
+    const r = run("context.mjs", "--hub", fx("hub"), "--for", "ad-strategy", "--root", at("business"), "--today", "2026-10-08");
+    assert.equal(r.code, 0, `${c}: context loader failed: ${r.err}`);
+  }
+});
