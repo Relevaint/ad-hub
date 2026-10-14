@@ -12,8 +12,8 @@ Every session ends by updating this file, committing, and pushing. Not committed
 - **Request:** "Go ahead": merge piece 2, then build Stage 1 piece 3, the regression cases. Stop for review.
 - **Changed:** Every skill now has a ready-made exam before it is written. Five synthetic businesses, one per README acceptance case, each with a client folder and a separate grading file the agent under test never sees: a digital product (unverified purchase signal), a local service (low volume, a capacity emergency), a real-estate brokerage (restricted category, exact compliance strings, long cycle), a consultancy (too little volume to judge, a story without permission), and a brand-new business (one sentence, no `ads/` folder). 23 requests across eight of the nine skills (audience-research has only one); competitor-ads has none, because it needs Ad Library access this platform cannot test. Files: `core/_system/regression/` (README, five cases); a structural test in `core/_system/scripts/test/scripts.test.mjs`; pointers in `README.md`, `BUILD-PLAN.md`, `core/_system/CONVENTIONS.md` section 11, `AGENTS.md` 2.6 and 2.13, and the scripts README.
 - **Verification:** `npm test`: 16 of 16 pass. Broke an ad ID in case 02 on purpose and confirmed the new test fails, then restored it. Ran the context loader on every case folder. The cases themselves have not been run, because no skill exists yet: they are untested until the first skill is.
-- **Status:** PR open on `clay/stage1-regression-cases`, waiting for Clay's review before merge.
-- **Next:** Clay reviews piece 3 and answers the approval-recording question below. Then piece 4, the last of Stage 1: the `adhub-` pointer generator and session hook for business repos.
+- **Status:** PR [lowkeycm/ad-hub#4](https://github.com/lowkeycm/ad-hub/pull/4). Clay approved it on 2026-10-14, and the approval-recording rule with it (now in `core/_system/schemas/authority.md`); merged that day.
+- **Next:** explain rule 16 to Clay and merge it on his OK. Then piece 4, the last of Stage 1: the `adhub-` pointer generator and session hook for business repos.
 
 ## Prior Session (2026-10-10, Stage 1 piece 2: helper scripts)
 
@@ -54,10 +54,9 @@ Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-
 
 **What works.** The authority map (`README.md`), the system layer (`core/_system/`: conventions, memory contract, spend authority, four schemas, helper scripts, regression cases), `npm test` as the build gate, thirteen source reviews plus a conflicts list, the first plays library, and two dated Meta references. Freshness: `meta-system/references/platform-tools.md` due 2026-11-02; plays library due 2026-11-17; `meta-system/references/result-signals.md` due 2026-12-02.
 
-**What is in progress.** Stage 1 piece 3, the regression-cases PR, awaiting review.
+**What is in progress.** Doctrine rule 16 on Clay's branch `chore/add-pm-formula`, waiting for his OK after a plain-language recap.
 
 **What is broken or unresolved.**
-- Who writes a chat approval into the approvals log of `ads/authority.md`. The authority schema says the business writes the file and `start-here` records explicit decisions, but cases 03 and 05 show `ad-launch` hearing the approval. Proposed: whichever skill hears an explicit approval appends one line quoting it (date, who, exactly what), and touches nothing else in the file. Needs Clay.
 - The results snapshot format is not defined yet; `ad-review` owns it. The cases use a plain table and may need adjusting when `ad-review` is built.
 - competitor-ads has no regression request: this platform cannot open the Meta Ad Library.
 - No business repo named for testing the first skill.
@@ -68,7 +67,7 @@ Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-
 **What could not be determined from here.** Whether any of Clay's platforms can view Meta's Ad Library in a working browser (this one cannot). Whether Meta's ads connector or the `meta-ads` command-line tool is set up anywhere for Clay.
 
 **Open owner actions.**
-- Review the regression-cases PR and answer the approval-recording question.
+- Remind Clay what doctrine rule 16 (branch `chore/add-pm-formula`, his, 2026-10-12) says before it is merged; it changes Section 1, which is shared across all repos.
 - Delete the leftover branches, or turn on automatic branch deletion in each repo's settings.
 - Name the business repo for the first skill test (needed after `start-here` is built).
 
@@ -103,4 +102,4 @@ Keep doctrine 12's acknowledgment rule intact so work by other operators is visi
 - 2026-10-05: starter import `d9ca701` and scaffolding pushed to `clay/agent-scaffolding`, PR #1, merged as `a67d2f4`. Nothing deploys from this repo.
 - 2026-10-06: Stage 1 piece 1 (schemas) pushed to `clay/stage1-schemas`, PR #2; merged 2026-10-10 as `7a4d327`.
 - 2026-10-10: Stage 1 piece 2 (helper scripts) pushed to `clay/stage1-helper-scripts`, PR #3; merged 2026-10-11 as `6fd13f7`.
-- 2026-10-11: Stage 1 piece 3 (regression cases) pushed to `clay/stage1-regression-cases`, PR open for review.
+- 2026-10-11: Stage 1 piece 3 (regression cases) pushed to `clay/stage1-regression-cases`, PR #4; merged 2026-10-14.

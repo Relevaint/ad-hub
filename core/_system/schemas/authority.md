@@ -2,7 +2,9 @@
 
 File in the business repo: `ads/authority.md`, one per business. **The business writes
 it.** `start-here` may record a decision the business states explicitly in the session,
-with the date and who said it; it never fills a field by inference. Rules behind it:
+with the date and who said it; it never fills a field by inference. Any skill that hears
+an explicit approval appends one line to the approvals log quoting it, and changes
+nothing else in the file (owner-confirmed 2026-10-14). Rules behind it:
 [spend-authority.md](../spend-authority.md).
 
 **No file means read-only.** A missing field means the safest reading: no level means
@@ -59,4 +61,6 @@ Append only. One line per approval.
 - Band thresholds come from the offer's break-even numbers in `ads/offers/<offer>.md`,
   never from a universal multiple.
 - An approval for one ad, batch or move covers only that. "Go ahead" in chat is
-  recorded here before `ad-launch` or `ad-manage` acts on it.
+  recorded here before `ad-launch` or `ad-manage` acts on it: the skill that heard it
+  appends the line, with the date, who approved, and exactly what, in their words.
+  Only a person with approval rights in "Who can approve" can give one.
