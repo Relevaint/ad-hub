@@ -13,7 +13,8 @@ Every session ends by updating this file, committing, and pushing. Not committed
 - **Changed:** Every skill now has a ready-made exam before it is written. Five synthetic businesses, one per README acceptance case, each with a client folder and a separate grading file the agent under test never sees: a digital product (unverified purchase signal), a local service (low volume, a capacity emergency), a real-estate brokerage (restricted category, exact compliance strings, long cycle), a consultancy (too little volume to judge, a story without permission), and a brand-new business (one sentence, no `ads/` folder). 23 requests across eight of the nine skills (audience-research has only one); competitor-ads has none, because it needs Ad Library access this platform cannot test. Files: `core/_system/regression/` (README, five cases); a structural test in `core/_system/scripts/test/scripts.test.mjs`; pointers in `README.md`, `BUILD-PLAN.md`, `core/_system/CONVENTIONS.md` section 11, `AGENTS.md` 2.6 and 2.13, and the scripts README.
 - **Verification:** `npm test`: 16 of 16 pass. Broke an ad ID in case 02 on purpose and confirmed the new test fails, then restored it. Ran the context loader on every case folder. The cases themselves have not been run, because no skill exists yet: they are untested until the first skill is.
 - **Status:** PR [lowkeycm/ad-hub#4](https://github.com/lowkeycm/ad-hub/pull/4). Clay approved it on 2026-10-14, and the approval-recording rule with it (now in `core/_system/schemas/authority.md`); merged that day.
-- **Next:** explain rule 16 to Clay and merge it on his OK. Then piece 4, the last of Stage 1: the `adhub-` pointer generator and session hook for business repos.
+- **Also 2026-10-14:** Clay's doctrine rule 16, the Project Management Formula, drafted by him on 2026-10-12 in [lowkeycm/ad-hub#5](https://github.com/lowkeycm/ad-hub/pull/5) and [lowkeycm/clay-config#7](https://github.com/lowkeycm/clay-config/pull/7), was recapped in plain language and merged in both on his OK. "Doctrine items 1 through 15" became "1 through 16" in `AGENTS.md` 2.3, `people/clay.md`, and the clay-config template and project map. Section 1 and the profile here match the clay-config template again. Clay's other active repos still have fifteen rules; clay-config `NEW-PROJECT.md` section 3 says to add rule 16 when each is next opened.
+- **Next:** piece 4, the last of Stage 1: the `adhub-` pointer generator and session hook for business repos.
 
 ## Prior Session (2026-10-10, Stage 1 piece 2: helper scripts)
 
@@ -54,7 +55,7 @@ Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-
 
 **What works.** The authority map (`README.md`), the system layer (`core/_system/`: conventions, memory contract, spend authority, four schemas, helper scripts, regression cases), `npm test` as the build gate, thirteen source reviews plus a conflicts list, the first plays library, and two dated Meta references. Freshness: `meta-system/references/platform-tools.md` due 2026-11-02; plays library due 2026-11-17; `meta-system/references/result-signals.md` due 2026-12-02.
 
-**What is in progress.** Doctrine rule 16 on Clay's branch `chore/add-pm-formula`, waiting for his OK after a plain-language recap.
+**What is in progress.** Nothing open. Next is Stage 1 piece 4.
 
 **What is broken or unresolved.**
 - The results snapshot format is not defined yet; `ad-review` owns it. The cases use a plain table and may need adjusting when `ad-review` is built.
@@ -62,12 +63,11 @@ Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-
 - No business repo named for testing the first skill.
 - `PROVENANCE.md` open items: the Ben Heath course terms were not reviewed, and two video creators are unnamed.
 - No CI, so `npm test` runs only when an agent runs it.
-- Merged branches cannot be deleted from this platform. Leftovers: `clay/agent-scaffolding`, `clay/stage1-schemas` and `clay/stage1-helper-scripts` here, `clay/add-ad-hub-project-map` in clay-config.
+- Merged branches cannot be deleted from this platform. Leftovers: `clay/agent-scaffolding`, `clay/stage1-schemas`, `clay/stage1-helper-scripts`, `clay/stage1-regression-cases` and `chore/add-pm-formula` here; `clay/add-ad-hub-project-map` and `chore/add-pm-formula` in clay-config.
 
 **What could not be determined from here.** Whether any of Clay's platforms can view Meta's Ad Library in a working browser (this one cannot). Whether Meta's ads connector or the `meta-ads` command-line tool is set up anywhere for Clay.
 
 **Open owner actions.**
-- Remind Clay what doctrine rule 16 (branch `chore/add-pm-formula`, his, 2026-10-12) says before it is merged; it changes Section 1, which is shared across all repos.
 - Delete the leftover branches, or turn on automatic branch deletion in each repo's settings.
 - Name the business repo for the first skill test (needed after `start-here` is built).
 

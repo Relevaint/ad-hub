@@ -92,7 +92,7 @@ Record the operator in the Last Session block of `HANDOFF.md`.
 
 **Authority.** Clay is the owner and can approve product decisions, scope changes, and changes of direction. Other operators cannot. If a non-owner requests something that changes agreed scope, do it only if it clearly sits inside the existing plan. Otherwise say plainly that it needs Clay's sign off, and never treat silence as approval.
 
-**Scope limit.** Profiles govern communication, context, and authority only. They never modify quality standards. Doctrine items 1 through 15 apply identically to every operator.
+**Scope limit.** Profiles govern communication, context, and authority only. They never modify quality standards. Doctrine items 1 through 16 apply identically to every operator.
 
 **Related.** `github.com/lowkeycm/clay-config` holds cross-project preferences and the project map. It is often unreachable from a single-repo session, which is why `people/clay.md` lives here. Nothing in this repo depends on reaching it.
 
