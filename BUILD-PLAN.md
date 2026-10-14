@@ -12,7 +12,8 @@ the README table matches what was built.
   change-log entry.
 - Helper scripts: context loader (resolves the business repo and loads only what a skill
   declares), freshness checker for dated reference files, router for the task lookup.
-- Regression cases with synthetic businesses, one per acceptance case in the README.
+- Regression cases with synthetic businesses, one per acceptance case in the README
+  (`core/_system/regression/`).
 - Install mechanism: a pointer generator and session hook so every hub skill appears in
   a business repo without copying anything (see `install/README.md`).
 

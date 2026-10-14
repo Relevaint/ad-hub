@@ -6,13 +6,24 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-10-11
+- **Who:** Clay. The platform showed the account listed in `people/clay.md`.
+- **Platform:** Claude Code (remote), branch `clay/stage1-regression-cases`
+- **Request:** "Go ahead": merge piece 2, then build Stage 1 piece 3, the regression cases. Stop for review.
+- **Changed:** Every skill now has a ready-made exam before it is written. Five synthetic businesses, one per README acceptance case, each with a client folder and a separate grading file the agent under test never sees: a digital product (unverified purchase signal), a local service (low volume, a capacity emergency), a real-estate brokerage (restricted category, exact compliance strings, long cycle), a consultancy (too little volume to judge, a story without permission), and a brand-new business (one sentence, no `ads/` folder). 23 requests across eight of the nine skills (audience-research has only one); competitor-ads has none, because it needs Ad Library access this platform cannot test. Files: `core/_system/regression/` (README, five cases); a structural test in `core/_system/scripts/test/scripts.test.mjs`; pointers in `README.md`, `BUILD-PLAN.md`, `core/_system/CONVENTIONS.md` section 11, `AGENTS.md` 2.6 and 2.13, and the scripts README.
+- **Verification:** `npm test`: 16 of 16 pass. Broke an ad ID in case 02 on purpose and confirmed the new test fails, then restored it. Ran the context loader on every case folder. The cases themselves have not been run, because no skill exists yet: they are untested until the first skill is.
+- **Status:** PR [lowkeycm/ad-hub#4](https://github.com/lowkeycm/ad-hub/pull/4). Clay approved it on 2026-10-14, and the approval-recording rule with it (now in `core/_system/schemas/authority.md`); merged that day.
+- **Next:** explain rule 16 to Clay and merge it on his OK. Then piece 4, the last of Stage 1: the `adhub-` pointer generator and session hook for business repos.
+
+## Prior Session (2026-10-10, Stage 1 piece 2: helper scripts)
+
 - **When:** 2026-10-10
 - **Who:** Clay. The platform showed the account listed in `people/clay.md`.
 - **Platform:** Claude Code (remote), branch `clay/stage1-helper-scripts`
 - **Request:** "Go ahead": merge piece 1 with the proposed ledger-status split, then build Stage 1 piece 2, the helper scripts, in Node with no packages. Stop for review.
 - **Changed:** An agent working in a business repo can now (1) load exactly the ad files a skill needs, with their age, and see what is missing and which skill fills it, (2) check which dated reference files need refreshing, and (3) get pointed at the right skill for a request. Skills that break the frontmatter rules now fail the build gate, and the repo has a build gate (`npm test`) for the first time. Files: `core/_system/scripts/` (lib.mjs, context.mjs, freshness.mjs, route.mjs, README.md, test/ with synthetic fixtures); `package.json` (test command only); `AGENTS.md` 2.4, 2.6, 2.12, 2.13; `README.md` layout; `core/_system/CONVENTIONS.md` sections 3 and 6 and `core/_system/memory-contract.md` "Reading" point at the scripts; hook comment updated. Piece 1 (PR #2) merged first, with the ledger split marked owner-confirmed.
 - **Verification:** `npm test`: 15 of 15 pass on Node 22.22.0. Broke a real freshness header on purpose and confirmed the gate fails, then restored it. Ran the context loader from inside a business folder with no `--root`. The router was tried on a dozen plain-language requests; it is a word match and will miss phrasings it has no words for. Not run on Node 20, the stated minimum. No real business repo was used: the first one is still to be named.
-- **Status:** PR open on `clay/stage1-helper-scripts`, waiting for Clay's review before merge.
+- **Status:** PR [lowkeycm/ad-hub#3](https://github.com/lowkeycm/ad-hub/pull/3). Clay approved it on 2026-10-11; merged that day as `6fd13f7`.
 - **Next:** Clay reviews piece 2. Then piece 3: synthetic regression cases, one per README acceptance case.
 
 ## Prior Session (2026-10-06, Stage 1 piece 1: schemas)
@@ -39,26 +50,28 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Where We Are
 
-Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-10 it has its rules, file schemas and helper scripts; no skill is built yet.
+Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-11 it has its rules, file schemas, helper scripts with a build gate, and five regression cases. No skill is built yet.
 
-**What works.** The authority map (`README.md`), the system layer (`core/_system/`: conventions, memory contract, spend authority, four schemas), helper scripts with a passing build gate (`npm test`, pending merge), thirteen source reviews plus a conflicts list, the first plays library, and two dated Meta references. Freshness: plays library due 2026-11-17; `meta-system/references/platform-tools.md` due 2026-11-02; `meta-system/references/result-signals.md` due 2026-12-02.
+**What works.** The authority map (`README.md`), the system layer (`core/_system/`: conventions, memory contract, spend authority, four schemas, helper scripts, regression cases), `npm test` as the build gate, thirteen source reviews plus a conflicts list, the first plays library, and two dated Meta references. Freshness: `meta-system/references/platform-tools.md` due 2026-11-02; plays library due 2026-11-17; `meta-system/references/result-signals.md` due 2026-12-02.
 
-**What is in progress.** Stage 1 piece 2, the helper-scripts PR, awaiting review.
+**What is in progress.** Doctrine rule 16 on Clay's branch `chore/add-pm-formula`, waiting for his OK after a plain-language recap.
 
 **What is broken or unresolved.**
+- The results snapshot format is not defined yet; `ad-review` owns it. The cases use a plain table and may need adjusting when `ad-review` is built.
+- competitor-ads has no regression request: this platform cannot open the Meta Ad Library.
 - No business repo named for testing the first skill.
 - `PROVENANCE.md` open items: the Ben Heath course terms were not reviewed, and two video creators are unnamed.
 - No CI, so `npm test` runs only when an agent runs it.
-- Merged branches cannot be deleted from this platform. Leftovers: `clay/agent-scaffolding` and `clay/stage1-schemas` here, `clay/add-ad-hub-project-map` in clay-config.
+- Merged branches cannot be deleted from this platform. Leftovers: `clay/agent-scaffolding`, `clay/stage1-schemas` and `clay/stage1-helper-scripts` here, `clay/add-ad-hub-project-map` in clay-config.
 
 **What could not be determined from here.** Whether any of Clay's platforms can view Meta's Ad Library in a working browser (this one cannot). Whether Meta's ads connector or the `meta-ads` command-line tool is set up anywhere for Clay.
 
 **Open owner actions.**
-- Review the helper-scripts PR.
-- Delete the leftover branches (the "Delete branch" button on each merged PR), or turn on automatic branch deletion in each repo's settings.
+- Remind Clay what doctrine rule 16 (branch `chore/add-pm-formula`, his, 2026-10-12) says before it is merged; it changes Section 1, which is shared across all repos.
+- Delete the leftover branches, or turn on automatic branch deletion in each repo's settings.
 - Name the business repo for the first skill test (needed after `start-here` is built).
 
-**Next concrete step.** After review: Stage 1 piece 3, synthetic regression cases.
+**Next concrete step.** After review: Stage 1 piece 4, the `adhub-` pointer generator and session hook.
 
 ## Platform capability notes
 
@@ -68,7 +81,7 @@ These are dated observations, not permanent truths. Retest any "cannot" older th
 
 | Capability | Result |
 | --- | --- |
-| Build gate | 2026-10-05: none existed. 2026-10-10: `npm test` runs, 15 of 15 pass. |
+| Build gate | 2026-10-05: none existed. 2026-10-11: `npm test` runs, 16 of 16 pass. |
 | Screenshot a local dev server | Partly. Headless Chromium (Playwright 1.56.1) rendered and screenshotted a local test page at 1440x900. There is no dev server in this repo to test. |
 | Reach the live site | No live site exists. Primary sources instead: Meta's developer documentation is reachable by plain web request (redirects to `developers.facebook.com/documentation/ads-commerce/marketing-api`). Meta's Ad Library is not: a plain request gets Meta's bot challenge (HTTP 403), and the headless browser failed on the session proxy's certificate (`ERR_CERT_AUTHORITY_INVALID`), so no public site opened in the browser at all. PyPI is reachable, so the `meta-ads` tool version can be checked. |
 | Query the database | No database. |
@@ -88,4 +101,5 @@ Keep doctrine 12's acknowledgment rule intact so work by other operators is visi
 
 - 2026-10-05: starter import `d9ca701` and scaffolding pushed to `clay/agent-scaffolding`, PR #1, merged as `a67d2f4`. Nothing deploys from this repo.
 - 2026-10-06: Stage 1 piece 1 (schemas) pushed to `clay/stage1-schemas`, PR #2; merged 2026-10-10 as `7a4d327`.
-- 2026-10-10: Stage 1 piece 2 (helper scripts) pushed to `clay/stage1-helper-scripts`, PR open for review.
+- 2026-10-10: Stage 1 piece 2 (helper scripts) pushed to `clay/stage1-helper-scripts`, PR #3; merged 2026-10-11 as `6fd13f7`.
+- 2026-10-11: Stage 1 piece 3 (regression cases) pushed to `clay/stage1-regression-cases`, PR #4; merged 2026-10-14.

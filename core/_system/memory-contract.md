@@ -44,7 +44,7 @@ ads/
 
 | File | Writer |
 |---|---|
-| `authority.md` | The business. `start-here` records explicit decisions only. |
+| `authority.md` | The business. `start-here` records explicit decisions only. Any skill appends an explicit approval to its approvals log, nothing else. |
 | `offers/<offer>.md`, `calendar.md` | The business; `start-here` records what is supplied. `ad-review` may append observed outside events to the calendar. |
 | `research/audience.md`, `research/voc.md` | `audience-research` |
 | `research/competitors.md`, `research/swipe/` | `competitor-ads` |
