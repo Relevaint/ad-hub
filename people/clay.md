@@ -82,4 +82,4 @@ Worth reading so nobody makes them a third time.
 
 ## Scope of this file
 
-This describes how to communicate with Clay and what authority he holds. It does not modify quality standards. Doctrine items 1 through 15 in `AGENTS.md` apply identically no matter who is operating.
+This describes how to communicate with Clay and what authority he holds. It does not modify quality standards. Doctrine items 1 through 16 in `AGENTS.md` apply identically no matter who is operating.
