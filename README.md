@@ -31,7 +31,7 @@ Ad-Hub/
 ├── install/             plug-in mechanism for business repos (to build)
 ├── source-notes/        written reviews of outside sources, in our own words
 ├── core/                the chassis, platform-neutral
-│   ├── _system/         conventions, memory contract, spend authority, schemas, scripts
+│   ├── _system/         conventions, memory contract, spend authority, schemas, scripts, regression cases
 │   ├── skills/          one folder per skill (to build)
 │   └── automations/     scheduled routines (to build)
 └── meta-system/         thin Meta layer: dated platform facts and tool how-to
@@ -123,7 +123,8 @@ difference and lets results decide; see [conflicts](source-notes/conflicts.md).
 ## Acceptance cases
 
 Architecture walkthroughs used to test that the hub stays universal. They are not
-client facts.
+client facts. Each one is a runnable synthetic business with requests and pass criteria
+in [core/_system/regression/](core/_system/regression/README.md).
 
 | Case | What it exercises |
 |---|---|

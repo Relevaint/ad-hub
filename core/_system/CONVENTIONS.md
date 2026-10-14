@@ -135,6 +135,6 @@ pinned to a revision with its licence, and recorded in `PROVENANCE.md`.
 
 ## 11. Tests
 
-Regression cases use synthetic businesses. Run each in a fresh agent given only the hub
-path, a client folder and the request. Judge the artifacts before reading their
+Regression cases use synthetic businesses ([regression/](regression/README.md)). Run each
+in a fresh agent given only the hub path, a client folder and the request. Judge the artifacts before reading their
 self-scores. A passing case is not proof of performance.

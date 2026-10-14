@@ -11,4 +11,5 @@ header comment is its full usage. Run from anywhere; `--hub` defaults to this hu
 | `route.mjs --check` | Enforces the frontmatter rules every skill must meet (CONVENTIONS sections 2 and 3, README hard rules 5 and 6). | The build gate |
 
 Build gate, from the repo root: `npm test`. It runs the script tests against synthetic
-fixtures in `test/fixtures/`, then runs the freshness and skill checks on the real hub.
+fixtures in `test/fixtures/`, then runs the freshness and skill checks on the real hub and
+checks that every regression case in `../regression/` is well formed.

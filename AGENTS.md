@@ -132,9 +132,9 @@ Run everything from the repo root.
 | Command | What it does | Verified |
 | --- | --- | --- |
 | none | No install step: the scripts use only Node's standard library. | 2026-10-10 |
-| `npm test` | Runs the helper-script tests against synthetic fixtures, then checks the real hub: every freshness header valid, every built skill passes `route.mjs --check`. | 2026-10-10, 15 of 15 passing on Node 22.22.0 |
+| `npm test` | Runs the helper-script tests against synthetic fixtures, then checks the real hub: every freshness header valid, every built skill passes `route.mjs --check`, every regression case well formed. | 2026-10-11, 16 of 16 passing on Node 22.22.0 |
 
-**Build gate: `npm test` must pass before every commit.** It covers the scripts and the structure of the hub, not the quality of a skill's output. For every change also re-read the diff, confirm every relative link you added points at a real file, confirm no template placeholder is left in `AGENTS.md` or `HANDOFF.md` (the check in clay-config `NEW-PROJECT.md`), and keep the README layout and task table matching what actually exists. There is no CI, so the gate runs only when an agent runs it. The Stage 1 regression cases become the acceptance test for each skill (`core/_system/CONVENTIONS.md` section 11).
+**Build gate: `npm test` must pass before every commit.** It covers the scripts and the structure of the hub, not the quality of a skill's output. For every change also re-read the diff, confirm every relative link you added points at a real file, confirm no template placeholder is left in `AGENTS.md` or `HANDOFF.md` (the check in clay-config `NEW-PROJECT.md`), and keep the README layout and task table matching what actually exists. There is no CI, so the gate runs only when an agent runs it. The regression cases in `core/_system/regression/` are the acceptance test for each skill (`core/_system/CONVENTIONS.md` section 11); running them needs a fresh agent, not `npm test`.
 
 ### 2.7 Deploy process
 
@@ -227,7 +227,7 @@ ad-hub/
 ├── people/clay.md       operator profile
 ├── .claude/             Claude Code settings and the session-start hook
 ├── core/
-│   ├── _system/         CONVENTIONS.md, memory-contract.md, spend-authority.md (drafts), schemas/, scripts/ (helper scripts and their tests)
+│   ├── _system/         CONVENTIONS.md, memory-contract.md, spend-authority.md (drafts), schemas/, scripts/ (helper scripts and their tests), regression/ (five synthetic test businesses)
 │   ├── skills/          one folder per skill; only ad-strategy/references/plays.md exists
 │   └── automations/     README.md only; routines not built
 ├── meta-system/         Meta layer: README.md plus dated references/ (platform-tools, result-signals)
