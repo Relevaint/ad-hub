@@ -141,7 +141,10 @@ Some platforms cannot open a public ad library (bot challenge, login wall, a pag
 needs a real browser). Then: say so first, in the file and in chat; record nothing from
 the library as Observed; use what can be read, which is usually the competitors'
 websites and landing pages, their public posts where reachable, and directory listings;
-and label the file's data line with what was actually seen. Where a platform's official
+and label the file's data line with what was actually seen. A library that half works is
+common: an empty result on one attempt is unconfirmed, so retry once before writing that
+an advertiser has no ads, and when only keyword search works, record every count as a
+lower bound. Where a platform's official
 connector offers library search with the business's own login, use it read-only
 (`meta-system/references/platform-tools.md`); it changes nothing on any account.
 

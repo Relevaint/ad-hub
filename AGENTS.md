@@ -242,7 +242,7 @@ ad-hub/
 - 2026-10-05: The repo was created with a `CLAUDE.MD` file (upper-case extension). It was replaced by `CLAUDE.md`. Do not re-add the upper-case name: on Mac and Windows the two names are the same file and the checkout breaks.
 - 2026-10-05: The starter arrived with its own `AGENTS.md`, a build handoff. Its content now lives in 2.16 (decisions, how to build, owner answers) and in `HANDOFF.md` (current state). Where `README.md` calls AGENTS.md the handoff, it means this file.
 - 2026-10-05: The clay-config hook template refreshes Marketing-Hub pointers. That block was removed from `.claude/hooks/session-start.sh` here on purpose (2.15). Do not restore it when syncing the hook with the template.
-- 2026-10-05: Plain web requests to Meta's Ad Library get a bot challenge instead of the page. Competitor research that depends on it needs a real browser; see the capability notes in `HANDOFF.md` for whether the platform has one that works.
+- 2026-10-05: Plain web requests to Meta's Ad Library get a bot challenge instead of the page. Competitor research that depends on it needs a real browser; see the capability notes in `HANDOFF.md` for whether the platform has one that works. 2026-10-19: a headless browser through the session proxy does render keyword searches and single-ad pages (not the per-advertiser view, not video), and one search in three returns empty until retried.
 
 ### 2.15 Marketing work and Marketing-Hub
 

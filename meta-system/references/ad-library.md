@@ -47,9 +47,11 @@ Three routes, in order of preference for an agent:
 1. **A real browser, signed in as a person.** The web page at
    `facebook.com/ads/library` renders the search, the filters and each ad's card with its
    "started running on" date, platforms and versions, and a link through to the landing
-   page. On the verify date, automated browsers and plain requests from this platform
-   got a bot challenge or an empty results list (`HANDOFF.md`, capability notes). A
-   platform where the operator's own browser is driven should work; test it.
+   page. On the verify date, a plain request from this platform got a bot challenge, and a
+   headless browser rendered keyword searches and single-ad pages, with screenshots, but
+   not the per-advertiser page view or video playback; about one search in three came
+   back empty until retried (`HANDOFF.md`, capability notes). A signed-in browser driven
+   on the operator's own machine should reach the rest; test it.
 2. **Meta's ads connector.** Its documented tool families include Ad Library search
    (`platform-tools.md`). It signs in with the business's own Meta login and reads the
    public library; it changes nothing on the account. Not yet tried from any session.
