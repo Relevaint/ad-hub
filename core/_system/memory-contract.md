@@ -4,7 +4,8 @@ How Ad-Hub remembers. The hub holds no business facts. Everything about a busine
 its offers, its accounts and its results lives in that business's own repo. The owner
 approved the folder layout and the ad ID format below on 2026-10-05. The fill-in
 templates for the files other skills depend on are in [schemas/](schemas/): offer file,
-authority file, ledger row, change-log entry, calendar and the manifest.
+authority file, ledger row, change-log entry, calendar, the manifest, and the two research
+files (voice of customer, audience).
 
 ## Two kinds of context
 
