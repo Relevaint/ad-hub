@@ -25,6 +25,7 @@ belong to the core skills.
 | `references/ad-library.md` | What Meta's Ad Library shows for which ads, and how to reach it | During `competitor-ads` |
 | `references/placements.md` | Shapes, durations and copy field lengths per placement | During `ad-creative`, before making assets |
 | `references/policy-notes.md` | Meta's personal-attributes standard with its examples; special ad categories | During `ad-creative` and `ad-setup` |
+| `references/events-and-matching.md` | Test events, deduplication, customer matching fields; how to see a result arrive | During `ad-setup`, after the signal is chosen |
 
 Every file here carries a last-verified date and a refresh instruction. Check it before
 relying on the content.
