@@ -23,8 +23,12 @@ credential; "trusted by" implies a count.
 ## The gate
 
 1. List every claim the ad will make or imply.
-2. Map each to a row in the offer's proof table, `Owner-confirmed` or `Observed` with its
-   source. A `Proposed` row is not proof.
+2. Map each to its source. Facts about the offer itself (what it is, what it costs, how
+   it is delivered, the refund or guarantee terms as stated, where the ad sends people)
+   come from the offer file's `Owner-confirmed` lines. Anything that supports a claim
+   about quality, results, trust or scale (a rating, a review, a credential, a number of
+   customers, a story, a result) comes from the offer's proof table, `Owner-confirmed`
+   or `Observed` with its source. A `Proposed` line is not proof of anything.
 3. Anything unmapped is cut, or becomes a marked blank `[confirm: ...]` in the draft.
 4. Testimonials and stories: a named, real person who gave permission the business
    recorded. No permission, no use, in any disguise, paraphrase or composite. Say so in
