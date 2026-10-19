@@ -31,6 +31,8 @@ purchases, lead-to-customer rate, capacity limits, restricted category.
 Feeds from: BH modules 06, 08, 09; `meta-system/references/result-signals.md`.
 Acceptance: a new business with one sentence of context gets a useful draft path and a
 short list of the facts that block going live.
+Status: built 2026-10-19 (`core/skills/start-here/`). Run against the three regression
+requests for it; not yet tested in a real business repo.
 
 ### 2. audience-research
 Job: who buys and what they say, with sources.

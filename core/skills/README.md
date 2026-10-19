@@ -1,11 +1,11 @@
 # Core skills
 
-Platform-neutral. One folder per skill. None is built yet; briefs are in
-`BUILD-PLAN.md`. Names are placeholders.
+Platform-neutral. One folder per skill. `start-here` is built (2026-10-19); the rest are
+briefs in `BUILD-PLAN.md` and their names are placeholders.
 
 | Skill | Job | Reaches live accounts |
 |---|---|---|
-| `start-here` | Unclear requests; adding a business or an offer | No |
+| `start-here` (built) | Unclear requests; adding a business or an offer; what blocks going live | No |
 | `audience-research` | Who buys, in their own words | No |
 | `competitor-ads` | What others are running | No |
 | `ad-strategy` | Gaps, angles, plays, what to test next | No |
