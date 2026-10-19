@@ -73,11 +73,15 @@ every early customer conversation; that is the next run's best source.
   the page cannot be opened, record the source as not reached and leave the snippet out.
 - A video is read only if its transcript or captions were read. Say so, or say it was
   not seen (claude-workflows review).
+- A page read through a summarising tool gives no verbatim line unless the tool returns
+  the exact text. Ask it for the exact sentence, or record the source as read and take
+  no line from it.
 
 ## Platform limits
 
-Some sources block automated reading or sit behind a login. From any platform: try,
-and when a source cannot be opened, record it by name in the Sources walked table with
+Some sources block automated reading or sit behind a login. From any platform: try
+the platform's own page-reading tool before a raw request, because the two reach
+different sites; and when a source cannot be opened, record it by name in the Sources walked table with
 the reason seen (blocked, login, not found) and move on. Never fill the gap from
 memory. Which sources a given platform can reach changes over time; the operator's
 handoff notes hold the dated observations, not this file.
