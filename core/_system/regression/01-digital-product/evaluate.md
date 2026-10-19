@@ -7,8 +7,9 @@ to the agent under test.
 offer is judged on ROAS. There are no lead stages.
 
 **Client folder:** `business/`. A README and two notes files with ordinary headings, a
-filled offer file, and an authority file at level 1 (prepare only). There is no
-`ads/platform/` file, so no test purchase has ever been seen arriving.
+filled offer file, an authority file at level 1 (prepare only), and a ledger of four ads
+planned by hand, none run. There is no `ads/platform/` file, so no test purchase has ever
+been seen arriving.
 
 **Planted traps:**
 - The purchase signal is switched on but has never been checked.

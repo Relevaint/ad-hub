@@ -23,6 +23,8 @@ belong to the core skills.
 | `references/platform-tools.md` | What Meta's official connector and command-line tool can do | Before any account read or write |
 | `references/result-signals.md` | How each funnel type sends its result back to Meta | During `ad-setup` |
 | `references/ad-library.md` | What Meta's Ad Library shows for which ads, and how to reach it | During `competitor-ads` |
+| `references/placements.md` | Shapes, durations and copy field lengths per placement | During `ad-creative`, before making assets |
+| `references/policy-notes.md` | Meta's personal-attributes standard with its examples; special ad categories | During `ad-creative` and `ad-setup` |
 
 Every file here carries a last-verified date and a refresh instruction. Check it before
 relying on the content.
