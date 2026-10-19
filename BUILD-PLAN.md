@@ -85,6 +85,9 @@ inspected. Production tools are whatever the operator has connected, never hard-
 Feeds from: DD static-ads and hooks reviews; BH modules 12, 14, 15, 16; the Meta kit
 review (copy skill).
 Acceptance: a finished ad is a produced, inspected asset with its copy, not a brief.
+Status: built 2026-10-19 (`core/skills/ad-creative/`). Run against its four regression
+requests (cases 01, 03, 04, 05). Case 01 gained a ledger of planned ads so its request is
+runnable. Meta layer: `placements.md` and `policy-notes.md`, from Meta's own pages.
 
 ### 6. ad-setup
 Job: make the account able to measure the real result, and prepare the structure.
