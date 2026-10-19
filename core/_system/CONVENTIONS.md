@@ -59,7 +59,9 @@ metadata:
 ---
 ```
 
-`reads` and `writes` are the contract. A skill writes only what it owns. `live: act` is
+`reads` and `writes` are the contract. A skill writes only what it owns. One writer per
+file or `file#section`; the ledger alone is owned by transition, declared as
+`ledger.md#<transition>` from the table in `schemas/ledger-row.md`. `live: act` is
 allowed for `ad-launch` and `ad-manage` only. `node core/_system/scripts/route.mjs --check`
 enforces these rules and is part of the build gate.
 

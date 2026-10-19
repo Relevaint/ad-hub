@@ -55,5 +55,7 @@ IDs and tags belong to `ad-strategy`; live status changes belong to `ad-launch` 
 | approved to live, live to paused, paused to live | `ad-launch`, `ad-manage` |
 | any status to retired | `ad-manage`, or `ad-strategy` for an ad that never went live |
 
-Each skill touches only its own columns and transitions. A status change made on a live
-account always has a matching entry in `ads/changes/`.
+Each skill touches only its own columns and transitions, and declares its part in its
+frontmatter as `ledger.md#<transition>` (for example `ledger.md#ids-and-tags` for
+`ad-strategy`), which the build gate checks. A status change made on a live account
+always has a matching entry in `ads/changes/`.
