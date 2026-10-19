@@ -87,7 +87,8 @@ reached: that is the emergency stop `ad-manage` watches for.
 Platforms learn from volume this offer may never produce. Say so plainly. Then:
 optimise on the earliest real status that arrives in time (the booked call, not the
 signed engagement months later); judge on thin data with long windows and small batches;
-keep decisions provisional; lean on trust-building plays aimed at people who already
+keep decisions provisional; keep the batch to two to four ads, since every extra ad
+halves again what can be read; lean on trust-building plays aimed at people who already
 know the business (`dist-omnipresent`, `fmt-founder-interview`, `offer-lead-magnet` and
 the like, each still a play to test); and treat a profitable account that never leaves
 "learning limited" as fine (Observed, 19.5). Never read a winner into a month of two

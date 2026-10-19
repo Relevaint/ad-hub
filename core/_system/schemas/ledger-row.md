@@ -11,7 +11,8 @@ Example: `song-2610-007`.
 
 - `<offer>` is the offer slug from `ads/offers/<offer>.md`.
 - `<yymm>` is the month the ad was planned.
-- `<nnn>` counts up per offer and is never reused, even for a retired ad.
+- `<nnn>` counts up per offer across all months and is never reused, even for a retired
+  ad: after `song-2609-006`, the next ad planned in October is `song-2610-007`.
 - Read an ID from the right: the last parts are the revision, then `nnn`, then `yymm`;
   everything before is the offer slug, which may contain hyphens.
 - `ad-strategy` creates IDs. Nobody renames one. A changed ad gets a revision suffix

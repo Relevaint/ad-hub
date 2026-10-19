@@ -68,4 +68,4 @@ Pass when:
 - Batch size and timing respect the two-week cadence and the fall rush, for example holding new ads until capacity frees up. Any choice is explained.
 - Location is the twelve towns only, and Eastport is excluded.
 - `offer-real-scarcity` is used only with the true capacity limit.
-- New ads get the next IDs (`gutter-cleaning-2610-001` onward), tags and reasons. No existing ID is changed.
+- New ads get the next IDs (`gutter-cleaning-2610-007` onward, since the number counts up per offer across months), tags and reasons. No existing ID is changed.
