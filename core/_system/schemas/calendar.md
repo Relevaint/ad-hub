@@ -16,6 +16,11 @@ on a date written here, so every date is a true date (README hard rule 4).
 ## Template
 
 ```markdown
+---
+business: <name as the business writes it>
+updated: YYYY-MM-DD
+---
+
 # Calendar
 
 One line per item. Recurring patterns first, then fixed dates, then outside events.

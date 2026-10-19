@@ -49,6 +49,7 @@ updated-by: start-here        # or "business"
 ## Limits
 - Capacity or stock limit: <what slows or stops spend, or none>   (status)
 - Restricted ad category: <category, or none>                     (status)   [live]
+- Compliance or brand rules: <the business's own file, or none>; exact strings stay there   (status)
 
 ## Proof the ads may use
 | Proof | Kind (review, result, credential, number, story) | Where it comes from | Status |
@@ -66,6 +67,8 @@ updated-by: start-here        # or "business"
   to spot. A business may set its own target instead; record it as Owner-confirmed.
 - **Local offers.** The service area is part of "Who it is for" and blocks going live: the
   platform is told exactly where the business can serve, and nothing else.
+- **Compliance** points at the business's own file. No legal, licence or brand string is
+  copied or paraphrased into this file; `ad-creative` reads them from the source.
 - **Restricted category** names the kind of offer in plain words (housing, employment,
   credit, financial products, social issues and the like). The platform layer maps it
   to the platform's own category and rules. Core files never carry platform settings.

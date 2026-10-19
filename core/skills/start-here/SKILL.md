@@ -241,9 +241,11 @@ Files first, inside the business repo's `ads/`:
 - `ads.yaml`, the manifest (`core/_system/schemas/manifest.md`), created with the first
   offer and updated for each file written.
 
-Then the summary in chat, short: what was recorded in one line, the first move, the
-live gaps as a list, and the next two to four skills. For a new business this fits in
-about twenty lines. A specific request gets a direct answer, not a tour of the hub.
+Then the summary in chat. It is not a second copy of the file: one line on what was
+recorded and where, the first move, the live gaps as a list with who clears each, and
+the next two to four skills. About twenty lines for a new business; a readiness check is
+often ten. Detail belongs in the files, where the next skill will read it. A specific
+request gets a direct answer, not a tour of the hub.
 
 ## What's next
 

@@ -6,6 +6,17 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-10-19
+- **Who:** Clay. The platform showed the account listed in `people/clay.md`.
+- **Platform:** Claude Code (remote), branches `clay/handoff-stage1-done` (PR #7, merged) and `clay/skill-start-here`
+- **Request:** A status report on the build; "installer is good" (merged PR #6); why the Ad Library was marked unreachable; then "Build the next part": Stage 2, skill 1, `start-here`. Stop for review.
+- **Changed:** An agent in a business repo can now take a vague ads request, a new business or a new offer and come out with three things in one pass: the first useful move, the business's facts recorded in `ads/` with a status on each, and the facts that block going live listed apart from those that only block scaling or improve the work. Files: `core/skills/start-here/SKILL.md` (about 260 lines) and `references/intake.md` (each fact, where it hides in a business's own files, what it blocks); two new schemas the skill needs to write deterministic files, `core/_system/schemas/calendar.md` and `manifest.md` (for `ads.yaml`); the offer schema gained a local-offer note (service area blocks going live) and a compliance pointer line; the memory contract names the two shared bookkeeping files (`ads.yaml`, the approvals log) that no skill declares in `writes`; README status and task-table note, skills README, `AGENTS.md` 2.4 and 2.13, `BUILD-PLAN.md` status. Design choices for Clay to accept or reverse: (1) `start-here` declares `authority.md` by section, so `ad-launch` can own the approvals log later without a two-writer conflict; (2) `ads.yaml` and the approvals log are shared bookkeeping outside the one-writer rule; (3) layer `strategy`; (4) the service area is a live gate for local offers.
+- **Verification:** `npm test`: 18 of 18. `route.mjs --check`: 1 built skill, 0 problems. The installer generated the `adhub-start-here` pointer into three scratch copies of regression client folders. Regression, hub commit `bb8a93c`: three fresh agents, one per `start-here` request, each given only the hub path, a client folder copy and the request word for word, and told not to open the regression folder. Files judged before the agents' own reports. Case 01 (digital product, "What do you still need before we can run ads for the garden kit?"): pass on all four criteria; the unverified purchase signal was named first, nothing on file was re-asked (it asked only the platform's name and permission for the emailed quotes), direct sale throughout, no workshop; it edited the business-written offer file by appending labels and sources only, no fact changed. Case 03 (real estate, "Add a second offer: a buyer consultation for people moving into the county."): pass on all four; `buyer-consult.md` with housing as a live gate, every line labelled, unknowns kept and break-even left unworked, the compliance file pointed to and no string copied, live and scale gaps apart. Case 05 (new business, "Help me get bookings with ads."): pass on all three; first ad's job plus four angle directions labelled model knowledge, three questions asked (area, booking system, authority), only supplied facts recorded, "none" for restricted category marked Proposed to confirm, no `authority.md` created. Pattern across all three: replies ran 35 to 50 lines against the skill's "about twenty", so the Output wording was tightened after the runs and not re-run. Case 05's agent added a date header to `calendar.md` on its own; the schema now includes one. Not done: a real business repo (none named yet) and Node 20.
+- **Status:** PR open on `clay/skill-start-here`, waiting for Clay's review before merge.
+- **Next:** Clay reviews. Then Stage 2, skill 2, `audience-research`. Ask Clay to name the business repo before any real-repo test.
+
+## Prior Session (2026-10-17 to 2026-10-19, Stage 1 piece 4: installer)
+
 - **When:** 2026-10-17
 - **Who:** Clay. The platform showed the account listed in `people/clay.md`.
 - **Platform:** Claude Code (remote), branch `clay/stage1-installer`
@@ -63,11 +74,11 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Where We Are
 
-Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-19 the foundation (Stage 1) is complete. No skill is built yet.
+Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-19 the foundation (Stage 1) is complete and the first skill, `start-here`, is built and waiting for Clay's review.
 
-**What works.** The authority map (`README.md`), the system layer (`core/_system/`: conventions, memory contract, spend authority, four schemas, helper scripts, five regression cases), the installer (`install/`), `npm test` as the build gate, thirteen source reviews plus a conflicts list, the first plays library, and two dated Meta references. Section 1 has sixteen rules, matching the clay-config template. Freshness: `meta-system/references/platform-tools.md` due 2026-11-02; plays library due 2026-11-17; `meta-system/references/result-signals.md` due 2026-12-02.
+**What works.** The authority map (`README.md`), the system layer (`core/_system/`: conventions, memory contract, spend authority, six schemas, helper scripts, five regression cases), the installer (`install/`), the `start-here` skill (pending merge), `npm test` as the build gate, thirteen source reviews plus a conflicts list, the first plays library, and two dated Meta references. Section 1 has sixteen rules, matching the clay-config template. Freshness: `meta-system/references/platform-tools.md` due 2026-11-02; plays library due 2026-11-17; `meta-system/references/result-signals.md` due 2026-12-02.
 
-**What is in progress.** Nothing open. Next is Stage 2, skill 1: `start-here`.
+**What is in progress.** Stage 2, skill 1, `start-here`: PR open, awaiting Clay's review.
 
 **What is broken or unresolved.**
 - The results snapshot format is not defined yet; `ad-review` owns it. The cases use a plain table and may need adjusting when `ad-review` is built.
@@ -75,8 +86,9 @@ Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-
 - No business repo named for testing the first skill.
 - `PROVENANCE.md` open items: the Ben Heath course terms were not reviewed, and two video creators are unnamed.
 - No CI, so `npm test` runs only when an agent runs it.
+- The context loader reports file ages against the machine clock. Regression requests state a date, so ages in a run differ from the owner's date. Cosmetic; `--today` exists for tests.
 - Clay's other active repos still have fifteen doctrine rules; clay-config `NEW-PROJECT.md` section 3 says to add rule 16 when each is next opened.
-- Merged branches cannot be deleted from this platform. Leftovers: `clay/agent-scaffolding`, `clay/stage1-schemas`, `clay/stage1-helper-scripts`, `clay/stage1-regression-cases`, `clay/stage1-installer` and `chore/add-pm-formula` here; `clay/add-ad-hub-project-map` and `chore/add-pm-formula` in clay-config.
+- Merged branches cannot be deleted from this platform. Leftovers: `clay/agent-scaffolding`, `clay/stage1-schemas`, `clay/stage1-helper-scripts`, `clay/stage1-regression-cases`, `clay/stage1-installer`, `clay/handoff-stage1-done` and `chore/add-pm-formula` here; `clay/add-ad-hub-project-map` and `chore/add-pm-formula` in clay-config.
 
 **What could not be determined from here.** Whether any of Clay's platforms can view Meta's Ad Library in a working browser (this one cannot). Whether Meta's ads connector or the `meta-ads` command-line tool is set up anywhere for Clay.
 
@@ -84,7 +96,7 @@ Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-
 - Name the business repo for the first skill test.
 - Delete the leftover branches, or turn on automatic branch deletion in each repo's settings.
 
-**Next concrete step.** On Clay's go: Stage 2, skill 1, `start-here`, defined with Clay first (doctrine 16), then built and run against the regression cases.
+**Next concrete step.** Clay reviews the `start-here` PR. Then Stage 2, skill 2, `audience-research`.
 
 ## Platform capability notes
 
@@ -118,3 +130,4 @@ Keep doctrine 12's acknowledgment rule intact so work by other operators is visi
 - 2026-10-11: Stage 1 piece 3 (regression cases) pushed to `clay/stage1-regression-cases`, PR #4; merged 2026-10-14.
 - 2026-10-14: doctrine rule 16 merged here (PR #5) and in clay-config (PR #7).
 - 2026-10-17: Stage 1 piece 4 (installer) pushed to `clay/stage1-installer`, PR #6; merged 2026-10-19 as `e5265d0`. Stage 1 complete.
+- 2026-10-19: Stage 2, skill 1 (`start-here`) pushed to `clay/skill-start-here`, PR open; regression requests for it pass (three cases).
