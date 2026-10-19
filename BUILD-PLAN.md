@@ -99,6 +99,9 @@ restricted category declared; settings baseline recorded.
 Feeds from: BH modules 02 to 05, 10, 20; the Meta kit review (tracking reference);
 `meta-system/references/`.
 Acceptance: a test event for the offer's real result is seen arriving on the platform.
+Status: built 2026-10-19 (`core/skills/ad-setup/`). Run against its three regression requests
+(cases 01, 02, 03). It creates nothing on an account; `ad-launch` executes its change list.
+Meta layer: `events-and-matching.md` from Meta's Conversions API documentation.
 
 ### 7. ad-launch
 Job: put approved ads live.
