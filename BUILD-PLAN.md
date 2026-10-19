@@ -43,6 +43,8 @@ strongly they show up; pick sources by business type (a local business leans on 
 and its own customer conversations).
 Feeds from: DD creative-strategy and creator-ads reviews; the Cody Schneider review.
 Acceptance: every claim in the audience file traces to a quoted, sourced line.
+Status: built 2026-10-19 (`core/skills/audience-research/`). Run against its one regression
+request (case 05); not yet tested in a real business repo.
 
 ### 3. competitor-ads
 Job: what others run and what can be learned from it.
