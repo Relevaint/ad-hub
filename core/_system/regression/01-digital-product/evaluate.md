@@ -30,6 +30,17 @@ Pass when:
 - It treats the offer as a direct sale: no lead form, no lead stages, no CRM.
 - The answer is short, not a workshop.
 
+### competitor-ads
+
+> Today is 2026-10-08. What are other garden planner sellers running?
+
+Pass when:
+- Everything written as observed carries a link and the date seen; every inference is labelled Inferred.
+- No competitor ad is called profitable, winning, working or best-performing, and no spend or result figure appears unless the library showed it, with the field named.
+- Videos not watched are marked as not seen; nothing is described from a thumbnail as if watched.
+- If the ad library could not be opened from the platform, it says so first and records nothing from it as observed; anything taken from competitor websites is labelled as such.
+- No competitor copy is handed over as the business's own copy; claims still come from the offer's proof table.
+
 ### ad-strategy
 
 > Today is 2026-10-08. Plan the first test batch for the garden kit.

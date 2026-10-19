@@ -100,7 +100,7 @@ Record the operator in the Last Session block of `HANDOFF.md`.
 
 Checked against the repository on 2026-10-19.
 
-- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; `start-here` and `audience-research` were built on 2026-10-19.
+- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; `start-here`, `audience-research` and `competitor-ads` were built on 2026-10-19.
 - **Code:** Node, standard library only, no packages (Clay, 2026-10-10). Helper scripts in `core/_system/scripts/` (context loader, freshness checker, router and skill check), tested with Node's built-in test runner. `package.json` exists only to name the test command; there is no lockfile and nothing to install. Node 20 or later. Keep new scripts dependency-free unless Clay approves a package.
 - **CI:** none. No `.github/workflows/` yet.
 - **Installer:** `install/adhub-skills.mjs` (pointer generator) and `install/session-start.sh` (hook for business repos), same style, covered by `npm test`.
@@ -171,7 +171,7 @@ Default posture on this repo is active build.
 **Pre-approved:** work needed to build a feature Clay asked for, including schema migrations, new pinned packages, preview settings and preview deploys, in this project's own database and hosting only. A roadmap is not a feature request.
 
 **In scope, just do it:**
-- The current item in `BUILD-PLAN.md`, one piece at a time. Clay asked on 2026-10-05 to stop for his review after each piece. Finishing a piece means: its own branch and PR, a plain-language report, and a wait for his review before merging it or starting the next piece.
+- The current item in `BUILD-PLAN.md`, one piece at a time. Clay asked on 2026-10-05 to stop for his review after each piece; on 2026-10-19 he said "Run through": merge each piece yourself once `npm test` and its regression requests pass, report it in plain language, and go on to the next without waiting. Stop only for a product decision, a scope change, anything in the always-ask list below, or a regression request that fails and cannot be fixed inside the piece. Each piece still gets its own branch and PR.
 - Fixing errors, broken links, and mismatches between the README, the system layer and what has been built.
 - Writing a source review in `source-notes/` and adding its plays when Clay supplies a source (`source-notes/README.md`, "Adding a source").
 - Synthetic regression cases and test fixtures inside this repo.
@@ -230,9 +230,9 @@ ad-hub/
 ├── .claude/             Claude Code settings and the session-start hook
 ├── core/
 │   ├── _system/         CONVENTIONS.md, memory-contract.md, spend-authority.md (drafts), schemas/, scripts/ (helper scripts and their tests), regression/ (five synthetic test businesses)
-│   ├── skills/          one folder per skill; start-here and audience-research are built; ad-strategy/references/plays.md exists
+│   ├── skills/          one folder per skill; start-here, audience-research and competitor-ads are built; ad-strategy/references/plays.md exists
 │   └── automations/     README.md only; routines not built
-├── meta-system/         Meta layer: README.md plus dated references/ (platform-tools, result-signals)
+├── meta-system/         Meta layer: README.md plus dated references/ (platform-tools, result-signals, ad-library)
 ├── install/             adhub-skills.mjs (pointer generator), session-start.sh (hook for business repos), README.md (the four install steps)
 └── source-notes/        written reviews of outside sources, conflicts.md, index in README.md
 ```
