@@ -11,7 +11,8 @@ Example: `song-2610-007`.
 
 - `<offer>` is the offer slug from `ads/offers/<offer>.md`.
 - `<yymm>` is the month the ad was planned.
-- `<nnn>` counts up per offer and is never reused, even for a retired ad.
+- `<nnn>` counts up per offer across all months and is never reused, even for a retired
+  ad: after `song-2609-006`, the next ad planned in October is `song-2610-007`.
 - Read an ID from the right: the last parts are the revision, then `nnn`, then `yymm`;
   everything before is the offer slug, which may contain hyphens.
 - `ad-strategy` creates IDs. Nobody renames one. A changed ad gets a revision suffix
@@ -55,5 +56,7 @@ IDs and tags belong to `ad-strategy`; live status changes belong to `ad-launch` 
 | approved to live, live to paused, paused to live | `ad-launch`, `ad-manage` |
 | any status to retired | `ad-manage`, or `ad-strategy` for an ad that never went live |
 
-Each skill touches only its own columns and transitions. A status change made on a live
-account always has a matching entry in `ads/changes/`.
+Each skill touches only its own columns and transitions, and declares its part in its
+frontmatter as `ledger.md#<transition>` (for example `ledger.md#ids-and-tags` for
+`ad-strategy`), which the build gate checks. A status change made on a live account
+always has a matching entry in `ads/changes/`.

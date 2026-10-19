@@ -115,6 +115,7 @@ test("route --check: catches every rule the rogue skill breaks", () => {
     /"ads\/offers\/x\.md" must be a path inside the business ads\/ folder/,
     /only ad-review writes learnings\.md/,
     /strategy\/diagnosis\.md and strategy\/diagnosis\.md: two writers/,
+    /ledger\.md is owned by transition/,
   ]) assert.match(r.out, want);
 });
 

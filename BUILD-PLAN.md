@@ -70,6 +70,9 @@ how long this offer takes to give a confident answer; an audit that classifies l
 Feeds from: DD creator-ads and creative-strategy reviews; BH modules 06, 07, 11, 19;
 the Claude-MCP-update review; `references/plays.md`.
 Acceptance: every planned ad has an ID, tags and a stated reason it is being tested.
+Status: built 2026-10-19 (`core/skills/ad-strategy/`). Run against its three regression
+requests (cases 01, 02, 04). Scout mode runs from a hub session only; the plays library is a
+hub file.
 
 ### 5. ad-creative
 Job: copy and finished ads per placement, checked before handoff.
