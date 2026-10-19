@@ -4,7 +4,7 @@ How Ad-Hub remembers. The hub holds no business facts. Everything about a busine
 its offers, its accounts and its results lives in that business's own repo. The owner
 approved the folder layout and the ad ID format below on 2026-10-05. The fill-in
 templates for the files other skills depend on are in [schemas/](schemas/): offer file,
-authority file, ledger row and change-log entry.
+authority file, ledger row, change-log entry, calendar and the manifest.
 
 ## Two kinds of context
 
@@ -57,6 +57,11 @@ ads/
 
 A skill never writes a file it does not own. Profile-style files are versioned before
 they are overwritten. `learnings.md` and `changes/` are append-only.
+
+Two files are shared bookkeeping rather than owned records, and no skill declares them in
+its `writes`: `ads.yaml` ([schemas/manifest.md](schemas/manifest.md)), which any skill
+updates for the file it just wrote, and the approvals log section of `authority.md`,
+which any skill appends to when it hears an explicit approval.
 
 ## Offer file
 

@@ -64,6 +64,8 @@ updated-by: start-here        # or "business"
   plus repeat value only if the business confirms repeat purchases. Lead funnel: that
   same value times the lead-to-customer rate. Show the working so a wrong input is easy
   to spot. A business may set its own target instead; record it as Owner-confirmed.
+- **Local offers.** The service area is part of "Who it is for" and blocks going live: the
+  platform is told exactly where the business can serve, and nothing else.
 - **Restricted category** names the kind of offer in plain words (housing, employment,
   credit, financial products, social issues and the like). The platform layer maps it
   to the platform's own category and rules. Core files never carry platform settings.

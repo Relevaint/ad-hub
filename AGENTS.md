@@ -98,9 +98,9 @@ Record the operator in the Last Session block of `HANDOFF.md`.
 
 ### 2.4 Stack
 
-Checked against the repository on 2026-10-17.
+Checked against the repository on 2026-10-19.
 
-- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. No skill (`SKILL.md`) exists yet.
+- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; the first, `start-here`, was built on 2026-10-19.
 - **Code:** Node, standard library only, no packages (Clay, 2026-10-10). Helper scripts in `core/_system/scripts/` (context loader, freshness checker, router and skill check), tested with Node's built-in test runner. `package.json` exists only to name the test command; there is no lockfile and nothing to install. Node 20 or later. Keep new scripts dependency-free unless Clay approves a package.
 - **CI:** none. No `.github/workflows/` yet.
 - **Installer:** `install/adhub-skills.mjs` (pointer generator) and `install/session-start.sh` (hook for business repos), same style, covered by `npm test`.
@@ -230,7 +230,7 @@ ad-hub/
 ├── .claude/             Claude Code settings and the session-start hook
 ├── core/
 │   ├── _system/         CONVENTIONS.md, memory-contract.md, spend-authority.md (drafts), schemas/, scripts/ (helper scripts and their tests), regression/ (five synthetic test businesses)
-│   ├── skills/          one folder per skill; only ad-strategy/references/plays.md exists
+│   ├── skills/          one folder per skill; start-here is built; ad-strategy/references/plays.md exists
 │   └── automations/     README.md only; routines not built
 ├── meta-system/         Meta layer: README.md plus dated references/ (platform-tools, result-signals)
 ├── install/             adhub-skills.mjs (pointer generator), session-start.sh (hook for business repos), README.md (the four install steps)
