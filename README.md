@@ -6,9 +6,9 @@ business facts. Any business repo can plug into it; the business repo supplies t
 context and keeps the records. The core is platform-neutral. Meta is the first platform
 layer; later platforms follow the same shape.
 
-**Status (2026-10-19): system layer complete, two skills built.** The system layer,
-source reviews, plays library and installer are in place. `start-here` and
-`audience-research` are built; the other seven are briefs. [BUILD-PLAN.md](BUILD-PLAN.md) is the build
+**Status (2026-10-19): system layer complete, three skills built.** The system layer,
+source reviews, plays library and installer are in place. `start-here`,
+`audience-research` and `competitor-ads` are built; the other six are briefs. [BUILD-PLAN.md](BUILD-PLAN.md) is the build
 queue; [AGENTS.md](AGENTS.md) holds the working rules and the build decisions;
 [HANDOFF.md](HANDOFF.md) holds the current state and the last session.
 
@@ -40,8 +40,8 @@ Ad-Hub/
 
 ## Task lookup
 
-`start-here` and `audience-research` are built. The other names are placeholders until
-each is built.
+`start-here`, `audience-research` and `competitor-ads` are built. The other names are
+placeholders until each is built.
 
 | Job | Start with |
 |---|---|

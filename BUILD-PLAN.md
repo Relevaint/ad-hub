@@ -55,6 +55,9 @@ steps ahead and at adjacent industries; say plainly when a video was not actuall
 Feeds from: BH module 13; DD claude-workflows review; both second-creator reviews.
 Acceptance: output separates what was observed from what is inferred, and never claims
 a competitor ad is profitable.
+Status: built 2026-10-19 (`core/skills/competitor-ads/`). A regression request was added to
+case 01 and passed on 2026-10-19: the library rendered in a headless browser with limits (no
+per-advertiser view, no video) and the run kept Observed apart from Inferred throughout.
 
 ### 4. ad-strategy
 Job: decide what to make and how it is tested.
