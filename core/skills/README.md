@@ -1,8 +1,8 @@
 # Core skills
 
-Platform-neutral. One folder per skill. `start-here`, `audience-research`, `competitor-ads`,
-`ad-strategy`, `ad-creative` and `ad-setup` are built (2026-10-19); the rest are briefs in
-`BUILD-PLAN.md` and their names are placeholders.
+Platform-neutral. One folder per skill. Seven are built (`start-here`, `audience-research`,
+`competitor-ads`, `ad-strategy`, `ad-creative`, `ad-setup`, `ad-launch`); `ad-manage` and
+`ad-review` are briefs in `BUILD-PLAN.md` and their names are placeholders.
 
 | Skill | Job | Reaches live accounts |
 |---|---|---|
@@ -12,7 +12,7 @@ Platform-neutral. One folder per skill. `start-here`, `audience-research`, `comp
 | `ad-strategy` (built) | Diagnosis, gaps, plays, the batch with IDs and tags, test design | No |
 | `ad-creative` (built) | Copy and finished ads per placement; claims and policy gate | No |
 | `ad-setup` (built) | Result signal, tracking verified, category, settings baseline, change list | Reads and dry runs only; creates nothing |
-| `ad-launch` | Putting approved ads live | Yes |
+| `ad-launch` (built) | Gates, approval record, create paused, preview, activate, log with undo | Yes, under recorded authority |
 | `ad-manage` | Monitor, pause, replace, budget | Yes |
 | `ad-review` | Results in, learnings out | No (read-only) |
 
