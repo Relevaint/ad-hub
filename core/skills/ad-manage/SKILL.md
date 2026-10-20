@@ -54,7 +54,9 @@ older than the watch needs, read the account and say the numbers came from the p
 and are not yet a snapshot), the change log (what was done last, the last known good),
 the calendar and the offer's limits (capacity, stock, seasons), and the learnings.
 `references/watch-and-sessions.md` carries the daily questions, the emergency table,
-the session checklist and the arithmetic; load it every time.
+the session checklist and the arithmetic; load it every time. The platform skill
+(`meta-system/SKILL.md` for Meta) maps pause, activate, budget changes and the activity
+log to their calls; load it before any account read or change.
 
 ## What reaches the account
 

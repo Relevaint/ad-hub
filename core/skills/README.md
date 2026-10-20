@@ -17,3 +17,7 @@ each has run against its regression requests and none has yet run in a real busi
 
 `ad-strategy/references/plays.md` is the plays library; `ad-strategy` scout mode refreshes it
 from a hub session.
+
+The platform skill for Meta, `meta-system/SKILL.md`, is loaded by `ad-setup`, `ad-launch`,
+`ad-manage` and `ad-review` when the business runs on Meta. It is not a core skill and gets
+no pointer; it maps each account action to a tool call with a dated verification status.

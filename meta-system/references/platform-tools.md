@@ -1,7 +1,7 @@
 # Meta's official tools for agents (perishable: check the header first)
 
-last-verified: 2026-10-19 · ttl-days: 30 · refresh: re-read Meta's developer documentation for "ads AI connectors" (the Ads MCP server overview, get-started and the tool pages per category; the Ads CLI overview and command reference); run `pip index versions meta-ads` and `meta ads --help` for the command-line tool; update every line below and bump last-verified.
-changes: 2026-10-03, first written from Meta's documentation and the tool's own help output (version 1.2.0). 2026-10-19, connector tool names and behaviours re-read from Meta's tool pages; command-line defaults re-read from the command reference. 2026-10-20, PyPI still lists 1.2.0 as the latest release; `meta ads --help` not run, the tool is not installed on this platform.
+last-verified: 2026-10-20 · ttl-days: 30 · refresh: re-read Meta's developer documentation for "ads AI connectors" (the Ads MCP server overview, get-started and the tool pages per category; the Ads CLI overview and command reference); run `pip index versions meta-ads` and `meta ads --help` for the command-line tool; update every line below and bump last-verified.
+changes: 2026-10-03, first written from Meta's documentation and the tool's own help output (version 1.2.0). 2026-10-19, connector tool names and behaviours re-read from Meta's tool pages; command-line defaults re-read from the command reference. 2026-10-20, PyPI still lists 1.2.0 as the latest release; `meta ads --help` not run, the tool is not installed on this platform. 2026-10-20, sign-in and credential locations added from the get-started and configuration pages; per-action mapping moved to `action-map.md`.
 
 Load before any account read or write, and when deciding whether a step can be done by
 the agent or must be handed to a person.
@@ -19,6 +19,38 @@ developer app and a system-user token predate them.
 Documentation lives under `developers.facebook.com/documentation/ads-commerce/`, with a
 plain-text index at `.../llms.txt` that lists every page. The pages are readable from a
 plain request on the verify date.
+
+Which call does which hub action, with its verification status: `action-map.md`. This
+file says what the tools are and how they sign in.
+
+## Sign-in and where credentials live (locations only, never values)
+
+From Meta's get-started and configuration pages, read 2026-10-20:
+
+- **Connector.** Three ways in: OAuth through the Facebook Login for Business dialog,
+  with the business's own Facebook account or Meta Managed Account (the agent client
+  redirects; nothing is pasted); a user access token; or a system-user access token,
+  Employee role only (Admin-role system-user tokens are refused). Minimum permissions
+  `ads_mcp_management` plus `ads_read` or `ads_management`; `ads_management`,
+  `catalog_management`, `business_management`, `pages_show_list` and `instagram_basic`
+  unlock more tools. A token with `ads_read` and no `ads_management` is a read-only
+  agent, the platform's own level 0. Claude Code adds the server with
+  `claude mcp add --transport http --client-id <app id> meta-ads https://mcp.facebook.com/ads`;
+  a Meta app of the business's own is optional.
+- **Command-line tool.** Installed with Homebrew (`brew install facebook/fb/meta-ads`)
+  or `pip install meta-ads` (Python 3.12 or later). Authenticates with a system-user
+  access token in `ACCESS_TOKEN`, read from the shell environment or a `.env` file in
+  the directory the tool runs from; `AD_ACCOUNT_ID` selects the account, or
+  `--ad-account-id` per command; `BUSINESS_ID`, `APP_ID` and `APP_SECRET` are optional.
+  Flags beat environment variables, which beat the `.env` file. `meta auth status`
+  confirms the token without printing it. The token's scopes are the lock; the page
+  lists `business_management`, `ads_management`, `pages_show_list`,
+  `pages_read_engagement`, `pages_manage_ads` and `read_insights`.
+- Neither page describes a confirmation prompt, a dry run on writes, or a rule that
+  limits an agent beyond the token's permissions. The hub's own gates do that work.
+- The `.env` file and the token live in the business's environment, outside every repo
+  (`AGENTS.md` 2.5; memory contract, "What never goes in a repo"). This hub records the
+  variable names and nothing else.
 
 ## Connector (MCP server)
 
@@ -93,7 +125,7 @@ From the command reference, read 2026-10-19:
 
 ## Not yet verified
 
-Whether either tool can: set up Ads Manager's creative testing feature; create
+Row by row, with dates, in `action-map.md`. In short, whether either tool can: set up Ads Manager's creative testing feature; create
 automated budget rules; create or apply value rules; change the attribution setting;
 switch off the local "reach more people" expansion; control individual creative
 enhancements; set up partnership ads; send a test event or read the Test Events window.

@@ -19,6 +19,7 @@ Writing into a business repo needs Clay's go-ahead for that repo (`AGENTS.md` 2.
    Commit them, so platforms that do not run hooks still see them. Rerun after a skill is
    added, removed or renamed in the hub. Editing the inside of a skill needs no rerun; a
    pointer only holds the address. `--remove` takes every `adhub-` pointer out again.
+   The Meta layer's skill gets no pointer; the core skills load it themselves.
 
 3. **Add the session-start hook** so the pointers refresh themselves. Copy
    `install/session-start.sh` to `<repo>/.claude/hooks/session-start.sh`, make it

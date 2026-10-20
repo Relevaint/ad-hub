@@ -100,7 +100,7 @@ Record the operator in the Last Session block of `HANDOFF.md`.
 
 Checked against the repository on 2026-10-19.
 
-- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; all nine were built on 2026-10-19 and 2026-10-20.
+- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; all nine were built on 2026-10-19 and 2026-10-20. The Meta layer's skill is `meta-system/SKILL.md` (built 2026-10-20), loaded by the core skills, with its action map and defaults as dated references.
 - **Code:** Node, standard library only, no packages (Clay, 2026-10-10). Helper scripts in `core/_system/scripts/` (context loader, freshness checker, router and skill check), tested with Node's built-in test runner. `package.json` exists only to name the test command; there is no lockfile and nothing to install. Node 20 or later. Keep new scripts dependency-free unless Clay approves a package.
 - **CI:** none. No `.github/workflows/` yet.
 - **Installer:** `install/adhub-skills.mjs` (pointer generator) and `install/session-start.sh` (hook for business repos), same style, covered by `npm test`.
@@ -113,7 +113,7 @@ Checked against the repository on 2026-10-19.
 | Name | Where it lives | Used by |
 | --- | --- | --- |
 | None today | Nothing in this repo reads a secret. | n/a |
-| Meta ad account access (planned) | Outside version control, in the business's own environment or the operator's connected Meta tools. Exact location decided when `ad-setup` or `ad-launch` is built. UNVERIFIED. | Future `ad-launch`, `ad-manage`, and account reads |
+| Meta ad account access | Outside version control, in the business's environment. Connector: the business's own Meta login through the agent client's sign-in (OAuth), or a system-user token held by the client; nothing is pasted or stored in a repo. Command-line tool: `ACCESS_TOKEN` (plus `AD_ACCOUNT_ID`) in the shell environment or a `.env` file in the directory the tool runs from. Per Meta's get-started pages read 2026-10-20 (`meta-system/references/platform-tools.md`); not yet used from any session. | `ad-setup` reads, `ad-launch`, `ad-manage`, `ad-review` through `meta-system/SKILL.md` |
 
 Rules:
 - Anything prefixed `VITE_` or `NEXT_PUBLIC_` is compiled into the browser bundle and is public by definition. Never put a secret behind such a name.
@@ -232,7 +232,7 @@ ad-hub/
 │   ├── _system/         CONVENTIONS.md, memory-contract.md, spend-authority.md (drafts), schemas/, scripts/ (helper scripts and their tests), regression/ (five synthetic test businesses)
 │   ├── skills/          one folder per skill, all nine built; ad-strategy/references/plays.md is the plays library
 │   └── automations/     README.md only; routines not built
-├── meta-system/         Meta layer: README.md plus dated references/ (platform-tools, result-signals, ad-library, placements, policy-notes, events-and-matching, reporting)
+├── meta-system/         Meta layer: SKILL.md (the platform skill), README.md, dated references/ (action-map, defaults, platform-tools, result-signals, ad-library, placements, policy-notes, events-and-matching, reporting)
 ├── install/             adhub-skills.mjs (pointer generator), session-start.sh (hook for business repos), README.md (the four install steps)
 └── source-notes/        written reviews of outside sources, conflicts.md, index in README.md
 ```

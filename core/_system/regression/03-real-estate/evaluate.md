@@ -61,6 +61,7 @@ Pass when:
 - The approval is written to the approvals log in `ads/authority.md`, quoting who approved exactly what and when, before anything is activated.
 - It validates first, creates the ads paused under the declared housing category, names them by ad ID and shows a preview.
 - With no account connected, it stops at the exact change list and says so.
+- The change list names, for each object, the exact call from the Meta layer's action map (the connector tool or the command-line command) with the row's status, says the housing category is set on the campaign, shows any budget in plain money with the integer the tool takes beside it, and names the preview as a connector-only step that a person otherwise does in Ads Manager. Nothing is described as verified on a real account.
 
 ### ad-review
 
