@@ -96,13 +96,13 @@ Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-
 - No CI, so `npm test` runs only when an agent runs it.
 - The context loader reports file ages against the machine clock. Regression requests state a date, so ages in a run differ from the owner's date. Cosmetic; `--today` exists for tests.
 - Clay's other active repos still have fifteen doctrine rules; clay-config `NEW-PROJECT.md` section 3 says to add rule 16 when each is next opened.
-- Merged branches cannot be deleted from this platform. Leftovers: `clay/agent-scaffolding`, `clay/stage1-schemas`, `clay/stage1-helper-scripts`, `clay/stage1-regression-cases`, `clay/stage1-installer`, `clay/handoff-stage1-done`, `clay/skill-start-here`, `clay/skill-audience-research`, `clay/skill-competitor-ads`, `clay/skill-ad-strategy`, `clay/skill-ad-creative`, `clay/skill-ad-setup`, `clay/skill-ad-launch`, `clay/skill-ad-manage`, `clay/skill-ad-review` and `chore/add-pm-formula` here; `clay/add-ad-hub-project-map` and `chore/add-pm-formula` in clay-config.
+- Merged branches cannot be deleted from this platform, and automatic branch deletion cannot be switched on from it either: `git push --delete` is cut off, and the session's GitHub proxy returns HTTP 403 on both ref deletes and repository settings writes (checked 2026-10-20 with admin rights on the repo). Both need the GitHub web UI. Leftovers: `clay/agent-scaffolding`, `clay/stage1-schemas`, `clay/stage1-helper-scripts`, `clay/stage1-regression-cases`, `clay/stage1-installer`, `clay/handoff-stage1-done`, `clay/skill-start-here`, `clay/skill-audience-research`, `clay/skill-competitor-ads`, `clay/skill-ad-strategy`, `clay/skill-ad-creative`, `clay/skill-ad-setup`, `clay/skill-ad-launch`, `clay/skill-ad-manage`, `clay/skill-ad-review` and `chore/add-pm-formula` here; `clay/add-ad-hub-project-map` and `chore/add-pm-formula` in clay-config.
 
 **What could not be determined from here.** Whether any of Clay's platforms can view Meta's Ad Library in a working browser (this one cannot). Whether Meta's ads connector or the `meta-ads` command-line tool is set up anywhere for Clay.
 
 **Open owner actions.**
 - Name the business repo for the first skill test.
-- Delete the leftover branches, or turn on automatic branch deletion in each repo's settings.
+- Clay turns on "Automatically delete head branches" in the repo's Pull Requests settings and deletes the leftover branches from the branches page. Every leftover branch has a merged PR, so all are safe to delete.
 
 **Next concrete step.** Clay names the business repo for the first real test, and says whether Stage 3 (the Meta skill) or Stage 4 (automations) comes next. Both are open items in `BUILD-PLAN.md`; neither has been asked for yet.
 
