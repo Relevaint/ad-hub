@@ -6,7 +6,8 @@ approved the folder layout and the ad ID format below on 2026-10-05. The fill-in
 templates for the files other skills depend on are in [schemas/](schemas/): offer file,
 authority file, ledger row, change-log entry, calendar, the manifest, the three research
 files (voice of customer, audience, competitors and swipe entries), the two strategy
-files (diagnosis, test plan), the creative files, and the platform file.
+files (diagnosis, test plan), the creative files, the platform file, and the results
+snapshot and review.
 
 ## Two kinds of context
 
