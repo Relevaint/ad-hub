@@ -42,3 +42,7 @@ offer: <slug>
 - "Result" records what the platform reports after the change, not what was sent. A
   change that failed is still logged.
 - Money values are in the account's currency. Percentages say what they are of.
+- A dry run is kept here too, with the action `dry-run` and `Result: dry run, nothing
+  sent`. It is the record of what was asked for, never evidence that anything changed.
+- Platform identifiers returned by a creation are recorded in the entry; `ad-setup`
+  carries them into the platform file's baseline at its next run.

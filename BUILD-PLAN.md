@@ -113,6 +113,9 @@ Feeds from: `core/_system/spend-authority.md`; BH lessons 19.3, 24.5, 24.6;
 `meta-system/references/platform-tools.md`.
 Acceptance: nothing is activated without an approval record; a dry run produces the
 exact change list.
+Status: built 2026-10-20 (`core/skills/ad-launch/`). Run against its three regression requests
+(cases 01, 03, 05). Case 03 gained a ledger and two creative-ready files so its request is
+runnable. `platform-tools.md` refreshed from Meta's tool documentation.
 
 ### 8. ad-manage
 Job: keep spend safe and performance improving without over-tinkering.

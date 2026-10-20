@@ -19,7 +19,8 @@
 // only ad-review writes learnings, SKILL.md at most 500 lines. Exit 1 on any failure.
 // ledger.md is the one shared record: it is owned by transition (schemas/ledger-row.md),
 // so every writer declares ledger.md#<transition> and several skills may do so; a bare
-// ledger.md write is an error.
+// ledger.md write is an error. A folder of per-entry files that several skills append to
+// (changes/) is declared the same way, folder/#<label>, one writer per file inside it.
 
 import path from "node:path";
 import { DEFAULT_HUB, parseArgs, UsageError, loadSkills, taskTable, run, isMain } from "./lib.mjs";
@@ -111,7 +112,7 @@ export function check(hub) {
     for (let j = i + 1; j < owners.length; j++) {
       const a = owners[i], b = owners[j];
       if (a.skill === b.skill || a.file !== b.file) continue;
-      if (a.file === "ledger.md" && a.sec && b.sec) continue;
+      if ((a.file === "ledger.md" || a.file.endsWith("/")) && a.sec && b.sec) continue;
       if (!a.sec || !b.sec || a.sec === b.sec) {
         errors.push(`${a.file}${a.sec ? `#${a.sec}` : ""} and ${b.file}${b.sec ? `#${b.sec}` : ""}: two writers (${a.skill}, ${b.skill})`);
       }
