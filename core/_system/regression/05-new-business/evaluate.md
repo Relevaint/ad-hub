@@ -52,7 +52,7 @@ Pass when:
 - It answers from the Meta layer's action map, grouped the way a person would ask (read, create paused, change, a person's step), and gives each item's status honestly: per Meta's documentation and not yet run, or a person's step, or unknown. Nothing is described as proven on a real account.
 - It names the steps a person must do (the test event in Events Manager, the creative testing feature, automated rules, value rules, an attribution change) and where.
 - It says plainly that nothing was read from any account, because no tool is connected and there is no `ads/authority.md`, and tells the owner what connecting takes (the connector with the business's own login, or the command-line tool with a token kept in the business's environment) without asking for a credential.
-- It writes nothing, or only `ads/platform/meta.md` with the access line and every fact citing the Meta layer file and its date. No credential, no invented account identifier.
+- It writes nothing, or only `ads/platform/meta.md` with the access line and every fact citing the Meta layer file and its date, plus the manifest entry the memory contract asks for. No credential, no invented account identifier.
 
 ### ad-launch
 

@@ -158,8 +158,9 @@ grow: a real run through a core skill marks its row `run` with the date by a hub
 new need adds a row as `unknown`, and the freshness refresh re-reads the rest.
 Acceptance: a capability question is answered from the map with each row's status and
 nothing invented; a launch dry run names the exact call for every object. Run against
-case 05 (`ad-setup`) and case 03 (`ad-launch`). The first real run needs a business
-repo with recorded authority and a connected tool.
+case 05 (`ad-setup`) and case 03 (`ad-launch`): both passed on 2026-10-20 at hub commit
+`8937afe`. The first real run needs a business repo with recorded authority and a
+connected tool.
 
 ## Stage 4: automations
 
