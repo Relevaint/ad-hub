@@ -8,6 +8,7 @@ when_to_use:
   - set up the account for this offer
   - is the pixel working
   - prepare the campaign structure
+  - what can you do in our ad account yourself
 metadata:
   adhub:
     version: 0.1.0
@@ -46,9 +47,11 @@ deciding metric, and the line "Signal sent to the platform", which may still be 
 Then `ads/authority.md` (what level, which account, who approves), the existing platform
 file, the test plan (location, structure, batch), the ledger (IDs the names and tracking
 parameters must carry), and any results snapshot (what has already been matched and
-what has not). Then the platform layer for the platform the business runs on:
-`meta-system/references/result-signals.md`, `events-and-matching.md`, `policy-notes.md`
-and `platform-tools.md` for Meta, each with its date checked first.
+what has not). Then the platform layer for the platform the business runs on, entered through its
+skill (`meta-system/SKILL.md` for Meta), which maps each account read to its call, says
+what a person must do, and names the files to load: `result-signals.md`,
+`events-and-matching.md`, `policy-notes.md`, `platform-tools.md` and `defaults.md`,
+each with its date checked first.
 
 Which platform: the one the business names. When the business names none and the hub
 has one platform layer, say the assumption and write that platform's file with the

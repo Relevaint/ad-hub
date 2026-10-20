@@ -129,6 +129,36 @@ test("real hub: skills pass the structural check", () => {
   assert.equal(r.code, 0, r.out);
 });
 
+test("real hub: the Meta platform skill and its action map are well formed", async () => {
+  const { readFileSync, existsSync } = await import("node:fs");
+  const { frontmatter, taskTable } = await import("../lib.mjs");
+  const hub = path.resolve(here, "../../../..");
+  const dir = path.join(hub, "meta-system");
+  const text = readFileSync(path.join(dir, "SKILL.md"), "utf8");
+  const fm = frontmatter(text);
+  assert.equal(fm.name, "meta");
+  assert.equal(fm.metadata.adhub.layer, "platform");
+  assert.equal(fm.metadata.adhub.platform, "meta");
+  assert.deepEqual(fm.metadata.adhub.writes, [], "the platform skill writes nothing in the business repo");
+  assert.ok(text.split("\n").length <= 500, "meta-system/SKILL.md is over 500 lines");
+  for (const ref of new Set([...text.matchAll(/`references\/([a-z-]+\.md)`/g)].map((m) => m[1]))) {
+    assert.ok(existsSync(path.join(dir, "references", ref)), `meta-system/SKILL.md names a missing reference: ${ref}`);
+  }
+  const skills = taskTable(hub).map((r) => r.skill);
+  const map = readFileSync(path.join(dir, "references/action-map.md"), "utf8");
+  const rows = map.split("\n").filter((l) => /^\| [^|-]/.test(l) && !/^\| Action \|/.test(l));
+  assert.ok(rows.length >= 20, `action map has only ${rows.length} rows`);
+  for (const r of rows) {
+    const cells = r.split("|").slice(1, -1).map((c) => c.trim());
+    const [action, needed, , , status] = cells;
+    assert.equal(cells.length, 6, `action map row "${action}" has ${cells.length} cells; a pipe inside a cell breaks the table`);
+    assert.match(status, /^(docs|run|person) \d{4}-\d{2}-\d{2}$|^unknown$/, `action map row "${action}": status "${status}" is not docs, run or person with a date, or unknown`);
+    for (const s of needed.split(",").map((x) => x.trim()).filter((x) => x && x !== "none")) {
+      assert.ok(skills.includes(s), `action map row "${action}": needed by unknown skill ${s}`);
+    }
+  }
+});
+
 test("regression cases: complete, named after real skills, and consistent with the schemas", async () => {
   const { readdirSync, readFileSync, existsSync } = await import("node:fs");
   const { taskTable } = await import("../lib.mjs");

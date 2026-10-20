@@ -67,6 +67,14 @@ writer per file inside it. `live: act` is
 allowed for `ad-launch` and `ad-manage` only. `node core/_system/scripts/route.mjs --check`
 enforces these rules and is part of the build gate.
 
+A platform skill (`<platform>-system/SKILL.md`, `meta-system/SKILL.md` for Meta) uses the
+same frontmatter with `layer: platform`, a `platform:` key, `writes: []` (the core skill
+that loaded it writes the business files) and `live: inherits` (its reach is the loading
+skill's). It is not a core skill: `route.mjs --check` does not scan it, it gets no pointer
+in business repos, and `npm test` checks its shape and its action map instead. Its
+action map gives every call a dated status (`docs`, `run`, `person`, `unknown`) that
+only a page read, a real run or a documented absence may set.
+
 ## 4. Skeleton of a SKILL.md
 
 Mission in two or three sentences (the job, what done means, the judgment it carries).

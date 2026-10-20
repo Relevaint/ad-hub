@@ -6,8 +6,9 @@ business facts. Any business repo can plug into it; the business repo supplies t
 context and keeps the records. The core is platform-neutral. Meta is the first platform
 layer; later platforms follow the same shape.
 
-**Status (2026-10-20): system layer and all nine core skills built.** Stage 2 of
-`BUILD-PLAN.md` is complete; the Meta skill (Stage 3) and the automations (Stage 4)
+**Status (2026-10-20): system layer, all nine core skills and the Meta layer's skill
+built.** Stages 2 and 3 of `BUILD-PLAN.md` are built; the Meta skill rests on Meta's
+documentation and has not run against a real account, the automations (Stage 4)
 remain, and no skill has yet run in a real business repo. [BUILD-PLAN.md](BUILD-PLAN.md) is the build
 queue; [AGENTS.md](AGENTS.md) holds the working rules and the build decisions;
 [HANDOFF.md](HANDOFF.md) holds the current state and the last session.
@@ -35,7 +36,7 @@ Ad-Hub/
 │   ├── _system/         conventions, memory contract, spend authority, schemas, scripts, regression cases
 │   ├── skills/          one folder per skill (to build)
 │   └── automations/     scheduled routines (to build)
-└── meta-system/         thin Meta layer: dated platform facts and tool how-to
+└── meta-system/         thin Meta layer: SKILL.md (how each action is done on Meta) and dated platform facts
 ```
 
 ## Task lookup
@@ -96,6 +97,12 @@ Core skills make the decisions. A platform layer knows how to carry them out on 
 platform and holds that platform's dated facts. Core files never contain click paths,
 setting names or specs; those change and belong in the platform layer with an expiry
 date. Adding a platform means adding a layer, not editing the core.
+
+Each layer has one skill, `<platform>-system/SKILL.md`, loaded by the core skill doing
+the work. It maps every account action to the platform's tools with a dated status
+(per the documentation, run on a real account, a person's step, or unknown), and the
+map grows from real runs: a session that performs a call records what it learned in the
+hub, never anything about the business.
 
 ## Hard rules
 

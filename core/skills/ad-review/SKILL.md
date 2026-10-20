@@ -60,7 +60,9 @@ connected tools when `ads/authority.md` exists, or from a snapshot the business 
 and the offer's own result source (the CRM, the checkout, the booking tool, the till).
 No tool and no fresh snapshot: review what is on file and say how old it is.
 `references/reading-results.md` carries the small-number arithmetic, the explaining
-metrics and the report shapes; load it every time.
+metrics and the report shapes; load it every time. The platform skill
+(`meta-system/SKILL.md` for Meta) says how to pull the window and how fresh the numbers
+are; load it before any account read.
 
 ## Modes
 

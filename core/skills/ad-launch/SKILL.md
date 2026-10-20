@@ -51,7 +51,9 @@ wrote), the test plan (the batch, the spend, the launch window), the ledger (whi
 are `creative-ready`), the creative folder (the files and assets for those rows, with
 their check verdicts), the change log (the last known good state) and the calendar (any
 hold). `references/launch-sequence.md` carries the gate checklist, the approval rules
-and the dry-run format; load it every time.
+and the dry-run format; load it every time. The platform skill (`meta-system/SKILL.md`
+for Meta) maps each create, preview and activation to its call with the call's
+verification status; load it before writing the change list.
 
 ## The gates
 

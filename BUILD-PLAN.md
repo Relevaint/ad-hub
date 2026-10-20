@@ -150,6 +150,17 @@ layer: `reporting.md`. With this, Stage 2 is complete.
 A thin skill plus dated references: tool how-to for the connector and command-line
 tool, placement specs, policy notes, operating defaults, result-signal routes. Built
 alongside the first core skill that needs each piece.
+Status: skill built 2026-10-20 (`meta-system/SKILL.md`, `references/action-map.md`,
+`references/defaults.md`) from Meta's tool pages and command reference read the same
+day, with the seven references built during Stage 2. Every action-map row is `docs`,
+`person` or `unknown`: nothing has run against a real account. The map is designed to
+grow: a real run through a core skill marks its row `run` with the date by a hub PR, a
+new need adds a row as `unknown`, and the freshness refresh re-reads the rest.
+Acceptance: a capability question is answered from the map with each row's status and
+nothing invented; a launch dry run names the exact call for every object. Run against
+case 05 (`ad-setup`) and case 03 (`ad-launch`): both passed on 2026-10-20 at hub commit
+`8937afe`. The first real run needs a business repo with recorded authority and a
+connected tool.
 
 ## Stage 4: automations
 

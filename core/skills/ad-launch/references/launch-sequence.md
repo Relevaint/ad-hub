@@ -60,7 +60,10 @@ settings in plain words and before and after values:
 4. Activation: which objects, in which order, under which approval line. Before:
    paused. After: active.
 
-The platform's validate-only option is run where the tool has one, and the result
+Each object also names the call that would create it, from the platform skill's
+action map, with the row's status (per the platform's documentation, run before, or a
+person's step), and any budget in plain money with the integer the tool takes beside
+it. The platform's validate-only option is run where the tool has one, and the result
 recorded. Without a tool, the entry says so and a person can follow it in the platform's
 own interface; the entry is the record of what was asked for.
 
@@ -69,10 +72,10 @@ own interface; the entry is the record of what was asked for.
 The course review's default (claims): new creatives enter through the platform's
 creative testing feature, two to five at a time with a fixed share of budget, so they
 get spend while the existing ads run undisturbed, and they become normal ads afterward
-(19.3). Whether the connected tools can set that feature is a platform fact
-(`meta-system/references/platform-tools.md`, "Not yet verified"). Until it is, the
-feature is set by a person, or the new ads enter the existing set directly at the test
-plan's share.
+(19.3). Whether the connected tools can set that feature is a platform fact: the
+platform skill's action map carries the row and its status (for Meta, a person's step
+on the verify date). Until a tool can, the feature is set by a person, or the new ads
+enter the existing set directly at the test plan's share.
 
 Keep the safe-to-risky mix the plan set, around eight safe to two bold, to protect the
 account's approval record while unusual plays run (24.6). Never activate only the bold
