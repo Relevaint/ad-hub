@@ -128,6 +128,8 @@ Feeds from: BH modules 09, 17, 18, 24, 25; the Claude-MCP-update review (kill ru
 option); the Meta kit review (safety model, daily questions).
 Acceptance: given the same data on consecutive days with no schedule slot, it changes
 nothing and says why.
+Status: built 2026-10-20 (`core/skills/ad-manage/`). Run against its three regression requests
+(case 02 daily watch, case 02 capacity emergency, case 04).
 
 ### 9. ad-review
 Job: say what the results mean and write what was learned.

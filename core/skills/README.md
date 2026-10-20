@@ -1,8 +1,7 @@
 # Core skills
 
-Platform-neutral. One folder per skill. Seven are built (`start-here`, `audience-research`,
-`competitor-ads`, `ad-strategy`, `ad-creative`, `ad-setup`, `ad-launch`); `ad-manage` and
-`ad-review` are briefs in `BUILD-PLAN.md` and their names are placeholders.
+Platform-neutral. One folder per skill. Eight are built; `ad-review` is a brief in
+`BUILD-PLAN.md` and its name is a placeholder.
 
 | Skill | Job | Reaches live accounts |
 |---|---|---|
@@ -13,7 +12,7 @@ Platform-neutral. One folder per skill. Seven are built (`start-here`, `audience
 | `ad-creative` (built) | Copy and finished ads per placement; claims and policy gate | No |
 | `ad-setup` (built) | Result signal, tracking verified, category, settings baseline, change list | Reads and dry runs only; creates nothing |
 | `ad-launch` (built) | Gates, approval record, create paused, preview, activate, log with undo | Yes, under recorded authority |
-| `ad-manage` | Monitor, pause, replace, budget | Yes |
+| `ad-manage` (built) | Daily watch for emergencies only; scheduled sessions under the rulebook; rollback | Yes, under recorded authority |
 | `ad-review` | Results in, learnings out | No (read-only) |
 
 `ad-strategy/references/plays.md` is the plays library; `ad-strategy` scout mode refreshes it
