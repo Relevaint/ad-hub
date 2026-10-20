@@ -100,7 +100,7 @@ Record the operator in the Last Session block of `HANDOFF.md`.
 
 Checked against the repository on 2026-10-19.
 
-- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; eight were built on 2026-10-19 and 2026-10-20 (every skill but `ad-review`).
+- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; all nine were built on 2026-10-19 and 2026-10-20.
 - **Code:** Node, standard library only, no packages (Clay, 2026-10-10). Helper scripts in `core/_system/scripts/` (context loader, freshness checker, router and skill check), tested with Node's built-in test runner. `package.json` exists only to name the test command; there is no lockfile and nothing to install. Node 20 or later. Keep new scripts dependency-free unless Clay approves a package.
 - **CI:** none. No `.github/workflows/` yet.
 - **Installer:** `install/adhub-skills.mjs` (pointer generator) and `install/session-start.sh` (hook for business repos), same style, covered by `npm test`.
@@ -230,9 +230,9 @@ ad-hub/
 ├── .claude/             Claude Code settings and the session-start hook
 ├── core/
 │   ├── _system/         CONVENTIONS.md, memory-contract.md, spend-authority.md (drafts), schemas/, scripts/ (helper scripts and their tests), regression/ (five synthetic test businesses)
-│   ├── skills/          one folder per skill; eight built (all but ad-review); ad-strategy/references/plays.md is the plays library
+│   ├── skills/          one folder per skill, all nine built; ad-strategy/references/plays.md is the plays library
 │   └── automations/     README.md only; routines not built
-├── meta-system/         Meta layer: README.md plus dated references/ (platform-tools, result-signals, ad-library, placements, policy-notes, events-and-matching)
+├── meta-system/         Meta layer: README.md plus dated references/ (platform-tools, result-signals, ad-library, placements, policy-notes, events-and-matching, reporting)
 ├── install/             adhub-skills.mjs (pointer generator), session-start.sh (hook for business repos), README.md (the four install steps)
 └── source-notes/        written reviews of outside sources, conflicts.md, index in README.md
 ```

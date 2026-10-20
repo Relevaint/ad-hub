@@ -9,6 +9,10 @@ observed outside events. Rules behind it: [memory-contract.md](../memory-contrac
 full, and stop before a promotion's real end date. An urgency claim in an ad later rests
 on a date written here, so every date is a true date (README hard rule 4).
 
+**Who writes which section.** `start-here` writes Recurring and Fixed dates from what the
+business supplies; `ad-review` appends to Outside events; both declare their section in
+their frontmatter. A business keeping a flat list is read as it is.
+
 **Status labels.** As in every file: `Owner-confirmed`, `Observed` (with the source), or
 `Proposed`. The business may keep its own flat list instead of the headings below;
 `start-here` adds to whatever shape it finds and does not reorganise it.

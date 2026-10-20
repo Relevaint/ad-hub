@@ -141,6 +141,9 @@ report and hit rate; hand "do more, do less, experiment" to strategy; note outsi
 events before blaming a change.
 Feeds from: BH modules 17, 20, 23, 25; DD claude-workflows review.
 Acceptance: no learning is written without a sample size and a source.
+Status: built 2026-10-20 (`core/skills/ad-review/`). Run against its three regression requests
+(cases 02, 03, 04). Owns the results snapshot and review formats (`schemas/results.md`). Meta
+layer: `reporting.md`. With this, Stage 2 is complete.
 
 ## Stage 3: the Meta layer
 

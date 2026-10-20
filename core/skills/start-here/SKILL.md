@@ -24,7 +24,8 @@ metadata:
       - learnings.md
     writes:
       - offers/<offer>.md
-      - calendar.md
+      - calendar.md#recurring
+      - calendar.md#fixed-dates
       - authority.md#who-can-approve
       - authority.md#per-offer
       - authority.md#pre-approved-at-level-2

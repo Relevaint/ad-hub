@@ -6,9 +6,9 @@ business facts. Any business repo can plug into it; the business repo supplies t
 context and keeps the records. The core is platform-neutral. Meta is the first platform
 layer; later platforms follow the same shape.
 
-**Status (2026-10-20): system layer complete, eight skills built.** The system layer,
-source reviews, plays library and installer are in place. Every skill but `ad-review`
-is built; `ad-review` is a brief. [BUILD-PLAN.md](BUILD-PLAN.md) is the build
+**Status (2026-10-20): system layer and all nine core skills built.** Stage 2 of
+`BUILD-PLAN.md` is complete; the Meta skill (Stage 3) and the automations (Stage 4)
+remain, and no skill has yet run in a real business repo. [BUILD-PLAN.md](BUILD-PLAN.md) is the build
 queue; [AGENTS.md](AGENTS.md) holds the working rules and the build decisions;
 [HANDOFF.md](HANDOFF.md) holds the current state and the last session.
 
@@ -40,7 +40,7 @@ Ad-Hub/
 
 ## Task lookup
 
-Eight skills are built; `ad-review` is a placeholder until it is built.
+All nine skills are built.
 
 | Job | Start with |
 |---|---|
