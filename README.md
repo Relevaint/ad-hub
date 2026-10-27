@@ -12,6 +12,8 @@ documentation and has not run against a real account, the automations (Stage 4)
 remain, and no skill has yet run in a real business repo. [BUILD-PLAN.md](BUILD-PLAN.md) is the build
 queue; [AGENTS.md](AGENTS.md) holds the working rules and the build decisions;
 [HANDOFF.md](HANDOFF.md) holds the current state and the last session.
+[CONTINUITY.md](CONTINUITY.md) covers canonical hub routes, Claude Code versus
+chat/Projects setup, and read-only fresh-session checks.
 
 For agents maintaining or using this repository, this page is the authority map. Read the
 [conventions](core/_system/CONVENTIONS.md) before writing a skill, the
@@ -26,6 +28,7 @@ Ad-Hub/
 ├── README.md            authority map (this page)
 ├── AGENTS.md            working rules for every agent, build decisions, owner answers
 ├── CLAUDE.md            points Claude Code at AGENTS.md
+├── CONTINUITY.md        hub routes and read-only fresh-session checks
 ├── HANDOFF.md           current state and the last session; read it first
 ├── BUILD-PLAN.md        build queue with a brief per skill
 ├── PROVENANCE.md        where outside material came from

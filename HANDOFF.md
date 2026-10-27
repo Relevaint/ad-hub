@@ -6,6 +6,18 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+Continuity route check: `python3 scripts/check-continuity.py` and its six `--self-test` cases pass; the new checker is read-only and excludes historical handoffs.
+
+- **When:** 2026-10-27.
+- **Who/platform:** Continuity-cleanup task in a cloud workspace, using the connected GitHub account. No teammate identity inferred from that account or the single local profile.
+- **Request:** Fix hub continuity and prepare draft cleanup PRs, leaving working installations and permissions untouched. No merge or deploy is authorized by this cleanup.
+- **Changed:** Corrected active Ad-Hub and Marketing-Hub owner routes to `Relevaint`; replaced the single-profile operator assumption with explicit identity resolution and separate client context. Added `CONTINUITY.md` for canonical hub selection, Code versus chat/Projects file loading, and a read-only fresh-session check. Kept the one-line `CLAUDE.md` forwarder. Added the scoped routing-document check described in the guide.
+- **Verification:** Local `npm test` passes all 19 tests on Node 24.22.1, including pointer-generator and hook tests against scratch synthetic folders. Universal doctrine, credentials/settings, hooks, installer implementation, skill content and existing profiles were not changed. Routing-check results and exact submitted head belong in the draft PR.
+- **Limits:** No actual teammate Claude Code or chat/Projects session was exercised; file sync, effective teammate permissions and the fresh-session check remain unverified. No business repo or live ad account was touched. This is a draft-only routing cleanup, not evidence that installations changed.
+- **Next:** Review the draft cleanup; after an authorized merge, run the read-only acceptance check in each actual teammate environment. The previous build state and open business-test actions below remain unchanged.
+
+## Previous session: 2026-10-19 to 2026-10-20
+
 - **When:** 2026-10-19 to 2026-10-20
 - **Who:** Clay. The platform showed the account listed in `people/clay.md`.
 - **Platform:** Claude Code (remote), branches `clay/handoff-stage1-done` (PR #7, merged), `clay/skill-start-here` (PR #8, merged), `clay/skill-audience-research` (PR #9, merged), `clay/skill-competitor-ads` (PR #10, merged), `clay/skill-ad-strategy` (PR #11, merged), `clay/skill-ad-creative` (PR #12, merged), `clay/skill-ad-setup` (PR #13, merged), `clay/skill-ad-launch` (PR #14, merged), `clay/skill-ad-manage` (PR #15, merged), `clay/skill-ad-review` (PR #16, merged), `clay/handoff-branch-cleanup-note` (PR #17, merged) and `clay/meta-skill`
