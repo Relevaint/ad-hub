@@ -1,13 +1,19 @@
 # Plugging Ad-Hub into a business repo
 
+For Claude Code and other filesystem-backed agents. Chat/Projects needs the actual
+selected files, not these local pointers; see [CONTINUITY.md](../CONTINUITY.md).
+
 Four steps, once per business repo. After them, every Ad-Hub skill shows up in the agent's
 skill list as `adhub-<name>`, and its steps load at the moment of the task. The hub stays
 the single source: nothing is copied into the business repo except small pointer files.
 
 Writing into a business repo needs Clay's go-ahead for that repo (`AGENTS.md` 2.11).
 
-1. **Check the hub out beside the business repo** as `../ad-hub`, or set `AD_HUB` to
-   wherever it lives.
+1. **Check the hub out beside the business repo** from
+   `https://github.com/Relevaint/ad-hub.git` as `../ad-hub`, or set `AD_HUB` to
+   wherever it lives. The organization move changes the remote address, not the
+   checkout folder or existing pointer paths. Keep a working installation in place;
+   inspect its remote before proposing any separate change.
 
 2. **Generate the skill pointers** from inside the business repo:
 
@@ -41,7 +47,7 @@ Writing into a business repo needs Clay's go-ahead for that repo (`AGENTS.md` 2.
 
 4. **Add this paragraph** to the business repo's `AGENTS.md`, in Section 2:
 
-   > **Paid ads go through Ad-Hub.** Ad-Hub (`github.com/lowkeycm/ad-hub`, checked out
+   > **Paid ads go through Ad-Hub.** Ad-Hub (`github.com/Relevaint/ad-hub`, checked out
    > at `../ad-hub`) holds the method; this repo holds this business's ad records in
    > `ads/`. Use the `adhub-` skills under `.claude/skills/`. On a platform without
    > skills, read `../ad-hub/README.md`, then the skill for the job, and load context with
@@ -53,7 +59,8 @@ Writing into a business repo needs Clay's go-ahead for that repo (`AGENTS.md` 2.
 
 Both hubs can be installed side by side. Ad-Hub pointers start with `adhub-`, Marketing-Hub
 pointers with `hub-`, and neither installer touches the other's. Both hooks can live in
-one session-start file.
+one session-start file. Marketing-Hub's canonical repository is
+`https://github.com/Relevaint/Marketing-Hub`; a repository link is not an access grant.
 
 Marketing-Hub also has skills for paid ads. Clay decided on 2026-10-06 that Marketing-Hub
 will ultimately own ad work, reconciled once Ad-Hub works on its own (`AGENTS.md` 2.15).

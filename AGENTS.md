@@ -6,6 +6,8 @@ Claude Code reads `CLAUDE.md`, which contains a single line pointing at this fil
 
 Section 1 is universal doctrine and is shared verbatim across projects. Do not edit it here. Section 2 is specific to this repository.
 
+For hub selection, Claude Code versus chat/Projects setup, and a read-only fresh-session check, see [CONTINUITY.md](CONTINUITY.md). That guide routes to these rules; it does not replace them or grant access.
+
 ---
 
 ## Section 1: Working Doctrine
@@ -53,7 +55,7 @@ Sixteen rules. Every agent, every platform, every operator. Nothing in `people/`
 | What it is | A self-contained hub of skills and rules for developing and managing paid ads: research, strategy, creative, account setup, launch, management and review. It holds capability only. Business repos plug into it and keep their own context and records. Meta is the first platform; others follow as thin layers. |
 | Business | None. Brand-neutral tooling owned by Clay, meant to serve any of his businesses. It holds no business's facts, results or learnings (README hard rule 6). |
 | Live URL | Not deployed. Nothing here is a website or an app. |
-| Repo | github.com/lowkeycm/ad-hub |
+| Repo | github.com/Relevaint/ad-hub |
 | Hosting | None. |
 | Database | None. By design the hub stores no business data. |
 | Other systems | Planned, not connected: Meta's official ads connector and the `meta-ads` command-line tool, used only against a business's own ad account under that business's recorded spend authority. See `meta-system/references/platform-tools.md`. |
@@ -80,15 +82,13 @@ The operator is the person directing this session. It is not the commit account.
 
 Profiles live in `people/`. Each begins with the person's name, role, and the account they work from.
 
-**If `people/` contains exactly one profile, that person is the operator. Use it and do not ask.**
+A profile's presence is not evidence of who is directing the session, even when `people/` contains only `clay.md`.
 
-**If it contains more than one:**
+1. Use the person's explicit identification in the current conversation. Otherwise, match a visible authenticated account to a profile only when it identifies one person unambiguously; a shared account or matching display name is not enough.
+2. If identity remains unclear, ask once. Do not apply Clay's personal preferences or owner authority to another operator, and do not invent a missing profile.
+3. Separately identify the business/client and offer being worked on. The operator, repo owner and customer are different roles; do not use one as evidence of another.
 
-1. Use the platform's authenticated account if you can see it, matched against the account listed in the profile header.
-2. If the platform does not expose it, ask once, then continue.
-3. If a person states who they are in the conversation, that overrides everything else.
-
-Record the operator in the Last Session block of `HANDOFF.md`.
+Record the resolved operator in the Last Session block of `HANDOFF.md`; if unresolved, say so rather than guessing. Resolve identity before relying on owner-only authority.
 
 **Authority.** Clay is the owner and can approve product decisions, scope changes, and changes of direction. Other operators cannot. If a non-owner requests something that changes agreed scope, do it only if it clearly sits inside the existing plan. Otherwise say plainly that it needs Clay's sign off, and never treat silence as approval.
 
@@ -221,6 +221,7 @@ Notes for this repo:
 ad-hub/
 ├── AGENTS.md            this file: doctrine, project specifics, build decisions (2.16)
 ├── CLAUDE.md            one line pointing here
+├── CONTINUITY.md        hub routes and read-only fresh-session checks
 ├── HANDOFF.md           current state and the last session; read it first
 ├── README.md            authority map: layout, task lookup, decision owners, hard rules
 ├── BUILD-PLAN.md        the build queue with a brief per skill; this repo's roadmap
@@ -248,7 +249,7 @@ ad-hub/
 
 Kept, and adapted to an owner decision. Ad-Hub is itself a capability hub for one part of marketing, paid ads. It is a sibling of Marketing-Hub, not a client of it.
 
-- **Owner decision** (starter decision 1, restated by Clay on 2026-10-05): Ad-Hub is self-contained. Marketing-Hub (`github.com/lowkeycm/Marketing-Hub`) is its structural model only: authority map, shared system layer, one skill pattern, dated facts, source reviews, provenance, regression cases, and the `install/` pointer generator. Do not copy Marketing-Hub content into this repo, and do not make any Ad-Hub skill read, call or require Marketing-Hub.
+- **Owner decision** (starter decision 1, restated by Clay on 2026-10-05): Ad-Hub is self-contained. Marketing-Hub (`github.com/Relevaint/Marketing-Hub`) is its structural model only: authority map, shared system layer, one skill pattern, dated facts, source reviews, provenance, regression cases, and the `install/` pointer generator. Do not copy Marketing-Hub content into this repo, and do not make any Ad-Hub skill read, call or require Marketing-Hub.
 - **So no `hub-` pointers are installed in this repo**, and its session hook does not generate them. That is deliberate, not a missed setup step. The usual rule, Marketing-Hub as the canonical marketing method, governs business repos, not this hub's own skills.
 - **In a business repo**, ad work goes through Ad-Hub's own pointers, prefixed `adhub-` (Clay, 2026-10-05), so they never collide with Marketing-Hub's `hub-` pointers. Non-ad marketing work (website, SEO, email, social, brand) stays with Marketing-Hub in that business repo.
 - **Who owns ad work in a business repo with both hubs** (Clay, 2026-10-06): ultimately Marketing-Hub. Marketing-Hub also has `paid-ads`, `start-here`, `audience-research`, `competitive-intel` and `performance-review` skills. Reconcile the two once Ad-Hub works on its own; until then build Ad-Hub independently and do not design around the merge. In a business repo that has both before then, say which one you used and why.
@@ -323,7 +324,7 @@ Carried over word for word from the starter's handoff, written 2026-10-03 at the
 | 4 | Pin parts of the MIT-licensed Meta kit, or rewrite from the review | Rewrite what is needed from `source-notes/meta-ads-kit-review.md`. Do not vendor it. |
 | 5 | Prefix for pointer skills generated into business repos | `adhub-` |
 
-The Marketing-Hub location was also left blank in that message; 2.15 uses the address recorded in `PROVENANCE.md`.
+The Marketing-Hub location was also left blank in that message. Section 2.15 now uses its canonical Relevaint address; `PROVENANCE.md` retains the historical source record.
 
 **To verify during the build.**
 
