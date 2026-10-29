@@ -79,7 +79,10 @@ gated on proof.
 
 The ledger row is the brief: the plays, the customer type, the awareness level, the
 format, the style, the breadth, and the sentence saying what this ad tests. That
-sentence is the ad's one job. Add the pillar and angle from the diagnosis, the lines
+sentence is the ad's one job. Select the opening dynamic from
+`references/opening-dynamics.md` using the row's awareness level plus the surface;
+the dynamic sets when the product enters and which mechanisms fit. Add the pillar
+and angle from the diagnosis, the lines
 from `research/voc.md` for that customer type (by ID), and the proof rows the ad may
 lean on. One customer type, one awareness level, one goal per focused ad (Observed,
 static-ads review). A broad ad is tagged broad and still has one goal.
