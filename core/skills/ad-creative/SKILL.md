@@ -12,7 +12,7 @@ when_to_use:
   - check this copy for claims and policy
 metadata:
   adhub:
-    version: 0.3.0
+    version: 0.4.0
     layer: creative
     reads:
       - offers/
@@ -99,7 +99,10 @@ the dynamic sets when the product enters and which mechanisms fit. Add the pilla
 and angle from the diagnosis, the lines
 from `research/voc.md` for that customer type (by ID), and the proof rows the ad may
 lean on. One customer type, one awareness level, one goal per focused ad (Observed,
-static-ads review). A broad ad is tagged broad and still has one goal.
+static-ads review). A broad ad is tagged broad and still has one goal. Before concepts,
+apply Pass 1's actual-destination and brand/cultural-context review. Record reviewed
+sources and unavailable-page gaps; derive creative choices without inferring people's
+demographics or importing another client's casting direction.
 
 ### 2. Run the claims gate before writing a word
 
@@ -204,6 +207,9 @@ through `ad-launch`.
 Before writing the summary, check every ad:
 
 - Required creative passes recorded; cast and rendering chosen independently.
+- Destination/brand sources reviewed or gaps stated; casting, setting, visual language
+  and voice grounded in the explicit brief. Batch checked for unintentional sameness
+  and ad-to-page mismatch, without quotas, stereotypes or targeting changes.
 - Cold visual openings pass the visual-alone stop test; other dynamics have the
   applicable test and reason recorded. No headline rescue for a generic frame.
 - Product clarity at the reveal/complete proposition; static understood at a glance.

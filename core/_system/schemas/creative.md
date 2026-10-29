@@ -22,7 +22,8 @@ Planned ad ID: <existing ID if any; otherwise not assigned>
 
 ## Pass record
 1. Fundamentals: audience/situation, awareness/surface, desire, offer, proof limits,
-   one message/action, constraints and deliverables.
+   one message/action, constraints and deliverables; destination/brand sources actually
+   reviewed, cultural/voice cues from explicit direction, gaps and provisional choices.
 2. Premise: mechanism, product-connected payoff; materially different route rejected.
 3. Cast / rendering: separate choices and reasons; alternative treatment considered.
 4. Attention: actual first frame/image, focal point, question/interest; visual-alone
@@ -31,7 +32,8 @@ Planned ad ID: <existing ID if any; otherwise not assigned>
 5. Connection: opening/development/turn/payoff/action for video; complete composition
    for static; key copy, CTA, claims mapped to supplied proof.
 6. Review: self or independent; attention, relevance, promise/clarity, proof/policy,
-   composition/hierarchy and distinctness/execution verdicts with concrete reasons; revisions and return passes.
+   composition/hierarchy, distinctness/execution and brand/cultural continuity verdicts;
+   batch sameness check when applicable; concrete reasons, revisions and return passes.
 
 ## Concept scores
 - Glance: n; Hook: n; One job: n; Proof: n; Finish: not applicable.
@@ -107,6 +109,8 @@ execution. Do not replace this with "all passes passed".>
 - Composition / hierarchy: first read, support, product/action; competing details
   changed or intentionally retained; premise preserved ... pass / fail
 - Actual render hierarchy at delivery size: inspected / not inspected / not applicable
+- Brand/cultural continuity: reviewed sources, grounded choices, gaps; batch defaults
+  or mismatch corrected / intentional consistency explained
 - Review: self / independent, with failure reasons and changes
 - One job: ... Score: n
 - Hook: ... Score: n

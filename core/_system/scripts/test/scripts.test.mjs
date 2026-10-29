@@ -338,3 +338,17 @@ test("creative: paired teaching assets are local, intact and bounded", async () 
   for (const m of gallery.matchAll(/\]\(([^)]+)\)/g)) assert.ok(existsSync(path.resolve(dir, m[1])), `missing gallery target ${m[1]}`);
   assert.doesNotMatch(JSON.stringify(manifest), /\/workspace\/|\/tmp\/|library_file_id|Sentinel_/);
 });
+
+test("creative: brand continuity comes from reviewed sources, not demographic defaults", async () => {
+  const { readFileSync } = await import("node:fs");
+  const hub = path.resolve(here, "../../../..");
+  const read = (p) => readFileSync(path.join(hub, p), "utf8");
+  const passes = read("core/skills/ad-creative/references/creative-passes.md");
+  const first = passes.split("## Pass 1.")[1].split("## Pass 2.")[0];
+  for (const rule of [/actual destination landing page/, /source note/, /page is unavailable/, /supplied brand direction/, /guessed race or/, /demographic quotas/, /alter ad targeting/]) assert.match(first, rule);
+  const third = passes.split("## Pass 3.")[1].split("## Pass 4.")[0];
+  assert.match(third, /nonhuman, fantasy, abstract and character-free/);
+  const sixth = passes.split("## Pass 6.")[1].split("## Pass 7.")[0];
+  for (const rule of [/Brand \/ cultural continuity/, /unintentional sameness/, /variety is not a quota/, /return to Pass 1/, /not a compliance essay/]) assert.match(sixth, rule);
+  assert.match(read("core/_system/schemas/creative.md"), /Brand\/cultural continuity/);
+});
