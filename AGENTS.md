@@ -53,7 +53,7 @@ Sixteen rules. Every agent, every platform, every operator. Nothing in `people/`
 | Field | Value |
 | --- | --- |
 | What it is | A self-contained hub of skills and rules for developing and managing paid ads: research, strategy, creative, account setup, launch, management and review. It holds capability only. Business repos plug into it and keep their own context and records. Meta is the first platform; others follow as thin layers. |
-| Business | None. Brand-neutral tooling owned by Clay, meant to serve any of his businesses. It holds no business's facts, results or learnings (README hard rule 6). |
+| Business | None. Brand-neutral tooling owned by Clay, meant to serve any of his businesses. It holds no operational business facts, results or learnings (README hard rule 6); the narrow generated-image teaching exception is described in 2.9. |
 | Live URL | Not deployed. Nothing here is a website or an app. |
 | Repo | github.com/Relevaint/ad-hub |
 | Hosting | None. |
@@ -100,7 +100,7 @@ Record the resolved operator in the Last Session block of `HANDOFF.md`; if unres
 
 Checked against the repository on 2026-10-19.
 
-- **Content:** Markdown only. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; all nine were built on 2026-10-19 and 2026-10-20. The Meta layer's skill is `meta-system/SKILL.md` (built 2026-10-20), loaded by the core skills, with its action map and defaults as dated references.
+- **Content:** Markdown instructions plus a small owner-authorized generated-image teaching gallery under `core/skills/ad-creative/references/composition-examples/`. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; all nine were built on 2026-10-19 and 2026-10-20. The Meta layer's skill is `meta-system/SKILL.md` (built 2026-10-20), loaded by the core skills, with its action map and defaults as dated references.
 - **Code:** Node, standard library only, no packages (Clay, 2026-10-10). Helper scripts in `core/_system/scripts/` (context loader, freshness checker, router and skill check), tested with Node's built-in test runner. `package.json` exists only to name the test command; there is no lockfile and nothing to install. Node 20 or later. Keep new scripts dependency-free unless Clay approves a package.
 - **CI:** none. No `.github/workflows/` yet.
 - **Installer:** `install/adhub-skills.mjs` (pointer generator) and `install/session-start.sh` (hook for business repos), same style, covered by `npm test`.
@@ -163,12 +163,12 @@ Doctrine item 10 applies. In addition for this project:
 
 - The hub has no customer-facing copy of its own. The ad copy its skills produce is customer-facing, so doctrine 10 applies to that output in every business repo, and no skill may instruct otherwise.
 - The truth rule is a hard rule: claims, testimonials, stories, numbers, urgency and scarcity must be real and traceable to the business's proof, and AI-made people are never presented as customers (README hard rule 4, `core/_system/spend-authority.md`).
-- Voice belongs to the business. Skills read each business's voice and context from that business's repo, by meaning. The hub carries no brand voice; examples and test businesses are synthetic and brand-neutral.
+- Voice belongs to the business. Skills read each business's voice and context from that business's repo, by meaning. The hub carries no brand voice; test businesses are synthetic and brand-neutral. The owner-authorized composition gallery is a narrow exception for generated, branded teaching images, not a source of current offer facts or performance evidence.
 - Skill text follows `core/_system/CONVENTIONS.md` section 1: plain, confident, operator to operator, no hype, no filler, each rule stated once.
 
 ### 2.10 Identity facts, source of truth
 
-Not applicable. The hub holds no business identity strings. Each business repo owns its own and names the file that holds them; skills read them from there and never paraphrase them.
+Each business repo owns its identity strings and names the file that holds them; skills read them from there and never paraphrase them. The generated teaching gallery described in 2.9 visibly retains its example branding, but is never an authoritative source for identity, current offers or any business operation.
 
 ### 2.11 Scope
 
@@ -190,7 +190,7 @@ Default posture on this repo is active build.
 - Adding a dependency on another hub, Marketing-Hub included (2.15).
 - Reopening a settled decision in 2.16.
 
-Never allowed: anything touching another business's data (doctrine 9). Also never allowed here: storing any business's facts, results, learnings or credentials in this repo (README hard rule 6), and storing raw transcripts or course files (2.16, decision 12).
+Never allowed: anything touching another business's data (doctrine 9). Also never allowed here: storing any business's operational facts, results, learnings or credentials in this repo (README hard rule 6), and storing raw transcripts or course files (2.16, decision 12). The narrowly authorized generated teaching gallery in 2.9 is not an operational record or permission to copy other client material.
 
 The project `.claude/settings.json` lets Supabase and Vercel tools run without prompts, except irreversible or costly ones (purchases, domains, promotions, rollbacks, protection and firewall changes, project pause or creation, database branches). None of this relaxes Section 1 or confirming the target before infrastructure work (doctrine 14).
 

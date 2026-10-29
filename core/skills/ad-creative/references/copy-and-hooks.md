@@ -88,7 +88,9 @@ cycles; unresolved failures are withheld from recommendations, not passed by tim
 A score of 4 means the required condition is clear with only minor execution risks;
 it is not the midpoint of contradictory judgments. Hook and Glance each need at least
 4, One job and Proof at least 3, and all applicable creative-pass gates must pass. No
-average or strong score elsewhere cancels a failed gate. A failed concept is revised
+average or strong score elsewhere cancels a failed gate. The composition / hierarchy
+gate in [composition-review.md](composition-review.md) also applies: a clean treatment
+is not automatically strong, and visual richness is not automatically clutter. A failed concept is revised
 or reported as a shortfall, never recommended to fill the requested count.
 
 For concepts-only, Finish is **not applicable**, not a reason to generate an asset.

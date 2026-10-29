@@ -6,6 +6,16 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-10-29, composition review follow-up.
+- **Who/platform:** Clay, through the owner-directed cloud task.
+- **Request:** Add composition / hierarchy review and original-versus-clean image comparisons. Preserve both rich and clean approaches; do not replace distinctive ideas with mandatory minimalism.
+- **Changed:** Required composition review is linked from the creative skill, Passes 4/6/7, rubric and concept/asset schema. It names intended reads, competing details, rework and purposeful richness. Added two repository-native paired examples (Cupid and never-ending card), four compact full-frame JPEG derivatives plus the standalone Enough Mugs benchmark and provenance hashes. No original source images changed. Copy/CTA/layout confounds and useful details lost during simplification are explicit. The branded generated gallery has a narrow owner-approved teaching exception, not authority for current offer facts or client records.
+- **Verification:** All 23 automated tests pass (21 existing plus composition-contract and paired-asset integrity tests); continuity scan and six self-tests pass; 35 relative Markdown links resolve. Independent review found and resolved copy-hidden applicability and gallery-policy contradictions. A fresh-context museum exercise retained purposeful habitat richness while rejecting competing headlines/CTAs, without generating assets. Source and derivative pixels inspected; gallery is teaching material, not production safe-zone approval or conversion evidence.
+- **Limits:** No live ads, spend, client repo, installation or permissions changed. No merge authorized for this addition; publish only a draft PR. Prior staged workflow was released in PR #21, main commit `6054e7f71bd29d0fcc295f8e376effce54237373`.
+- **Next:** Review the draft and obtain merge authorization. A fresh agent must read the new instructions and view the repository-native examples without relying on private Library links or conversation context.
+
+## Previous session: 2026-10-29 staged workflow
+
 - **When:** 2026-10-29.
 - **Who/platform:** Owner-directed creative-workflow implementation in a cloud workspace.
 - **Request:** Make separate creative passes a required, self-contained workflow so a fresh agent can follow it without conversation context. Casting and rendering must be independent choices; nonhuman casting is not shorthand for talking products.

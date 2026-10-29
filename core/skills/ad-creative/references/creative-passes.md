@@ -85,8 +85,15 @@ can qualify. Search text ads, deliberate text-only work and proof/offer-led warm
 use their selected opening dynamic instead; record why the visual-alone test is not
 applicable. Do not quietly switch a cold visual request into an exception to avoid it.
 
-**Gate:** A weak visual returns to Pass 2 or 3, not to headline polishing. Clutter that
-needs explanation is a failure. An arbitrary spectacle unrelated to the offer fails.
+Before accepting the frame, run the **composition / hierarchy review** in
+[composition-review.md](composition-review.md): name the first read, supporting cue
+and product/action read; identify competing details and what to remove, subordinate
+or retain for meaning. Use its paired visual examples as comparisons, not templates.
+
+**Gate:** A weak premise returns to Pass 2 or 3, not to headline polishing. Competing
+details that obscure the intended read return to Pass 4 for recomposition. Do not
+strip away the distinctive premise, necessary context or product clarity to make the
+image cleaner. An arbitrary spectacle unrelated to the offer fails.
 
 ## Pass 5. Connect opening, turn, payoff and action
 
@@ -123,7 +130,11 @@ For each concept, record a concrete reason for each verdict:
 3. **Promise / clarity:** Does the product payoff answer the opening and make the
    benefit and next action clear? On statics, does the complete image work at a glance?
 4. **Proof / policy:** Are claims supportable and required rules preserved?
-5. **Distinctness / execution:** Is this a distinct mechanism where the brief asks for
+5. **Composition / hierarchy:** Can the eye find the intended first read and then
+   the product/action without competing details? What was removed, subordinated or
+   deliberately retained, and did the distinctive premise survive? Apply
+   [composition-review.md](composition-review.md); richness alone is not a failure.
+6. **Distinctness / execution:** Is this a distinct mechanism where the brief asks for
    variety, and can the idea be read quickly and actually produced? A deliberately
    matched pair or controlled variant is valid when that is the brief, not evidence
    of several independent ideas.
@@ -148,7 +159,11 @@ Concepts-only work ends here. See the concept record in the creative schema if s
 
 Only produce the requested assets after Pass 6 passes. Inspect the actual image/video
 at delivery size, not just the prompt: first frame, timing, readable text, safe zones,
-cast/treatment consistency, claims and product demonstration. Watch a video to verify
+cast/treatment consistency, claims and product demonstration. Repeat the composition /
+hierarchy review on the actual pixels at feed size, hiding/restoring copy when the
+visual-alone gate applies:
+prompts do not prove a clear focal point. Check video frames and transitions for
+competing movement or overlays; preserve the turn and payoff. Watch a video to verify
 its pacing; an unplayed file is unverified. Re-run the gates on the execution. Repair
 a render failure or return to the concept if the idea cannot survive production.
 

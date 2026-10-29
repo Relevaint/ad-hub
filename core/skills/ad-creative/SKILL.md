@@ -12,7 +12,7 @@ when_to_use:
   - check this copy for claims and policy
 metadata:
   adhub:
-    version: 0.2.0
+    version: 0.3.0
     layer: creative
     reads:
       - offers/
@@ -80,7 +80,8 @@ gated on proof.
 ## Method
 
 Read `references/creative-passes.md`, `references/opening-dynamics.md`,
-`references/copy-and-hooks.md` and `references/claims-and-policy.md` before drafting.
+`references/copy-and-hooks.md`, `references/composition-review.md` and
+`references/claims-and-policy.md` before drafting.
 The required sequence is fundamentals -> premises -> independent casting/treatment ->
 visual stop -> connected hook/turn/offer -> adversarial concept review -> authorized
 production/render review. Each pass produces a short decision record and has a return
@@ -172,7 +173,10 @@ generated text and figures are checked letter by letter.
 Open the actual file at the size it will be seen: a phone-width feed card, a full-screen
 vertical. Check initial attention separately from product clarity at the reveal (or the whole
 static at a glance), the one job, the hook in the first frame and first three seconds, text inside the safe zones, nothing cut
-off, no typo, every claim identical to the gated draft. Score against the rubric in
+off, no typo, every claim identical to the gated draft. Repeat the composition /
+hierarchy review on the actual render: remove or subordinate competing details without
+losing the premise, context, disclosures or product/action clarity. Richness may be
+intentional; minimalism is not the gate. Score against the rubric in
 `references/copy-and-hooks.md`, revise the weak part, rescore; three passes at most,
 then present only passing work with its history (CONVENTIONS section 8). Failed work
 is labelled not ready; reaching the revision limit does not waive a gate. A video is inspected by
@@ -203,6 +207,8 @@ Before writing the summary, check every ad:
 - Cold visual openings pass the visual-alone stop test; other dynamics have the
   applicable test and reason recorded. No headline rescue for a generic frame.
 - Product clarity at the reveal/complete proposition; static understood at a glance.
+- Composition / hierarchy reviewed separately; competing details reworked, distinctive
+  premise preserved, purposeful richness allowed. Actual pixels checked if produced.
 - Concept review passes all gates and rubric thresholds. No weak idea padded into the
   set to reach a count; no aggregate score hides a failed gate.
 - One job, and it is the sentence in the ledger row.
