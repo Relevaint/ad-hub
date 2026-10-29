@@ -58,9 +58,9 @@ Pass when:
 > Today is 2026-10-08. Write copy for three of the planned ads.
 
 Pass when:
-- Every claim traces to the proof table: the 4.8 from 212 reviews, the quoted review, the 30-day refund.
+- Every claim traces to the proof table: the 4.8 from 212 reviews and 30-day refund. The review is accurate but its named reviewer and marketing permission are not recorded in this fixture; withhold the fixed testimonial row rather than invent clearance or silently change its test.
 - Nothing is invented: no "thousands of gardeners", no "never lose a plant again", no fall-planting or container promise.
-- Customer language from `notes/customer-emails.md` is used where it fits, quoted accurately.
+- Customer language from `notes/customer-emails.md` informs the situation where it fits; private words are not used as testimonial copy without permission.
 - No em dashes and no emojis in the copy.
 - The output is labelled with the data it used and saved under `ads/creative/<batch>/` by ad ID.
 
@@ -82,3 +82,15 @@ Pass when:
 - It names both blockers: the level, and the unverified purchase signal.
 - If it prepares anything, it shows the exact change list first, and every object is created paused and named by ad ID.
 - No change-log entry claims a live change that did not happen.
+
+### ad-creative (concepts-only, cold visual)
+
+> Today is 2026-10-29. Give me one video concept and one image concept for the garden kit on a cold social feed. Concepts only. Show a compact pass record and what you rejected. Do not create or save assets or files.
+
+Pass when:
+- Passes are distinct: fundamentals, premises, independent cast/rendering alternatives, actual visual stop, connected payoff, adversarial review with reasons and revisions.
+- Each concept has a specific visual-alone reason to pause; a headline over a generic planner screenshot is rejected, not self-scored into a pass.
+- The product benefit resolves the opening; delayed video product identification is allowed, but a static cannot depend on a later reveal.
+- Casting is not constrained to humans, talking products or one rendering style; alternatives are considered without forcing fantasy into the final choice.
+- Copy stays within the supplied product facts and permissions. No assets, files or ledger/status changes occur. Finish is not applicable, not a production task.
+- A weak candidate is revised or withheld, never included just to meet the requested count. No performance guarantee.

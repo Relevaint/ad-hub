@@ -1,6 +1,6 @@
 # Copy and hooks: the spec, the structures and the rubric
 
-Load for every batch and every quick request. Defaults from the reviews; the hard rules
+Load for every concept, batch and quick request. Run [creative-passes.md](creative-passes.md) before scoring. Defaults from the reviews; the hard rules
 are in the skill. Named tactics are plays in `../../ad-strategy/references/plays.md`.
 
 ## The hook
@@ -26,8 +26,11 @@ a hook built from a real customer line often beats them.
   specific relatable use, or polished for premium (12.3).
 - **Testimonial.** An honest review that admits a trade-off; a montage of varied real
   customers; always released (12.4).
-- **Static.** Headline first, then the product or key visual, then support; the
-  one-second test (static-ads review). Menu: infographic, headliner, benefit callouts,
+- **Static.** The source review's "headline first" is a possible reading hierarchy,
+  not permission to design a dull image and rescue it with copy. For cold visual
+  concepts, choose and test the visual first without copy; then compose visual,
+  headline, product and support as one at-a-glance proposition. Deliberate text-only
+  or proof/offer-led briefs follow the applicable dynamic, recorded explicitly. Menu: infographic, headliner, benefit callouts,
   us against the alternative, transformation, grid, text only, lo-fi creator photo,
   golden nugget from a real review.
 - **Carousel.** Cards that tell one sequence or show one catalogue; each card stands
@@ -69,19 +72,30 @@ to fill from what businesses like this usually say.
 
 ## The rubric
 
-Score each ad on five lines, 1 to 5, with these anchors. Revise the weakest, rescore,
-three passes at most, then present the best with its history.
+Score each concept on the first four lines, 1 to 5. Finish applies only to requested
+assets. The anchors are editorial judgments, not performance forecasts. Revise failed
+gates through the pass that owns them, then recheck the whole. Up to three revision
+cycles; unresolved failures are withheld from recommendations, not passed by timeout.
 
 | Line | 1 | 3 | 5 |
 | --- | --- | --- | --- |
-| Glance | A stranger cannot say what is sold | Says what, not for whom | Says what and for whom in one second |
+| Glance | Product/payoff remains unclear | Product clear but benefit or audience vague | Clear offer, audience and benefit at reveal; static complete proposition at a glance |
 | One job | Two goals or two audiences | One goal, audience implied | One goal, one customer type, one awareness level, matches the row |
-| Hook | Generic opener; frame unrelated | Clear line; frame supports | Text, sound and first frame pull in the named type |
+| Hook | Generic opener or unrelated spectacle | Relevant copy; ordinary supporting frame | Visual earns attention under applicable test; relevant question fulfilled by product payoff |
 | Proof | A claim with no row behind it | Claims true but unspecific | Every claim specific and mapped; blanks marked |
 | Finish | A brief, no asset | Asset exists, not inspected or wrong shape | Every shape made, inspected, text in safe zones |
 
-An ad below 3 on Proof does not leave this skill. An ad below 3 on Finish stays
-`copy-ready`.
+A score of 4 means the required condition is clear with only minor execution risks;
+it is not the midpoint of contradictory judgments. Hook and Glance each need at least
+4, One job and Proof at least 3, and all applicable creative-pass gates must pass. No
+average or strong score elsewhere cancels a failed gate. A failed concept is revised
+or reported as a shortfall, never recommended to fill the requested count.
+
+For concepts-only, Finish is **not applicable**, not a reason to generate an asset.
+Concept acceptance is not a ledger status. For production, any missing/uninspected or
+wrong-shape asset stays `copy-ready`; only every shape required by the authorized placement scope made and inspected
+permits `creative-ready`, regardless of the numeric Finish score. One completed preview
+does not promote an ad whose broader planned placement set is still incomplete.
 
 ## Copy standard
 

@@ -6,6 +6,16 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-10-29.
+- **Who/platform:** Owner-directed creative-workflow implementation in a cloud workspace.
+- **Request:** Make separate creative passes a required, self-contained workflow so a fresh agent can follow it without conversation context. Casting and rendering must be independent choices; nonhuman casting is not shorthand for talking products.
+- **Changed:** Added `core/skills/ad-creative/references/creative-passes.md` and wired it through AGENTS, README, the skill, rubric, concept schema and conventions. Required passes separate fundamentals, premises, cast/treatment, visual attention, connected payoff, rejection/revision and authorized production. Concepts-only stops before generation and ledger promotion. Cold visual feeds use a visual-alone stop gate; other dynamics keep explicit applicability. Product clarity is judged at the reveal, not forced into the first frame. Optional cast/style examples and fresh-input routes stay brand-neutral, not a compulsory formula. Shape scope and fictional-scene versus real-customer proof boundaries are reconciled across references.
+- **Verification:** `npm test` passes 21 tests (the existing 19 plus routing/reference and staged-gate contract checks); continuity route scan and all six self-tests pass; relative Markdown targets resolve and universal doctrine is unchanged. Independent diff review identified and resolved conflicting scope, file-writing, story-permission, static-headline and reveal wording. Six fresh-context text regressions exercised all four original creative requests plus concepts-only and independent nonhuman-casting requests. Housing avoided protected-attribute targeting and retained exact required strings; consultancy withheld an uncleared customer story; thin-context drafts invented no proof; concept runs produced no assets, files or ledger changes. The digital-product request produced two copy packages and withheld its testimonial row because the fixture lacks reviewer identity and permission: its older evaluation wording was corrected to match the existing truth gate, not to grant clearance.
+- **Limits:** Automated tests check routing and instruction structure, not creative quality. Regression outputs were inspected against the criteria, but concept appeal remains editorial and untested in a live audience. No actual media execution, live ad account or external client workflow was exercised. No client repo, installation, permission or spend was changed. No merge is authorized in this implementation task; publication is a draft PR for review.
+- **Next:** Review the draft PR and obtain merge authorization before changing the default branch. For a fresh-context test, use the PR branch (or main after merge), current business context and a normal concepts-only request. The workflow must not rely on these handoff examples. Update local hub checkouts/Project files before testing the released rules.
+
+## Previous session: 2026-10-27 continuity cleanup
+
 Continuity route check: `python3 scripts/check-continuity.py` and its six `--self-test` cases pass; the new checker is read-only and excludes historical handoffs.
 
 - **When:** 2026-10-27.

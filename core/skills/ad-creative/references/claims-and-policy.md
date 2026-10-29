@@ -1,6 +1,6 @@
 # Claims and policy: the gate every ad passes before handoff
 
-Load for every batch, every quick request and every check. The gate is a hard rule
+Load for every concept, batch, quick request and check. The gate is a hard rule
 (README hard rule 4; `core/_system/spend-authority.md`, "Gates before anything goes
 live"). The platform's own policy text and examples live in the platform layer.
 
@@ -30,9 +30,11 @@ credential; "trusted by" implies a count.
    customers, a story, a result) comes from the offer's proof table, `Owner-confirmed`
    or `Observed` with its source. A `Proposed` line is not proof of anything.
 3. Anything unmapped is cut, or becomes a marked blank `[confirm: ...]` in the draft.
-4. Testimonials and stories: a named, real person who gave permission the business
+4. Testimonials and purported real customer stories: a named, real person who gave permission the business
    recorded. No permission, no use, in any disguise, paraphrase or composite. Say so in
-   one line and offer what is cleared.
+   one line and offer what is cleared. Clearly fictional sketches, casts and
+   illustrative demonstration details are allowed, not disguised private stories or
+   invented customer evidence. The scene cannot imply unproved product capabilities.
 5. People: an AI-made or stock person may present or demonstrate; they are never
    presented as a customer, a reviewer or the founder.
 6. Urgency and scarcity: true, dated, and traceable to `ads/calendar.md` or the offer's
@@ -44,7 +46,10 @@ credential; "trusted by" implies a count.
 9. Generated imagery: backgrounds and settings may be generated; the product, the place
    and any real person are not altered into something they are not; generated text and
    figures are read letter by letter.
-10. Write the claims map into the ad's file. The map is part of the deliverable.
+10. Keep the claims map with the deliverable: in the ad file for saved copy/assets,
+    or in the concept working record for chat-only concepts. Do not create a file just
+    to satisfy this gate when the request is concepts-only; surface missing proof and
+    decisive constraints in the reply.
 
 ## Personal attributes
 
@@ -74,10 +79,12 @@ buyer by who lives there, the ad describes the home, the move or the moment inst
 Legal names, licence lines, equal-opportunity lines, disclaimers: used exactly as the
 business wrote them, where the format has room, read from the business's file each
 time. Where a format has no room, the ad's file says which string was left off and why,
-so the business can decide.
+so the business can decide. For an unsaved concept, name the omission in the reply.
 
 ## The check report
 
 For Check mode, and as the last section of every ad's file: one line per claim with its
 row and status, one line per policy item with pass or fail, the blanks, and the verdict:
-ready for approval, or not, and what would make it so.
+copy-ready, creative-ready for approval, or not, and what would make it so. For
+concepts-only, record these checks in the concept record without requiring a file;
+the verdict is concept-ready and untested, or withheld. No asset/ledger promotion.

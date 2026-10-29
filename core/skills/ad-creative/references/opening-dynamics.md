@@ -6,9 +6,14 @@ Status: untested as a framework. The Your Song row is itself untested on live
 ads.
 
 Home: `core/skills/ad-creative/references/opening-dynamics.md`, loaded by
-ad-creative for every batch (Step 1 selects the dynamic from the row's
+ad-creative for every concept and batch (Step 1 selects the dynamic from the row's
 awareness level plus the surface). Ad-strategy records the opening dynamic
 on the ledger row, derived from the row's awareness tag plus the surface.
+
+The required [creative passes](creative-passes.md) govern the working order and
+rejection gates. This reference supplies mechanisms and timing, not a shortcut past
+independent casting/treatment or concept review. Historical examples below illustrate
+one category, not a default cast, prop, style or premise for the next business.
 
 ## The principle
 
@@ -96,11 +101,15 @@ what is happening right now, and it must be refreshed before every batch,
 because trends expire and patterns wear out. Violation of expectation
 works once per pattern. When everyone does it, it is the pattern.
 
-Three fresh inputs, pulled before every batch:
+Consider these fresh-input routes for each batch. Use those that fit the actual brief,
+not a fixed quota. Record observed sources and dates; if access is unavailable, say so
+and label invented material as creative exploration, never an observed trend. Missing
+trend access does not block a concept grounded in the offer. None of these routes
+requires copying a trend or using absurdity or a holiday in the final ad:
 
 - Current trends, two layers. Ad Library adjacent categories first
-  (flower, card, gift, plushie brands, Etsy sellers): record the
-  mechanic, never the copy. But the Library only shows paid ads, so it
+  (adjacent to this business and audience, not a fixed set of industries): record
+  the mechanic, never the copy. But the Library only shows paid ads, so it
   misses organic internet trends, and by the time a trend is in the
   Library it has already been commercialized. The internet layer: social
   search on the niche, Threads trends, what top creators in adjacent
@@ -117,31 +126,34 @@ Three fresh inputs, pulled before every batch:
   something stops your own scroll, save the link, the date seen, and the
   mechanic. It is not sitting down to brainstorm trends on demand.
 - Calendar. Holidays and relevant periods the audience is already
-  feeling: Christmas, Valentine's, Mother's Day, Father's Day, graduation,
-  and the business's own seasons. Plus current conditions everyone is
-  living through right now: prices, seasons, big events. The calendar is
-  forced material, not decoration. What is the audience already thinking
-  about that the ad can collide with?
+  feeling, including relevant holidays and the business's own seasons. Plus current conditions everyone is
+  living through right now: prices, seasons, big events. Use calendar material only
+  when relevant; do not force a seasonal tie-in. What is the audience already
+  thinking about that the ad can connect with?
 - Deliberate absurdity. An absurd messenger or one impossible rule, played
-  completely straight: cute animals giving gifts, aliens singing to each
-  other. Absurdity is an input, not an accident. It works when the absurd
-  element proves a product truth (you do not need to sing to give a song),
-  and fails when it is cute with no turn.
+  completely straight. Casting can be human, nonhuman or character-free, independently
+  of rendering. Absurdity is one optional input, not a compulsory brand voice. It works
+  when the unexpected element illuminates an honest product benefit, and fails when
+  it is spectacle with no relevant turn. Serious briefs may reject it entirely.
 
 The collision rule. The idea is the row's mechanism crossed with fresh
 material. Violation of expectation crossed with a current format. An open
 question crossed with a holiday the audience is already feeling. Without
 the collision you get one of two failures: on-strategy but generic (table
 only), or novel but off-strategy (trend only). The usual filters still
-apply: could any gift brand run it (if yes, it fails), does it assume the
-viewer is already looking for the product (if yes, rewrite), claims gate,
-policy check.
+apply: is the idea interchangeable with any category competitor, or does the payoff
+use this offer's actual benefit? For unaware cold audiences, does it assume product
+interest they do not yet have? Rewrite that mismatch; search and most-aware ads may
+rightly address existing interest. Preserve the claims gate and policy check.
 
 ## The stop test and the promise
 
-The ad stops the scroll in one second, sound off, from the image, the
-headline, or both together. If neither does anything, kill it. What fails is
-generic plus generic.
+For cold visual feed concepts, first judge the image/first frame alone with sound and
+copy hidden: name the reason a distracted viewer would pause. Then judge the complete
+hook. A headline cannot compensate for a generic visual. This is a hypothesis checked
+again on the render, not proof of performance. Other surfaces and deliberate text-only
+briefs use their selected dynamic; see Pass 4 in [creative-passes.md](creative-passes.md)
+for applicability. Do not silently use that exception to dodge a cold visual brief.
 
 The opening is a promise, and everything after it is the promise being kept.
 A hook the body does not fulfill is not a hook. It is a lie the viewer
@@ -172,18 +184,20 @@ introduce something different. The hook never assumes the category.
 
 ## How to use it in a batch
 
+Follow `creative-passes.md` in order; the steps here supply its opening decisions.
+
 1. Read the row from the ledger row's awareness tag plus the surface.
-1b. Pull fresh material before choosing: current trends, the calendar,
-    and deliberate absurdity. This pull is repeated every batch.
+1b. Consider fresh material before choosing: observed trends, relevant calendar
+    context and optional deliberate absurdity. Record fit and source limits.
 2. Pick a mechanism from that row and collide it with the fresh material.
    Mechanisms differ; phrasings of one mechanism do not count as variety.
 3. Write the hook per the dynamic: text, sound, and first frame together,
    as ad-creative already requires.
-4. Run the hub's gates unchanged: claims gate before writing, policy check
+4. Run the staged concept rejection gate before production and preserve the hub's claims gate before writing, policy check
    (situation, never the viewer's attributes; urgency and scarcity only if
    true and dated), asset inspection at actual size.
-5. Score glance on the ad as a whole once the turn lands, not on the hook
-   alone. See the open ruling below.
+5. Score opening attention separately from product clarity when the turn lands.
+   On a static, judge the complete proposition at a glance. See the timing rule below.
 
 ## What this does not change
 
@@ -193,19 +207,19 @@ ad-creative's claims gate, policy check, or finish standard. It governs
 only the opening's shape and the product's timing. Everything else in both
 skills stands.
 
-## Open rulings (not yet decided)
+## Timing rule and verification limit
 
-- Glance tension. The ad-creative rubric gives top glance marks when a
-  stranger can say what is sold and for whom in one second. A curiosity
-  hook deliberately withholds that in the first second, and the turn is
-  what reveals it. Proposed ruling: glance is judged on the ad as a whole
-  once the turn lands, not on the hook alone. For statics this is moot,
-  since hook, turn, and close are simultaneous. For video it needs the
-  ruling.
-- Relevance by second two on video. The scene must signal who the ad is
-  for early (object, setting, words, person) even while the product waits
-  for the turn. This is compatible with the recipient-in-turn rule, but
-  the two must be written together, not assumed.
-- The Your Song row is untested. The framework's rows are drawn from
-  collected craft material, not from this business's results. Learnings
-  from this business's own results outrank it once they exist.
+Opening attention and product clarity are separate gates. On video, inspect the first
+frame for attention and early audience relevance, then judge what is sold, for whom
+and why at the product reveal. Do not force a product packshot into second one just to
+satisfy Glance. A demonstration, search or most-aware offer can correctly lead with it.
+On static images there is no later turn: judge the whole proposition together after
+the visual-alone test. This resolves the earlier one-second product-recognition
+conflict; the skill and rubric use these same two checkpoints.
+
+Relevance still needs to arrive early through the situation, object, setting, words
+or cast, while product identification may wait. Delayed identification is not a license
+for an unrelated hook or a reveal so late that the audience has left.
+
+The framework and category examples are untested as performance claims. Real business
+results, when available and relevant, outrank speculative craft choices.
