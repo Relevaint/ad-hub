@@ -52,7 +52,7 @@ All nine skills are built.
 | Who buys, and what they say in their own words | `audience-research` |
 | What competitors are running | `competitor-ads` |
 | What to make and test next; gaps, angles, plays, test plan | `ad-strategy` |
-| Copy and finished ads; policy and claims check | `ad-creative` |
+| Video and image concepts, creative ideas, copy and finished ads; policy and claims check | `ad-creative` |
 | Account, tracking, result signal, campaign structure | `ad-setup` |
 | Putting approved ads live | `ad-launch` |
 | Monitoring, pausing, replacing, budget moves | `ad-manage` |
@@ -63,7 +63,7 @@ Load only the skill and references the job needs.
 ## How the work flows
 
 Research feeds strategy. Strategy decides what to make and how it will be tested.
-Creative produces it. Setup makes sure the account can measure the real result. Launch
+Creative develops it through [separate passes and rejection gates](core/skills/ad-creative/references/creative-passes.md), producing only the assets requested. Concepts-only work stops before generation. Setup makes sure the account can measure the real result. Launch
 puts approved ads live. Management watches daily and acts on a schedule. Review reads
 the results and writes what was learned, which strategy uses next time.
 

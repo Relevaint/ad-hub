@@ -257,3 +257,36 @@ test("installer hook: runs the generator when the hub is present, stays quiet wh
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });
+
+test("creative: concept requests route to ad-creative and required pass reference exists", async () => {
+  const { readFileSync, existsSync } = await import("node:fs");
+  const hub = path.resolve(here, "../../../..");
+  for (const request of ["give me video and image ad concepts only", "brainstorm ad ideas without generating assets"]) {
+    assert.match(run("route.mjs", "--goal", request).out, /^Start with: ad-creative\n/);
+  }
+  const at = (p) => readFileSync(path.join(hub, p), "utf8");
+  const skill = at("core/skills/ad-creative/SKILL.md");
+  assert.match(skill, /\*\*Concepts\.\*\*/);
+  assert.match(skill, /references\/creative-passes\.md/);
+  assert.match(at("AGENTS.md"), /references\/creative-passes\.md/);
+  for (const ref of new Set([...skill.matchAll(/(?<![a-z/-])references\/([a-z-]+\.md)/g)].map((m) => m[1]))) {
+    assert.ok(existsSync(path.join(hub, "core/skills/ad-creative/references", ref)), `missing reference ${ref}`);
+  }
+});
+
+test("creative: separate passes, scope and hard rejection remain explicit", async () => {
+  const { readFileSync } = await import("node:fs");
+  const hub = path.resolve(here, "../../../..");
+  const at = (p) => readFileSync(path.join(hub, p), "utf8");
+  const passes = at("core/skills/ad-creative/references/creative-passes.md");
+  assert.deepEqual([...passes.matchAll(/^## Pass (\d)\./gm)].map((m) => Number(m[1])), [1, 2, 3, 4, 5, 6, 7]);
+  for (const needed of [/no image, audio or video generation/, /Cast and treatment are independent/, /Nonhuman does not mean/, /visual-alone stop test/, /do not average away a failed/, /withhold/, /fresh reviewer/, /not a finished asset or proven winner/]) {
+    assert.match(passes, needed);
+  }
+  const rubric = at("core/skills/ad-creative/references/copy-and-hooks.md");
+  assert.match(rubric, /Hook and Glance each need at least\n4/);
+  assert.match(rubric, /Finish is \*\*not applicable\*\*/);
+  assert.doesNotMatch(rubric, /Says what and for whom in one second/);
+  assert.match(at("core/_system/schemas/creative.md"), /not a new ledger status/);
+  assert.match(at("core/skills/ad-creative/references/claims-and-policy.md"), /Do not create a file just/);
+});

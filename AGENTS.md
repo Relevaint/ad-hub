@@ -153,6 +153,12 @@ The visual check that matters for this hub is ad creative: a finished ad is insp
 
 ### 2.9 Copy doctrine
 
+For every ad concept or creative change, load `core/skills/ad-creative/SKILL.md` and
+its required `references/creative-passes.md`. Separate fundamentals, premises,
+independent casting/rendering, visual attention, connected payoff and rejection before
+production. Concepts-only requests stop before generation. This workflow is an owner
+requirement, not an optional play; it does not grant publishing or spend authority.
+
 Doctrine item 10 applies. In addition for this project:
 
 - The hub has no customer-facing copy of its own. The ad copy its skills produce is customer-facing, so doctrine 10 applies to that output in every business repo, and no skill may instruct otherwise.

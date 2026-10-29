@@ -16,6 +16,9 @@ think of. Two classes of rule, kept apart in the wording:
   Deviating silently is the only wrong way to deviate.
 
 If more than a handful of a skill's rules are hard, the skill is over-strict. Recut it.
+The owner-required staged creative workflow is a quality-contract exception: its
+separate decisions, scope boundaries and rejection gates are required; its example
+casts, treatments and mechanisms remain options, not mandatory creative formulas.
 
 ## 1. What a skill carries
 
@@ -123,7 +126,9 @@ A play is a specific, named tactic from a source. Plays live in
 Generation never ends at "here you go".
 
 - Copy and concepts: score against the skill's rubric with calibrated anchors, revise
-  the weak part, rescore. Three passes at most, then present the best with its history.
+  the weak part, rescore. Use up to three revision cycles, then present only passing
+  work with its history. A failed gate remains failed at the limit; report the shortfall
+  instead of padding the set. `ad-creative` defines separate concept and render gates.
 - Finished creative: inspect the actual render at the size it will be seen. A brief is
   not an ad. An unchecked asset is not a finished one.
 - Numbers: re-check any figure taken from an account before reporting it.
@@ -131,7 +136,8 @@ Generation never ends at "here you go".
 
 ## 9. Output
 
-Files first: write the deliverable into the business repo, then summarise in chat. End
+Concepts-only requests follow the creative skill's chat-first scope; no media generation
+or ledger promotion. Otherwise files first: write the deliverable into the business repo, then summarise in chat. End
 with the files saved and two to four next steps.
 
 Quick mode: a specific single-asset request gets the asset, not a scan or a workshop.
