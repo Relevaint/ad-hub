@@ -6,6 +6,17 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-10-29, composition review follow-up.
+- **Who/platform:** Clay, through the owner-directed cloud task.
+- **Request:** Add composition / hierarchy review and original-versus-clean image comparisons. Preserve both rich and clean approaches; do not replace distinctive ideas with mandatory minimalism. Later authorized a general brand/cultural-continuity rule and merging the combined PR after verification.
+- **Changed:** Required composition review is linked from the creative skill, Passes 4/6/7, rubric and concept/asset schema. It names intended reads, competing details, rework and purposeful richness. Added two repository-native paired examples (Cupid and never-ending card), four compact full-frame JPEG derivatives plus the standalone Enough Mugs benchmark and provenance hashes. No original source images changed. Copy/CTA/layout confounds and useful details lost during simplification are explicit. The branded generated gallery has a narrow owner-approved teaching exception, not authority for current offer facts or client records.
+- **Verification:** All 24 automated tests pass (21 baseline plus composition-contract, paired-asset integrity and brand-continuity contract tests); continuity scan and six self-tests pass; 35 relative Markdown links resolve. Independent review found and resolved copy-hidden applicability and gallery-policy contradictions. A fresh-context museum exercise retained purposeful habitat richness while rejecting competing headlines/CTAs, without generating assets. Source and derivative pixels inspected; gallery is teaching material, not production safe-zone approval or conversion evidence.
+- **Added continuity:** Before concepts, inspect the actual destination and supplied brand/voice/cultural context; record sources and gaps, ground choices in explicit direction, and review batch sameness and ad-to-page mismatch. No client-specific demographic rule, individual ethnicity inference, quotas, stereotypes or targeting changes; fantasy and abstract choices stay available.
+- **Limits:** No live ads, spend, client repo, installation or permissions changed. Owner authorized the combined PR #22 merge after verification. Prior staged workflow was released in PR #21, main commit `6054e7f71bd29d0fcc295f8e376effce54237373`.
+- **Next:** Verify the combined PR head and checks, merge that exact reviewed head, then verify main matches the tested tree. A fresh agent must refresh its hub checkout and read the instructions/examples without private Library links or conversation context. Exact release commit belongs in the merged PR record.
+
+## Previous session: 2026-10-29 staged workflow
+
 - **When:** 2026-10-29.
 - **Who/platform:** Owner-directed creative-workflow implementation in a cloud workspace.
 - **Request:** Make separate creative passes a required, self-contained workflow so a fresh agent can follow it without conversation context. Casting and rendering must be independent choices; nonhuman casting is not shorthand for talking products.

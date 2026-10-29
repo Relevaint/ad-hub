@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "id": "composition-examples-2026-10-29",
+  "purpose": "User-approved generated-ad composition teaching examples, not performance or current-offer evidence",
+  "approval": {
+    "date_utc": "2026-10-29T16:57:00Z",
+    "scope": "Add composition review guidance and original-versus-clean comparisons while preserving that both styles can work; approved Enough Mugs image included as a standalone hierarchy benchmark, not a comparison pair"
+  },
+  "provenance_note": "Source generation artifact IDs identified by exact SHA-256 equality to the existing generation artifacts. These are artifact IDs, not external Library IDs. Source originals retained unchanged outside this repository.",
+  "derivation": {
+    "tool": "Version: ImageMagick 7.1.1-43 Q16 x86_64 22550 https://imagemagick.org",
+    "operations": [
+      "Lanczos proportional resize to 896 pixels wide (integer height rounds to 1120)",
+      "Strip metadata",
+      "JPEG encode at quality 88 with 4:4:4 chroma sampling"
+    ],
+    "excluded_operations": [
+      "generation",
+      "cropping",
+      "retouching",
+      "text replacement",
+      "layout change"
+    ],
+    "command_template": "magick SOURCE.png -filter Lanczos -resize 896x -strip -sampling-factor 4:4:4 -quality 88 DERIVATIVE.jpg"
+  },
+  "assets": [
+    {
+      "id": "your-song-02-cupid-off-duty",
+      "variant": "original",
+      "source": {
+        "filename": "your-song-02-cupid-off-duty.png",
+        "generation_artifact_id": "exec-8cb6e99e-c53e-40f8-a07d-d10368ae722d",
+        "sha256": "5adad91b11b0ae247329efefff01518a591852683ba6b60c6c27c16c3990f256",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 2051698
+      },
+      "derivative": {
+        "file": "your-song-02-cupid-off-duty.jpg",
+        "sha256": "bf302c1d6db555a5477e7a81deccaa0758c9d6386e1930681d8ce9ab61be9d40",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 283052
+      }
+    },
+    {
+      "id": "your-song-02-cupid-off-duty-simplified",
+      "variant": "simplified",
+      "source": {
+        "filename": "your-song-02-cupid-off-duty-simplified.png",
+        "generation_artifact_id": "exec-37d785b4-643d-427f-991b-dedae0fb24b7",
+        "sha256": "b96bcacc2ad9a8b3d57390ca7c08d47c2926cc87f05c27b14f5fec55a746c6fa",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 1805162
+      },
+      "derivative": {
+        "file": "your-song-02-cupid-off-duty-simplified.jpg",
+        "sha256": "e1b7dd68924c2e7dd4e9d29d10187ee51a0532209c23f90c7d2f5d1f3046fd46",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 212878
+      }
+    },
+    {
+      "id": "your-song-07-never-ending-card",
+      "variant": "original",
+      "source": {
+        "filename": "your-song-07-never-ending-card.png",
+        "generation_artifact_id": "exec-3e31c040-0599-4c0b-a2bc-8527e9efc2cc",
+        "sha256": "87f4cc0c8be47434b1587b4bfec9ef849d914e52757c36c1c7354e839ec3513a",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 2562117
+      },
+      "derivative": {
+        "file": "your-song-07-never-ending-card.jpg",
+        "sha256": "c7106bc2e6ca77849381e52a19eaad0262a82aad17ef9a5b9238b3b642b9e15e",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 354135
+      }
+    },
+    {
+      "id": "your-song-07-never-ending-card-simplified",
+      "variant": "simplified",
+      "source": {
+        "filename": "your-song-07-never-ending-card-simplified.png",
+        "generation_artifact_id": "exec-c9759c9e-5c6b-49aa-877e-a0180ab5179f",
+        "sha256": "f9a48507fe0c8d08d907f5c60def50daa3edba26a563b73356edf9bdff9b1bfd",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 1936143
+      },
+      "derivative": {
+        "file": "your-song-07-never-ending-card-simplified.jpg",
+        "sha256": "4d6d90a1bfce06f50ced67d9109dfddfef4857e33b15ea66515d49610cb3d7d3",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 199653
+      }
+    },
+    {
+      "id": "enough-mugs",
+      "variant": "standalone",
+      "source": {
+        "filename": "exec-ecdaffdb-b1b3-4e82-9206-76008524ab9b.png",
+        "generation_artifact_id": "exec-ecdaffdb-b1b3-4e82-9206-76008524ab9b",
+        "sha256": "a37d8522e206a925b749b930d8d5dae61afcafc77ea9db5188e003e0a70fc9f8",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 2042000
+      },
+      "derivative": {
+        "file": "enough-mugs-benchmark.jpg",
+        "sha256": "f873877e03dc37d746dec6a1ff2fa6f49936af55caf8df49a0def204f069abb9",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 217802
+      }
+    }
+  ]
+}

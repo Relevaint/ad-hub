@@ -23,6 +23,23 @@ name the conflict instead of changing strategy or scope without authority.
 Output a compact brief: audience and recognizable situation; awareness and surface;
 one desire/problem; offer and defensible benefit; proof available and claims forbidden;
 one message and action; brand/category constraints; requested formats and output scope.
+Before developing concepts, review the actual destination landing page alongside the
+business's brand imagery, voice, stated cultural context and supplied audience brief.
+Inspect the visible page/imagery when available; reading text alone is not visual
+inspection. Record a compact source note (URL/file and what was actually reviewed),
+relevant creative cues and any uncertainty. If the page is unavailable, use supplied
+brand materials, name the gap and keep continuity provisional; do not invent what
+it looks like or infer an audience demographic. If a missing direction materially
+changes the creative, ask for that choice before recommending a direction.
+
+Derive casting, setting, visual language and copy from those sources and explicit
+creative direction, not an unexplained default or this hub's example ads. Cultural
+context comes from supplied brand direction and explicit brief, not guessed race or
+ethnicity of individuals from photos, names or appearance. Do not turn one client's
+representation choices into a rule for other clients, impose demographic quotas,
+use stereotypes or alter ad targeting. A brand's current imagery informs continuity;
+it does not freeze the cast, exclude other people or prohibit deliberate expansion.
+
 Separate supplied facts from assumptions. Missing research does not block ideation,
 but an unknown fact cannot become a claim. Use the skill's claims and policy checks.
 
@@ -61,7 +78,11 @@ Output the chosen cast, treatment and a short reason; note the materially differ
 alternative rejected and why. Choose for audience recognition, clarity, freshness,
 brand fit and feasible execution. Absurdity is available, not mandatory. A serious or
 restricted-category brief may call for restraint. A supplied brand character or style
-is a constraint, not permission to ignore the brief. Fictional scenes can illustrate;
+is a constraint, not permission to ignore the brief. Connect the chosen cast, setting,
+style and language to the Pass 1 brand evidence; distinguish intentional creative
+contrast from an accidental ad-to-page mismatch. Continuity does not require literal
+imitation: nonhuman, fantasy, abstract and character-free treatments remain available,
+with their product/brand connection explained. Fictional scenes can illustrate;
 never portray fabricated people or creatures as real customers or as product proof.
 
 **Gate:** If the choice is only a default, return to treatment exploration. If the cast
@@ -85,8 +106,15 @@ can qualify. Search text ads, deliberate text-only work and proof/offer-led warm
 use their selected opening dynamic instead; record why the visual-alone test is not
 applicable. Do not quietly switch a cold visual request into an exception to avoid it.
 
-**Gate:** A weak visual returns to Pass 2 or 3, not to headline polishing. Clutter that
-needs explanation is a failure. An arbitrary spectacle unrelated to the offer fails.
+Before accepting the frame, run the **composition / hierarchy review** in
+[composition-review.md](composition-review.md): name the first read, supporting cue
+and product/action read; identify competing details and what to remove, subordinate
+or retain for meaning. Use its paired visual examples as comparisons, not templates.
+
+**Gate:** A weak premise returns to Pass 2 or 3, not to headline polishing. Competing
+details that obscure the intended read return to Pass 4 for recomposition. Do not
+strip away the distinctive premise, necessary context or product clarity to make the
+image cleaner. An arbitrary spectacle unrelated to the offer fails.
 
 ## Pass 5. Connect opening, turn, payoff and action
 
@@ -123,10 +151,24 @@ For each concept, record a concrete reason for each verdict:
 3. **Promise / clarity:** Does the product payoff answer the opening and make the
    benefit and next action clear? On statics, does the complete image work at a glance?
 4. **Proof / policy:** Are claims supportable and required rules preserved?
-5. **Distinctness / execution:** Is this a distinct mechanism where the brief asks for
+5. **Composition / hierarchy:** Can the eye find the intended first read and then
+   the product/action without competing details? What was removed, subordinated or
+   deliberately retained, and did the distinctive premise survive? Apply
+   [composition-review.md](composition-review.md); richness alone is not a failure.
+6. **Distinctness / execution:** Is this a distinct mechanism where the brief asks for
    variety, and can the idea be read quickly and actually produced? A deliberately
    matched pair or controlled variant is valid when that is the brief, not evidence
    of several independent ideas.
+
+7. **Brand / cultural continuity:** Do cast, setting, visual language and copy have an
+   evidence-based relationship to the destination and brief? Across a batch, check
+   for unintentional sameness or unexplained defaults in people, settings and styles.
+   An intentionally consistent cast or treatment can be right; variety is not a quota.
+   If continuity is unsupported, return to Pass 1 for evidence or Pass 3 for treatment,
+   then recheck the whole. Report source gaps honestly rather than inventing alignment.
+
+Keep this source-and-choice check compact in the working record. User-facing output
+needs only the useful rationale or material uncertainty, not a compliance essay.
 
 Score with [copy-and-hooks.md](copy-and-hooks.md), but **do not average away a failed
 gate**. Hook and Glance must each reach 4/5, One job and Proof at least 3/5, and every
@@ -148,7 +190,11 @@ Concepts-only work ends here. See the concept record in the creative schema if s
 
 Only produce the requested assets after Pass 6 passes. Inspect the actual image/video
 at delivery size, not just the prompt: first frame, timing, readable text, safe zones,
-cast/treatment consistency, claims and product demonstration. Watch a video to verify
+cast/treatment consistency, claims and product demonstration. Repeat the composition /
+hierarchy review on the actual pixels at feed size, hiding/restoring copy when the
+visual-alone gate applies:
+prompts do not prove a clear focal point. Check video frames and transitions for
+competing movement or overlays; preserve the turn and payoff. Watch a video to verify
 its pacing; an unplayed file is unverified. Re-run the gates on the execution. Repair
 a render failure or return to the concept if the idea cannot survive production.
 

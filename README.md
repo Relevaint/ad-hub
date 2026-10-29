@@ -117,7 +117,11 @@ on, saying why in one line.
 3. Every live change is logged with what changed, why, and how to undo it.
 4. No invented claims, testimonials, results, stories or scarcity.
 5. One writer per file. Only `ad-review` writes learnings.
-6. Business facts and results never live in this hub.
+6. Business facts and results never live in this hub. The owner-authorized
+   [composition gallery](core/skills/ad-creative/references/composition-examples/README.md)
+   contains generated branded teaching images only, not business records, current
+   offer authority, customer proof or performance results. This is not permission to
+   add other client material.
 
 ## Plays and source material
 

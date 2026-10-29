@@ -290,3 +290,65 @@ test("creative: separate passes, scope and hard rejection remain explicit", asyn
   assert.match(at("core/_system/schemas/creative.md"), /not a new ledger status/);
   assert.match(at("core/skills/ad-creative/references/claims-and-policy.md"), /Do not create a file just/);
 });
+
+test("creative: composition review preserves hierarchy without prescribing minimalism", async () => {
+  const { readFileSync } = await import("node:fs");
+  const hub = path.resolve(here, "../../../..");
+  const read = (p) => readFileSync(path.join(hub, p), "utf8");
+  const prefix = "core/skills/ad-creative/references/";
+  const review = read(prefix + "composition-review.md");
+  for (const rule of [/hierarchy, not mandatory minimalism/, /Richness|rich environment/, /Reject \/ rework/, /distinctive/, /concepts-only/, /not controlled single-variable tests/, /actual render/, /not conversion evidence/]) assert.match(review, rule);
+  assert.match(read("core/skills/ad-creative/SKILL.md"), /references\/composition-review\.md/);
+  const passes = read(prefix + "creative-passes.md");
+  for (const n of [4, 6, 7]) {
+    const section = passes.split(`## Pass ${n}.`)[1].split("## Pass ")[0];
+    assert.match(section, /[Cc]omposition \/\s+hierarchy/);
+  }
+  assert.match(read("core/_system/schemas/creative.md"), /Composition \/ hierarchy/);
+});
+
+test("creative: paired teaching assets are local, intact and bounded", async () => {
+  const { readFileSync, existsSync } = await import("node:fs");
+  const { createHash } = await import("node:crypto");
+  const dir = path.resolve(here, "../../../skills/ad-creative/references/composition-examples");
+  const manifest = JSON.parse(readFileSync(path.join(dir, "manifest.json"), "utf8"));
+  assert.equal(manifest.schema_version, 1);
+  const variants = new Map();
+  let bytes = 0;
+  const gallery = readFileSync(path.join(dir, "README.md"), "utf8");
+  for (const a of manifest.assets) {
+    const f = a.derivative;
+    assert.equal(path.basename(f.file), f.file, "asset must be a local filename");
+    assert.match(f.file, /\.jpg$/);
+    const data = readFileSync(path.join(dir, f.file));
+    assert.equal(createHash("sha256").update(data).digest("hex"), f.sha256);
+    assert.equal(data.length, f.bytes);
+    assert.equal(data.readUInt16BE(0), 0xffd8, "JPEG signature");
+    assert.match(a.source.sha256, /^[0-9a-f]{64}$/);
+    assert.ok(Math.abs(f.width / f.height - a.source.width / a.source.height) < 0.001, "preserve full-frame ratio");
+    assert.ok(gallery.includes(`](${f.file})`), "each asset embedded");
+    const pair = a.id.replace(/-simplified$/, "");
+    if (a.variant !== "standalone") variants.set(pair, [...(variants.get(pair) || []), a.variant]);
+    else assert.equal(a.id, "enough-mugs", "standalone benchmark must be explicit");
+    bytes += data.length;
+  }
+  assert.ok(variants.size >= 2);
+  for (const v of variants.values()) assert.deepEqual(v.sort(), ["original", "simplified"]);
+  assert.ok(bytes < 2_000_000, "keep teaching gallery lightweight");
+  for (const m of gallery.matchAll(/\]\(([^)]+)\)/g)) assert.ok(existsSync(path.resolve(dir, m[1])), `missing gallery target ${m[1]}`);
+  assert.doesNotMatch(JSON.stringify(manifest), /\/workspace\/|\/tmp\/|library_file_id|Sentinel_/);
+});
+
+test("creative: brand continuity comes from reviewed sources, not demographic defaults", async () => {
+  const { readFileSync } = await import("node:fs");
+  const hub = path.resolve(here, "../../../..");
+  const read = (p) => readFileSync(path.join(hub, p), "utf8");
+  const passes = read("core/skills/ad-creative/references/creative-passes.md");
+  const first = passes.split("## Pass 1.")[1].split("## Pass 2.")[0];
+  for (const rule of [/actual destination landing page/, /source note/, /page is unavailable/, /supplied brand direction/, /guessed race or/, /demographic quotas/, /alter ad targeting/]) assert.match(first, rule);
+  const third = passes.split("## Pass 3.")[1].split("## Pass 4.")[0];
+  assert.match(third, /nonhuman, fantasy, abstract and character-free/);
+  const sixth = passes.split("## Pass 6.")[1].split("## Pass 7.")[0];
+  for (const rule of [/Brand \/ cultural continuity/, /unintentional sameness/, /variety is not a quota/, /return to Pass 1/, /not a compliance essay/]) assert.match(sixth, rule);
+  assert.match(read("core/_system/schemas/creative.md"), /Brand\/cultural continuity/);
+});
