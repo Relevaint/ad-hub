@@ -109,7 +109,8 @@ applicable. Do not quietly switch a cold visual request into an exception to avo
 Before accepting the frame, run the **composition / hierarchy review** in
 [composition-review.md](composition-review.md): name the first read, supporting cue
 and product/action read; identify competing details and what to remove, subordinate
-or retain for meaning. Use its paired visual examples as comparisons, not templates.
+or retain for meaning. Choose text placement, reading path and CTA expression
+deliberately, independently of cast and rendering. Compare structurally different gallery examples, not templates.
 
 **Gate:** A weak premise returns to Pass 2 or 3, not to headline polishing. Competing
 details that obscure the intended read return to Pass 4 for recomposition. Do not
@@ -158,7 +159,9 @@ For each concept, record a concrete reason for each verdict:
 6. **Distinctness / execution:** Is this a distinct mechanism where the brief asks for
    variety, and can the idea be read quickly and actually produced? A deliberately
    matched pair or controlled variant is valid when that is the brief, not evidence
-   of several independent ideas.
+   of several independent ideas. Across a multi-concept batch, separately challenge
+   layout, reading path, text placement and CTA expression using the composition
+   review. Explain intentional consistency; rework accidental template repetition.
 
 7. **Brand / cultural continuity:** Do cast, setting, visual language and copy have an
    evidence-based relationship to the destination and brief? Across a batch, check
@@ -193,8 +196,9 @@ at delivery size, not just the prompt: first frame, timing, readable text, safe 
 cast/treatment consistency, claims and product demonstration. Repeat the composition /
 hierarchy review on the actual pixels at feed size, hiding/restoring copy when the
 visual-alone gate applies:
-prompts do not prove a clear focal point. Check video frames and transitions for
-competing movement or overlays; preserve the turn and payoff. Watch a video to verify
+prompts do not prove a clear focal point. For a multi-concept batch, compare actual
+renders together for unintended layout repetition, not only individual legibility.
+Check video frames and transitions for competing movement or overlays; preserve the turn and payoff. Watch a video to verify
 its pacing; an unplayed file is unverified. Re-run the gates on the execution. Repair
 a render failure or return to the concept if the idea cannot survive production.
 

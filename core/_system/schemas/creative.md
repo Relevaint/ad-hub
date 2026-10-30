@@ -33,7 +33,8 @@ Planned ad ID: <existing ID if any; otherwise not assigned>
    for static; key copy, CTA, claims mapped to supplied proof.
 6. Review: self or independent; attention, relevance, promise/clarity, proof/policy,
    composition/hierarchy, distinctness/execution and brand/cultural continuity verdicts;
-   batch sameness check when applicable; concrete reasons, revisions and return passes.
+   batch sameness check when applicable, including layout, reading path, text placement
+   and CTA expression independent of cast/style; concrete reasons, revisions and return passes.
 
 ## Concept scores
 - Glance: n; Hook: n; One job: n; Proof: n; Finish: not applicable.
@@ -108,6 +109,8 @@ execution. Do not replace this with "all passes passed".>
 - Promise fulfilled and audience relevance: ... pass / fail
 - Composition / hierarchy: first read, support, product/action; competing details
   changed or intentionally retained; premise preserved ... pass / fail
+- Batch composition: intentional consistency with reason / accidental layout or CTA
+  default reworked / not applicable; compare actual renders when produced
 - Actual render hierarchy at delivery size: inspected / not inspected / not applicable
 - Brand/cultural continuity: reviewed sources, grounded choices, gaps; batch defaults
   or mismatch corrected / intentional consistency explained

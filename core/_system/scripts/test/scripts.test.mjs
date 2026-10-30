@@ -307,7 +307,7 @@ test("creative: composition review preserves hierarchy without prescribing minim
   assert.match(read("core/_system/schemas/creative.md"), /Composition \/ hierarchy/);
 });
 
-test("creative: paired teaching assets are local, intact and bounded", async () => {
+test("creative: teaching assets preserve pairs and selected counterexamples", async () => {
   const { readFileSync, existsSync } = await import("node:fs");
   const { createHash } = await import("node:crypto");
   const dir = path.resolve(here, "../../../skills/ad-creative/references/composition-examples");
@@ -328,13 +328,22 @@ test("creative: paired teaching assets are local, intact and bounded", async () 
     assert.ok(Math.abs(f.width / f.height - a.source.width / a.source.height) < 0.001, "preserve full-frame ratio");
     assert.ok(gallery.includes(`](${f.file})`), "each asset embedded");
     const pair = a.id.replace(/-simplified$/, "");
-    if (a.variant !== "standalone") variants.set(pair, [...(variants.get(pair) || []), a.variant]);
-    else assert.equal(a.id, "enough-mugs", "standalone benchmark must be explicit");
+    if (["original", "simplified"].includes(a.variant)) variants.set(pair, [...(variants.get(pair) || []), a.variant]);
+    else if (a.variant === "standalone") assert.equal(a.id, "enough-mugs", "standalone benchmark must be explicit");
+    else assert.equal(a.variant, "counterexample", "unknown example role");
     bytes += data.length;
   }
   assert.ok(variants.size >= 2);
   for (const v of variants.values()) assert.deepEqual(v.sort(), ["original", "simplified"]);
-  assert.ok(bytes < 2_000_000, "keep teaching gallery lightweight");
+  assert.ok(bytes < 3_500_000, "keep ten full-frame teaching images lightweight");
+  const selected = manifest.assets.filter(a => a.variant === "counterexample");
+  assert.deepEqual(selected.map(a => a.selection_number), [1, 2, 3, 4, 9]);
+  assert.deepEqual(manifest.approval_additions[0].asset_ids, selected.map(a => a.id));
+  assert.equal(manifest.assets.length, 10, "preserve five existing and five selected images");
+  for (const a of selected) {
+    assert.match(a.media, /conceptual/);
+    assert.ok(a.derivative.bytes < 400_000, "compact counterexample");
+  }
   for (const m of gallery.matchAll(/\]\(([^)]+)\)/g)) assert.ok(existsSync(path.resolve(dir, m[1])), `missing gallery target ${m[1]}`);
   assert.doesNotMatch(JSON.stringify(manifest), /\/workspace\/|\/tmp\/|library_file_id|Sentinel_/);
 });
@@ -351,4 +360,19 @@ test("creative: brand continuity comes from reviewed sources, not demographic de
   const sixth = passes.split("## Pass 6.")[1].split("## Pass 7.")[0];
   for (const rule of [/Brand \/ cultural continuity/, /unintentional sameness/, /variety is not a quota/, /return to Pass 1/, /not a compliance essay/]) assert.match(sixth, rule);
   assert.match(read("core/_system/schemas/creative.md"), /Brand\/cultural continuity/);
+});
+
+
+test("creative: composition diversity is reviewed without forcing novelty", async () => {
+  const { readFileSync } = await import("node:fs");
+  const hub = path.resolve(here, "../../../..");
+  const read = p => readFileSync(path.join(hub, p), "utf8");
+  const prefix = "core/skills/ad-creative/references/";
+  const review = read(prefix + "composition-review.md");
+  for (const rule of [/Challenge the batch/, /reading path separately from premise/, /CTA treatment/, /does not require a drawn button/, /required rotation or a ban/, /controlled variant/, /actual renders as/]) assert.match(review, rule);
+  const passes = read(prefix + "creative-passes.md");
+  for (const n of [4, 6, 7]) assert.match(passes.split(`## Pass ${n}.`)[1].split("## Pass ")[0], /reading path|layout repetition/);
+  assert.match(read("core/_system/schemas/creative.md"), /Batch composition/);
+  const gallery = read(prefix + "composition-examples/README.md");
+  for (const rule of [/Start with contrasting reading paths/, /warm consideration/, /not actual inventory photography/, /not measured audience performance/, /not become the next/, /conventional stack or drawn button remains/]) assert.match(gallery, rule);
 });

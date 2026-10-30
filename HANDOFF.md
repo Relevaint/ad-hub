@@ -6,6 +6,16 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-10-30, selected composition counterexamples.
+- **Who/platform:** Clay, through the owner-directed cloud task, continuing the same platform within 24 hours.
+- **Request:** Balance the example set that was encouraging repeated upper headlines and bottom actions. After reviewing ten cross-brand renders, selected examples 1, 2, 3, 4 and 9 for the Hub.
+- **Changed:** Added five compact full-frame derivatives: physical keytag, restrained coach editorial, flowing collision ribbon, dent reflection and cinematic video-ad spectacle. Preserved all five existing images. Gallery annotations explain reading paths, fit, tradeoffs and proof limits. Required composition review now separately challenges batch layout, text placement and CTA expression, not just premise/cast/style. No ban on buttons, upper headlines or conventional layouts; controlled variants retain intentional consistency.
+- **Evidence boundary:** These are selected generated teaching examples, not conversion winners, current offers, real job results or inventory photos. The coach editorial is warm consideration and shows a representative generated vehicle, not a particular available unit. No other client assets or operational records were imported.
+- **Verification:** All 25 automated tests pass; continuity scan and six self-tests pass; 20 relative Markdown targets in changed documents resolve; whitespace check passes. Independent review inspected all five source PNGs and full-size derivatives and found no material issue; minor grammar/provenance clarifications were corrected. The implementation task separately inspected all five 390-pixel derivative previews and recorded smaller secondary type. Original gallery image bytes remain unchanged. Tests validate structure and integrity, not creative effectiveness or live campaign performance.
+- **Status / next:** Prepare a draft PR for review. No merge, campaign launch or change to client repositories is authorized by this task. Existing examples and original source PNGs remain unchanged.
+
+## Previous session: 2026-10-29 composition review
+
 - **When:** 2026-10-29, composition review follow-up.
 - **Who/platform:** Clay, through the owner-directed cloud task.
 - **Request:** Add composition / hierarchy review and original-versus-clean image comparisons. Preserve both rich and clean approaches; do not replace distinctive ideas with mandatory minimalism. Later authorized a general brand/cultural-continuity rule and merging the combined PR after verification.
