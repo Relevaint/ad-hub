@@ -38,12 +38,33 @@ at the actual pixels, not only a prompt or filename. If you cannot view an asset
 state that limit and do not claim visual QA. Apply this to video movement, overlays
 and transitions as well as stills; it does not require static-looking videos.
 
-## Learn from paired images without copying them
+## Challenge the batch, not only each image
+
+For a multi-concept request, compare layout and reading path separately from premise,
+casting, rendering style and scene density. Name where text lives, what leads the eye,
+and how the action is expressed. Different characters in the same headline/hero/button
+stack are not automatically different compositions.
+
+Ask whether repeated placement or CTA treatment is intentional and useful to this
+brief, or merely inherited from examples or a prompt boilerplate. A clear next action
+does not require a drawn button. Text may sit in the scene, in an editorial group or
+in a visual pocket when that supports legibility and the proposition. None is a quota,
+a required rotation or a ban on conventional stacks, upper headlines or buttons.
+
+When sameness is accidental, return to Pass 4, choose the reading path from the
+premise and surface, and recheck Pass 6. During Pass 7 compare the actual renders as
+a set as well as individually; prompt diversity does not prove visual diversity.
+Record one compact batch verdict: intentional consistency with reason, or the repeated
+default and what changed. For a deliberate controlled variant, preserve the matched
+layout rather than introducing confounds just to look different.
+
+## Learn from contrasting images without copying them
 
 Open the repository-native images in the [comparison gallery](composition-examples/README.md).
 Inspect the pixels when image viewing is available; text descriptions are not evidence
-that you inspected them. The comparisons preserve original and simplified executions,
-show what changed and what each gives up. They teach selective emphasis, not a
+that you inspected them. The gallery preserves original and simplified executions
+plus selected layout counterexamples. Annotations explain changes, reading paths and
+tradeoffs. They teach selective emphasis, not a
 required cast, holiday, mug, empty backdrop, headline, brand voice or composition.
 
 These are generated teaching examples, not real customer stories or approved current

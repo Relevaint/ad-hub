@@ -6,7 +6,7 @@
     "date_utc": "2026-10-29T16:57:00Z",
     "scope": "Add composition review guidance and original-versus-clean comparisons while preserving that both styles can work; approved Enough Mugs image included as a standalone hierarchy benchmark, not a comparison pair"
   },
-  "provenance_note": "Source generation artifact IDs identified by exact SHA-256 equality to the existing generation artifacts. These are artifact IDs, not external Library IDs. Source originals retained unchanged outside this repository.",
+  "provenance_note": "Original gallery generation artifact IDs were verified by SHA-256 equality. New selected counterexamples are identified by source filenames and SHA-256 hashes. All source originals remain unchanged outside the repository.",
   "derivation": {
     "tool": "Version: ImageMagick 7.1.1-43 Q16 x86_64 22550 https://imagemagick.org",
     "operations": [
@@ -128,6 +128,134 @@
         "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
         "bytes": 217802
       }
+    },
+    {
+      "id": "coach-not-yet",
+      "variant": "counterexample",
+      "selection_number": 1,
+      "composition": "scene-integrated keytag",
+      "media": "AI-generated conceptual teaching image; not an actual inventory, job-result or customer photograph",
+      "source": {
+        "filename": "01-coach-not-yet.png",
+        "sha256": "1ea93470f2341283140f6b90cca621ab54351d84dd64271ef22b23d5754891f3",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 2553527
+      },
+      "derivative": {
+        "file": "coach-not-yet.jpg",
+        "sha256": "2ed0714d7dd833d31d47e993c40f8e19224e2145c11a03f915443cba467f10ce",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 259974
+      }
+    },
+    {
+      "id": "coach-preowned-editorial",
+      "variant": "counterexample",
+      "selection_number": 2,
+      "composition": "restrained editorial",
+      "media": "AI-generated conceptual teaching image; not an actual inventory, job-result or customer photograph",
+      "source": {
+        "filename": "02-coach-preowned-editorial.png",
+        "sha256": "3c3c03b273ebfbb04b2769cb7ca223bbe4d81badd7ea45ad8a42c856a47f208f",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 2504275
+      },
+      "derivative": {
+        "file": "coach-preowned-editorial.jpg",
+        "sha256": "61e4ca58b4e45f6b407fe1163131f31238e4ec7f7797603624d1a3a3d8a0a4bf",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 234361
+      }
+    },
+    {
+      "id": "collision-paper-car",
+      "variant": "counterexample",
+      "selection_number": 3,
+      "composition": "flowing text-bearing ribbon",
+      "media": "AI-generated conceptual teaching image; not an actual inventory, job-result or customer photograph",
+      "source": {
+        "filename": "03-collision-paper-car.png",
+        "sha256": "b7d4b2668870e2708d76b00b3f5d1e069f78bb5efbb803aa9e91f735156c8b59",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 2241503
+      },
+      "derivative": {
+        "file": "collision-paper-car.jpg",
+        "sha256": "0d46674916f71451cf53b4b2e0142947a084fc9841a040da15bd000e32e872e6",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 233149
+      }
+    },
+    {
+      "id": "collision-dent",
+      "variant": "counterexample",
+      "selection_number": 4,
+      "composition": "full-bleed macro reflection",
+      "media": "AI-generated conceptual teaching image; not an actual inventory, job-result or customer photograph",
+      "source": {
+        "filename": "04-collision-dent.png",
+        "sha256": "239f0c7fa80232f750720254f95bf7dbf4e6c2aed3564033f57f48454f8a52ef",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 2202562
+      },
+      "derivative": {
+        "file": "collision-dent.jpg",
+        "sha256": "636d2d2da2e0c8c512c2529cc35ad078af4b441e0b0814144512c13392f5b997",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 226035
+      }
+    },
+    {
+      "id": "rtv-impossible-commercial",
+      "variant": "counterexample",
+      "selection_number": 9,
+      "composition": "cinematic scene and prop copy",
+      "media": "AI-generated conceptual teaching image; not an actual inventory, job-result or customer photograph",
+      "source": {
+        "filename": "09-rtv-impossible-commercial.png",
+        "sha256": "7df8afed38f27a6229374c9bdfabe48b2c6d62f2132b801435d00a7c1c2eb736",
+        "width": 1122,
+        "height": 1402,
+        "encoding": "PNG",
+        "bytes": 2491789
+      },
+      "derivative": {
+        "file": "rtv-impossible-commercial.jpg",
+        "sha256": "9aad87f6249586114d9d614ba672070f7593b6a2fdbee20c04f90f3c99755aaa",
+        "width": 896,
+        "height": 1120,
+        "encoding": "JPEG, quality 88, 4:4:4 chroma sampling, metadata stripped",
+        "bytes": 312136
+      }
+    }
+  ],
+  "approval_additions": [
+    {
+      "date_utc": "2026-10-30T06:41:37Z",
+      "scope": "User selected examples 1, 2, 3, 4 and 9 from ten generated cross-brand previews to balance the existing gallery. Creative selection only, not performance validation or campaign publication approval.",
+      "asset_ids": [
+        "coach-not-yet",
+        "coach-preowned-editorial",
+        "collision-paper-car",
+        "collision-dent",
+        "rtv-impossible-commercial"
+      ]
     }
   ]
 }
