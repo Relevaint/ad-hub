@@ -31,6 +31,7 @@ numerical rules become per-offer defaults that results can overturn.
 | `build-fb-ads-ai-agent-review.md` | Cody Schneider video | The loop; result signal; plumbing |
 | `meta-ad-basics-review.md` | Beginner video | Little new |
 | `meta-ads-kit-review.md` | Open-source repository | Safety model, tracking reference |
+| `ecommerce-alley-meta-playbook-review.md` | Ecommerce Alley PDF playbook | Testing ladder, weekly rhythm, e-commerce funnel check |
 | `conflicts.md` | All of the above | Where sources disagree and how the hub handles it |
 
 ## Adding a source

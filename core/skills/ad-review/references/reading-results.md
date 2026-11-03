@@ -47,6 +47,35 @@ Hook rate is three-second plays over impressions; link click rate is link clicks
 impressions, not all clicks. Which platform fields hold these is in the platform layer
 (`meta-system/references/reporting.md` for Meta), with the ones still to confirm marked.
 
+## Spend against results (Ecommerce Alley playbook)
+
+Read each ad on two axes: how much the platform chose to spend on it, and how it did on
+the deciding metric. Sort by spend first, then read results.
+
+| Spend | Result | Reading | Hand to |
+| --- | --- | --- | --- |
+| High | Strong | The ad to chase: new angles or hooks on its creative, or new styles and formats on its message | `ad-strategy` (remix) |
+| Low | Strong | A sleeper: give it room, judge it once it has spent | nobody yet, note it |
+| High | Weak | Meta likes it, buyers do not: raise the ad's buying intent, check page match | `ad-creative`, page owner |
+| Low | Weak | Meta is not backing it; do not chase it | the pause rule |
+
+Spend is the platform's vote, not proof of profit. The deciding metric still decides.
+
+## Funnel check for a direct online sale (Ecommerce Alley playbook)
+
+When an online-sale offer is not converting, read the steps in order and clear each
+before the next. The thresholds are that publisher's rules of thumb across its own
+clients, not Meta's or this business's; replace them with the business's own history
+once it has some.
+
+1. Cost per link click (claim: under about $1.50). Higher reads as an ad not intriguing
+   enough: back to the angle test.
+2. Cost per add to cart (claim: under about 10% of the order value). Cheap clicks with
+   costly carts point at site errors, an ad that hides that a product is for sale, a
+   price above the market, or an ad and page that do not match.
+3. Conversion rate (claim: about 2 to 5%; lower can be fine for high prices). Off here,
+   it is still most often the ad or the ad-to-page match.
+
 ## Roll-ups
 
 Group results by each ledger tag and show spend, results and cost per result or ROAS

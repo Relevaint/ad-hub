@@ -133,6 +133,10 @@ Every planned ad is one of these three things, and the sentence says which: a te
 customer type or awareness level nobody addresses, a test of a play, or a remix of a
 winner. Anything else is padding.
 
+Give the batch one testing focus (angle, hook, style or format) and write it in the
+plan; `references/test-design.md`, "What each batch tests: the ladder", has the default
+order.
+
 ### 6. Design the test from this offer's numbers
 
 `references/test-design.md` carries the working. The short form:

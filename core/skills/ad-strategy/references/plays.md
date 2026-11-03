@@ -1,7 +1,7 @@
 # Plays library
 
 last-verified: 2026-10-03 · ttl-days: 45 · refresh: review every source note added since last-verified and add its plays; for any play older than two refresh cycles, check current ad libraries to see whether the pattern is still in use and note the check date in the changes line; never record a business's results here.
-changes: 2026-10-03, first library built from ten video transcripts and one course (see source-notes/).
+changes: 2026-10-03, first library built from ten video transcripts and one course (see source-notes/). 2026-11-03, added EA plays from the Ecommerce Alley playbook review (not a full refresh; last-verified unchanged).
 
 Load when `ad-strategy` selects what to test, and when `ad-creative` builds from a
 selected play.
@@ -13,6 +13,7 @@ Plays that contradict each other stay side by side; ledger tags let results deci
 **Source key.** DD: Dara Denney videos (hooks, static, creator, strategy). C2: the
 second agency creator (lib = ad-library video, mcp = connector video). CS: Cody
 Schneider video. MB: "Meta ad basics" video. BH n.n: Ben Heath Ads Academy lesson.
+EA: Ecommerce Alley "Ecommerce Meta Ads Playbook, Tier 1" PDF.
 Source reviews with dates are in `source-notes/`.
 
 ## Hooks
@@ -102,6 +103,9 @@ A hook is the on-screen text, the sound and the first frame together.
 | copy-low-stakes-cta | A small, friendly next step | Calls and consultations | BH 14.6 |
 | copy-three-step | Problem, solution, specific action; avoid a vague "learn more" | Beginners' first ads | MB |
 | copy-multi-text | Up to five texts and five headlines inside one ad rather than separate ads | Any | BH 16.5 |
+| copy-three-two-one | Three primary texts, two headlines and one description per creative, each written for that creative and different from the others | Any | EA |
+| angle-focus | Brainstorm angles from five buckets: Frustration, Outcome, Constraint, Unspoken cost, Skepticism; if fewer than ten hooks fit under one, it is a hook, not an angle | Any; first angle test | EA |
+| angle-villain-default | Make the default alternative the villain and every complaint about it a hook | Replacement products | EA |
 
 ## Offer and urgency
 
@@ -129,3 +133,6 @@ A hook is the on-screen text, the sound and the first frame together.
 | dist-message-human-first | Run message funnels with a person before automating | Message funnels | BH 10.4 |
 | dist-remix-winner | Feed winners back into testing as remixes, with fresh inputs each cycle | Any | CS |
 | dist-campaign-reset | Relaunch the same ads in a new campaign after other fixes fail | Last resort | BH 24.2 |
+| test-ladder | Test angles, then hooks, then styles, then formats, one focus per batch; lock the winner and climb | Any | EA |
+| dist-weekly-batch | One evergreen sales campaign; a new ad set of three to five diverse ads every week, launched on the best converting day | Direct online sales | EA |
+| static-to-video | Rebuild a winning static as a 9:16 video once angle, hook and style have won | Accounts starting on images | EA |

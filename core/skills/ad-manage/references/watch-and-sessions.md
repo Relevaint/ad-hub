@@ -37,6 +37,13 @@ most recent two to three days are still settling. A new ad looks worse than an
 established one for its first day or two. None of these is an emergency; all of them
 wait for the session.
 
+When results crash across the account, check first for an outage on the platform, the
+store or checkout, or the hosting behind them; if one is found, nothing is changed and
+the outage is noted for the calendar (Observed, Ecommerce Alley playbook). With no
+outage, widen the window to fourteen days before reading it, assume creative, message
+or offer before blaming the market, and make no changes for 48 to 72 hours. A
+destination that is actually down is still the emergency in the list above.
+
 ## The session checklist
 
 1. Confirm the session is due: the test plan's date, or the business called one. A
