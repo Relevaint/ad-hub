@@ -6,6 +6,16 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-11-03, Ecommerce Alley playbook review.
+- **Who/platform:** Clay, through a cloud task in the Claude app (identified in the conversation).
+- **Request:** Compare an e-commerce Meta ads playbook PDF with the hub, then fold its best ideas in as a draft PR marked as rules of thumb, not authority. Clay reviews and merges.
+- **Changed:** New source review `source-notes/ecommerce-alley-meta-playbook-review.md`, indexed and recorded in `PROVENANCE.md`. Test design gains the angle, hook, style, format ladder with one focus per batch, a target 25% better than break-even when none is set, a weekly launch option for direct online sales, and a simple scale band (20 to 30% a week above target). Plays library gains six EA plays. Results reading gains a spend-against-results grid and an online-sale funnel check with the publisher's thresholds labelled as claims. The bad-day section checks for outages first. Meta defaults gain the playbook's UTM string, ad set naming, copy counts and ratios as claims. Five new rows in `conflicts.md`. `ad-strategy` step 5 points at the ladder. No hard rule, default structure or pause rule changed.
+- **Verification:** `npm test` and the continuity check; results in the PR. Regression cases not rerun with a fresh agent.
+- **Limits:** Draft PR only, by Clay's request; not merged. No live account, business repo, installation or permission touched.
+- **Next:** Clay reviews the draft PR. After merge, the next Gift Smith strategy session is the natural first use of the weekly launch option and the ladder.
+
+## Previous session: 2026-10-29 composition review follow-up
+
 - **When:** 2026-10-29, composition review follow-up.
 - **Who/platform:** Clay, through the owner-directed cloud task.
 - **Request:** Add composition / hierarchy review and original-versus-clean image comparisons. Preserve both rich and clean approaches; do not replace distinctive ideas with mandatory minimalism. Later authorized a general brand/cultural-continuity rule and merging the combined PR after verification.

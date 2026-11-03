@@ -15,6 +15,12 @@ Illustrative: a $29 digital product at 92% margin breaks even at $26.68 per purc
 ROAS of about 1.09. A $340 service job at 50% margin where 45% of booked estimates are
 won breaks even at $76.50 per booked estimate.
 
+**Target.** Where the business has set no target, propose one about 25% better than
+break-even: ROAS times 1.25, or cost per result divided by 1.25 (Observed, Ecommerce
+Alley playbook). Illustrative: break-even ROAS 1.8 gives a target of 2.25; break-even
+$30 per purchase gives $24. It marks the line above which the budget band may scale;
+it is Proposed until the business confirms it.
+
 ## Time to a confident answer
 
 Enough data is not a number of days. It depends on how many results arrive and how far
@@ -47,6 +53,16 @@ emergencies (hub decision 8). Set the session cadence from volume:
 One type of account change per session. Killing weak ads and adding new ones is one
 change. Write the next session date in the plan.
 
+**Direct online sales: a weekly launch option.** For a store selling online, the
+Ecommerce Alley playbook launches a new batch every week regardless of volume, and lets
+the platform's spend allocation and the campaign's own result do the early judging
+(Observed). Where the business picks this, write it into the plan: analyse and build
+early in the week, launch on the store's best converting day by its own data (the
+playbook's default is Thursday, ahead of Friday and Saturday), launch whatever is ready
+rather than skip a week. Judging individual ads still follows the bar above; the
+weekly batch adds swings, it does not shorten the window for calling a winner. The
+hub's conflicts note records the tension with the hold rule below.
+
 ## Batch size and the hold rule
 
 Default production target from the course: about twenty genuinely different ads per ad
@@ -61,6 +77,29 @@ campaign only when it would itself reach about fifty results a week; otherwise t
 inside the one campaign and ad set (Observed, 19.2; the hub's conflicts note records
 the other position). Where the platform has a creative testing feature, new ads enter
 through it so they get spend (play `dist-test-slot`).
+
+## What each batch tests: the ladder
+
+A default order for choosing a batch's one testing focus, cheapest variable first
+(Observed, Ecommerce Alley playbook; play `test-ladder`):
+
+1. **Angles.** The umbrella message. Several angles, one hook each, until one wins.
+2. **Hooks.** Many ways to say the winning angle: what is seen, read, heard, and the
+   sound. Images have hooks too (the image and its text).
+3. **Styles.** The winning hook shown different ways: comparison, founder story,
+   advertorial, sticky notes, demonstration, and so on.
+4. **Formats.** Move the winning static into video (9:16), or the reverse.
+
+One testing focus per batch, written in the plan, so the result can be read; mixing
+angle, hook and style changes in one batch leaves nothing to follow. Lock a winner at
+one rung, then test the next rung on it. Dropping back to test fresh angles beside a
+higher rung is fine when production and budget allow. Start with images where they are
+faster to make. Rule of thumb for angle versus hook: if fewer than ten hooks fit under
+it, it is a hook. This sits on top of the gap checks in the skill: the gap table says
+which customer type and awareness level the batch serves; the ladder says what varies
+inside it.
+
+## Mix and risk
 
 Safe-to-bold mix: most of a batch near-certain approvals, a minority bold, to protect
 the account's approval record while unusual plays run (Observed, 24.6). Default three
@@ -108,7 +147,11 @@ or results confirm them:
 - Budget band: scale up in small steps while the metric is well inside break-even, hold
   in the middle zone, scale down past a worse threshold, with a floor, a ceiling and a
   short lookback, all from the business's band in `ads/authority.md`. No band set means
-  no budget moves.
+  no budget moves. A simple band to propose for a direct online sale (Observed,
+  Ecommerce Alley playbook): below break-even, run the pause rule; between break-even
+  and target, hold; above target over the last seven days, raise the campaign budget
+  20 to 30% a week, expect a two to three day dip, and step back if it does not
+  settle. Proposed until the business records it.
 - Judge nothing in the most recent two to three days. Fatigue check: frequency rising
   with cost worsening means a meaningfully different replacement, which the next batch
   should already hold.

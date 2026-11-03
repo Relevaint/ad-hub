@@ -1,7 +1,7 @@
 # Meta names for the plain-word baseline (perishable: check the header first)
 
 last-verified: 2026-10-20 · ttl-days: 60 · refresh: re-read the Ads CLI command reference for the objective, optimisation goal, billing event, special ad category, custom event and button values; read Meta's Marketing API targeting reference for the location, placement and audience expansion fields and replace every MODEL KNOWLEDGE line with Meta's own names; re-check the course review's defaults against results in the business repos; bump last-verified.
-changes: 2026-10-20, first written. Enum values from the command reference read the same day. Operating defaults are the course review's claims and are marked as such. Field names not yet read from Meta's own reference are marked MODEL KNOWLEDGE.
+changes: 2026-10-20, first written. Enum values from the command reference read the same day. Operating defaults are the course review's claims and are marked as such. Field names not yet read from Meta's own reference are marked MODEL KNOWLEDGE. 2026-11-03, added the Ecommerce Alley playbook's setup claims under operating claims; no Meta fact changed, last-verified unchanged.
 
 Load when a core skill writes or executes the settings baseline in `ads/platform/meta.md`.
 The platform file describes settings in plain words; this file says what each one is
@@ -56,3 +56,24 @@ relying on it; never pass it to a tool unchecked).
 - Budget steps: about 3% a day by rule, or bigger and rarer by hand, inside the band the
   business set (course review 18.2, 18.3). The band itself comes from `ads/authority.md`.
 - Keep the first ad's enhancements off and the ad's own crop (course review 2.5).
+
+### Ecommerce Alley playbook setup claims (2026-11-03, direct online sales)
+
+Claims to test, not Meta facts; none replaces a row in the settings table above.
+
+- Tracking string on every ad, built from Meta's name macros:
+  `utm_source=meta&utm_medium=cpc&utm_campaign={{campaign.name}}&utm_term={{adset.name}}&utm_content={{ad.name}}`.
+  Since the ad's name is the ad ID, `utm_content` then carries the ID. Use it only
+  where the business's result source reads UTM parameters; otherwise keep the
+  parameter that source already reads. Confirm the macros resolve on the first run.
+- Ad set name when each weekly batch has its own ad set: the batch ID and the test
+  focus, for example `2611-a | angle test`. The ad name stays the ad ID.
+- Copy per creative: three primary texts, two headlines, one description, each written
+  for that creative (play `copy-three-two-one`; up to five each is the platform limit,
+  see the settings table).
+- Ratios: images 4:5 at 1440 x 1800, video 9:16 at 1080 x 1920 and under 90 seconds.
+  `placements.md` holds the placement specs these must fit.
+- Budget at campaign level of about three times the target cost per purchase, $50 a
+  day at least, as a starting proposal; the ceiling stays the business's.
+- Budget step above target: 20 to 30% a week at campaign level, on a seven-day
+  lookback (test-design, "The rulebook, per offer").
