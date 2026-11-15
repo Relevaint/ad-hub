@@ -17,13 +17,15 @@ skipped layer visible to the agent itself and to whoever reads the result.
    or read [work-orders/README.md](../../work-orders/README.md) and open the file for the
    output. A request that is unclear or spans several outputs goes to `start-here`, which
    names the work orders in order.
-2. **Load everything it lists.** The owner skill and each file under "Load first", in full,
-   plus the conditional ones that apply. Reading a file in an earlier session does not count.
+2. **Load everything it lists.** The owner skill, each file under "Load first", the
+   conditional ones that apply and the business's files the request rests on, each to its
+   last line: `head`, a line range, a search or a reader that stops at a line limit is a
+   read in part, and a file read in part is not read. An earlier session's read does not count.
 3. **Work the layers in order.** For each layer: build that layer only, answer its check
-   from the evidence it names, write its line in the layer record, then move on. When the
-   output writes a file, the layer's result goes into that file before the next layer
-   starts: the finished piece is assembled from the layer results, never drafted first
-   and labelled afterward. Order is the agent's word: neither the files nor the checker
+   from the evidence it names, write its line in the layer record, then move on. The
+   layer's result goes into the notes file, under a heading with the layer's id, before the
+   next layer starts: the finished piece is assembled from the layer results, never drafted
+   first and labelled afterward. Order is the agent's word: neither the files nor the checker
    can prove which layer was built first, which is why each result is written down as it
    is reached.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
@@ -77,9 +79,14 @@ skipped layer visible to the agent itself and to whoever reads the result.
 - **Three repair cycles, then stop.** The limit is a stopping point, not a pass. Work that
   still fails is withheld from the ready set and reported with what failed. A requested
   count is never padded with failed work.
-- **Use a fresh reviewer for review layers when one is available,** given the brief, the
-  constraints and the work, without the author's pitch or scores. Otherwise review in a
-  separate pass and call it self-review.
+- **Review with a fresh agent when one can be started,** handed [the review brief](#the-review-brief)
+  without the author's pitch or scores. Otherwise run the brief as a separate pass and call
+  it self-review.
+- **Facts carry over; sentences do not.** The business's site, emails, earlier ads, brand
+  files and brief supply facts. A line that is one of their sentences trimmed or reworded
+  is rewritten for this surface, in the register of the owner's examples and corrections
+  for the channel. Offer terms, names, prices and required legal or identity strings stay
+  exact. Across a set, no sentence, opening or argument repeats from ad to ad; offer terms may.
 
 ## When something changes
 
@@ -121,11 +128,20 @@ One row per layer in the work order, in order, then the whole-output row and the
 It goes at the end of the file the output writes, under the heading below. An output that
 writes no file carries it in the reply on its own line, starting with
 `Layers (<work order>):`, every layer by name with its verdict and a few words of
-evidence in brackets, then the state. The work order prints the line to fill in.
+evidence in brackets, then the state and the notes file (`... State: <state>. Notes: <path>`).
+The work order prints the line to fill in.
+
+The notes file holds each layer's result under a heading carrying the layer's id, written
+as the work proceeds: the job, the premises kept and rejected, the claims, the reviewer's
+findings and the repairs. It is the output's own file when the work order writes one;
+for a reply, a scratch file outside the hub, and outside the business repo unless the
+business says outputs go there. Only a session that cannot write files writes
+`Notes: none (why)`.
 
 ```markdown
 ## Layer record
 Work order: <id>
+Notes: <path to the notes file>
 Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
@@ -149,7 +165,11 @@ essay.
 Check a record before sending it, every time; a record that fails is fixed, not sent:
 `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe a reply in with
 `--record -`. It fails on a missing layer, a pass with no evidence, a pass whose evidence
-says the check was not made, two verdicts in one row, or a state the rows do not support.
+says the check was not made, two verdicts in one row, a state the rows do not support, a
+failed, unchecked or partial layer not named by its id after `State:`, or a missing
+evidence item. A one-line or piped record with no `Notes:` line fails. Given a notes file,
+it opens it: each passed layer needs its heading with at least 15 words under it, and the
+loading layer names every file under Load first, none read in part.
 Each state lists the layers it needs. The ones the work order shows in bold must be
 `pass` or `carried`; `n/a` is not accepted there. The whole-output row is never `n/a`,
 and no state stands on `n/a` rows alone. A state takes no exceptions: `rechecked, except the
@@ -157,6 +177,33 @@ live ads` is not `rechecked`. Claim the weaker state and name what remains.
 
 Business facts in a record stay in the business repo with the file they belong to. Nothing
 from a record is written into the hub.
+
+## The review brief
+
+Handed word for word to the reviewer, with the paths filled in. When no fresh agent can be
+started, the maker runs it as a separate pass after the draft is finished and answers every
+item in writing in the notes file. It adds to the review layer's own gates and scores.
+
+> You did not make this. Trust nothing in the maker's notes until you have opened the file
+> it points at. You have the request as typed, the output, the work-order page, the maker's
+> notes file, the sources, and the owner's rules and examples for this channel (paths
+> below). Answer each check with a quoted line and a verdict:
+>
+> 1. Open every source and every rules or examples file to its last line.
+> 2. Every fact, price, date, name and claim traces to a source and keeps the conditions
+>    its source attaches; nothing is implied that no source supports.
+> 3. Own words: facts carry over, sentences do not. Quote the two closest existing passages
+>    beside the lines that resemble them.
+> 4. The owner's register: quote each of the owner's corrections for this channel that the
+>    piece follows or breaks, and say what the owner would cut first.
+> 5. One job per piece, and nothing repeated across a set.
+> 6. Each layer's check question from the work-order page, answered from the output, not
+>    from the maker's record.
+> 7. The record: something to open behind every pass, a state no stronger than the rows,
+>    every failed or unchecked layer named beside the state.
+>
+> Return numbered findings (line, rule or source, fix), each marked blocking or not. Do not
+> rewrite the work.
 
 ## What the operator sees
 

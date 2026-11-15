@@ -10,7 +10,7 @@
 **Part of:** [`ad-batch`](ad-batch.md)
 **Live account:** not reached
 
-Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its line in the layer record, then move on. Do not draft the finished output first and check it afterward.
+Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
 
 ## Load first
 
@@ -38,7 +38,8 @@ Also, when it applies:
 - **Build:** A compact brief: audience and situation, awareness and surface, one desire or problem, the offer and its defensible benefit, proof available and claims forbidden, one message and action, constraints, the exact deliverables asked for; plus a source note for the destination page and brand material actually looked at.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 1 fundamentals before creative"](../core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative); [ad-creative/SKILL.md, "1 take the brief from the row"](../core/skills/ad-creative/SKILL.md#1-take-the-brief-from-the-row)
 - **Check:** Can this ad do one clear job for this audience inside the brief, with every unknown fact left unknown?
-- **Evidence:** The offer file's proof table and limits; the destination page opened and viewed, or the gap named; the ledger row's sentence when there is one.
+- **Evidence:** The offer file's proof table and limits; the destination page opened and viewed, or the gap named; the ledger row's sentence when there is one. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.
+- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.
 - **If it fails:** Resolve the brief or ask only for the blocking choice. Never invent a customer story or a fact to move on.
 
 ### 2. Premises (`premises`)
@@ -83,10 +84,11 @@ Also, when it applies:
 
 ### 7. Adversarial review and revision (`review`)
 
-- **Build:** A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 6 adversarial concept review then revision"](../core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision); [ad-creative/references/copy-and-hooks.md, "the rubric"](../core/skills/ad-creative/references/copy-and-hooks.md#the-rubric)
+- **Build:** A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; its findings are repaired at the layer each one names, and the review runs again on what changed. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.
+- **Method:** [ad-creative/references/creative-passes.md, "pass 6 adversarial concept review then revision"](../core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision); [ad-creative/references/copy-and-hooks.md, "the rubric"](../core/skills/ad-creative/references/copy-and-hooks.md#the-rubric); [_system/staged-work.md, "the review brief"](../core/_system/staged-work.md#the-review-brief)
 - **Check:** Does every gate pass with a concrete reason, with Hook and Glance at 4 or more and One job and Proof at 3 or more, and no average hiding a failed gate?
-- **Evidence:** The seven verdicts with their reasons, the rubric scores, who reviewed (a fresh reviewer or self-review), and what changed in each revision cycle.
+- **Evidence:** The seven verdicts with their reasons and what changed in each revision cycle; the reviewer, the findings and the four scores, each score with its reason.
+- The row's evidence gives each of these as `name: what was found`: `reviewer`, `findings`, `hook`, `glance`, `one job`, `proof`
 - **If it fails:** Return to the pass that failed, change that part, review the connected whole again. Three cycles at most, then withhold the concept and report the shortfall.
 
 ### Whole output (`whole`)
@@ -113,7 +115,7 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 | concept-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, **`claims`**, **`review`**, `whole` | A document verdict: untested, not a ledger status, not copy-ready and not a finished asset. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
 
-A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. Any layer that failed, was not checked or is partial, the whole row included, is named by its id after `State:`; the checker fails a record that leaves one out. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
 
 ## Layer record
 
@@ -122,6 +124,7 @@ Where it goes: In the reply, as one line. When concepts are saved, in the concep
 ```markdown
 ## Layer record
 Work order: ad-concepts
+Notes: <path to the notes file>
 Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
@@ -138,10 +141,12 @@ State:
 
 One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
 
+Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it, and the loading layer names every file under Load first.
+
 In a reply with no file, put the record on its own line, starting with `Layers (ad-concepts):`, every layer in order with a few words of evidence in brackets:
 
 ```
-Layers (ad-concepts): fundamentals pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+Layers (ad-concepts): fundamentals pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>. Notes: <path>
 ```
 
 Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

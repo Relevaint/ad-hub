@@ -9,7 +9,7 @@
 **Contains:** [`ad-concepts`](ad-concepts.md), [`ad-copy`](ad-copy.md), [`static-ad`](static-ad.md), [`video-ad`](video-ad.md), [`ad-remix`](ad-remix.md)
 **Live account:** not reached
 
-Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its line in the layer record, then move on. Do not draft the finished output first and check it afterward.
+Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
 
 ## Load first
 
@@ -30,7 +30,8 @@ Build this one layer at a time, in order, under [staged work](../core/_system/st
 - **Build:** For each planned row: its one job, plays, customer type, awareness, format, style, and the proof rows it may lean on.
 - **Method:** [ad-creative/SKILL.md, "1 take the brief from the row"](../core/skills/ad-creative/SKILL.md#1-take-the-brief-from-the-row)
 - **Check:** Is each ad's one job the sentence in its ledger row, with the scope of the request (concepts, copy, or finished assets and which shapes) written down?
-- **Evidence:** The ledger rows and the request, read literally.
+- **Evidence:** The ledger rows and the request, read literally. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.
+- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.
 - **If it fails:** A row with no reason, or two rows with one reason, goes back to ad-strategy. Never invent a row or rename an ID.
 
 ### 2. Make each ad through its own work order (`ads`)
@@ -46,7 +47,7 @@ Build this one layer at a time, in order, under [staged work](../core/_system/st
 - **Build:** All the batch's hooks, first frames, casts, settings and styles laid side by side against the rows' reasons.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 6 adversarial concept review then revision"](../core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision)
 - **Check:** Does each ad still test what its row says the others do not, with no accidental sameness in people, settings, styles or hooks?
-- **Evidence:** The side-by-side list.
+- **Evidence:** The side-by-side list, primary texts and headlines included: no sentence repeats from one ad to another except the offer terms.
 - **If it fails:** Return the duplicate to its own work order at premises or cast and treatment. A deliberately matched pair is named as one.
 
 ### 4. Ad against destination (`destination`)
@@ -92,7 +93,7 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 | batch partly ready | **`briefs`**, **`ads`** | Some rows are ready and some are withheld; the review names each and why. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
 
-A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. Any layer that failed, was not checked or is partial, the whole row included, is named by its id after `State:`; the checker fails a record that leaves one out. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
 
 ## Layer record
 
@@ -101,6 +102,7 @@ Where it goes: In ads/creative/<batch>/batch-review.md, under ## Layer record.
 ```markdown
 ## Layer record
 Work order: ad-batch
+Notes: <path to the notes file>
 Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
@@ -115,10 +117,12 @@ State:
 
 One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
 
+Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it, and the loading layer names every file under Load first.
+
 In a reply with no file, put the record on its own line, starting with `Layers (ad-batch):`, every layer in order with a few words of evidence in brackets:
 
 ```
-Layers (ad-batch): briefs pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+Layers (ad-batch): briefs pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>. Notes: <path>
 ```
 
 Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.
