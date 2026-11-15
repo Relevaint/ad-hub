@@ -792,6 +792,19 @@ test("work orders: the tool hands out one layer at a time", async () => {
     assert.equal(stampsIn(notes), 2);
     assert.equal(wo("--id", "ad-copy", "--layer", "fundamentals", "--notes", notes).code, 0);
     assert.equal(stampsIn(notes), 2, "opening a layer again adds no line");
+    // The tool keeps its own ledger of the stamps beside the notes: a notes file rewritten
+    // whole loses its stamps, the ledger keeps them, and reopening adds nothing.
+    const ledger = `${notes}.opened`;
+    const kept = fs.readFileSync(ledger, "utf8");
+    assert.equal((kept.match(/opened: ad-copy\//g) || []).length, 2);
+    const rewritten = path.join(tmp, "rewritten.md");
+    assert.equal(wo("--id", "ad-copy", "--layer", "fundamentals", "--notes", rewritten).code, 0);
+    const first1 = fs.readFileSync(`${rewritten}.opened`, "utf8");
+    fs.writeFileSync(rewritten, "## fundamentals\nRead every file under Load first to its last line, and the business's brief and channel rules, before any premise.\n");
+    assert.equal(stampsIn(rewritten), 0);
+    assert.equal(wo("--id", "ad-copy", "--layer", "fundamentals", "--notes", rewritten).code, 0);
+    assert.equal(stampsIn(rewritten), 0, "a layer whose stamp is in the ledger is not stamped again");
+    assert.equal(fs.readFileSync(`${rewritten}.opened`, "utf8"), first1);
     // The stamp lines do not count toward a section's words.
     fs.appendFileSync(notes, "\n## premises\nFour kept.\n");
     assert.equal(wo("--id", "ad-copy", "--layer", "cast-treatment", "--notes", notes).code, 1);
