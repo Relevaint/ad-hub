@@ -71,7 +71,7 @@ node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
 ```
 
 or open it from [work-orders/](../../../work-orders/README.md). This skill owns
-`ad-batch`, `ad-concepts`, `ad-copy`, `static-ad`, `video-ad`, `ad-remix`, `claims-check`. The creative passes are the first six layers of every creative work order; copy, production and review of the actual render follow. A video adds the build layers in `references/video-build.md`.
+`ad-batch`, `ad-concepts`, `ad-copy`, `static-ad`, `video-ad`, `ad-remix`, `claims-check`. The creative passes and the claims gate are the first layers of every creative work order. Where the work order writes copy, the copy per placement (and a video's script) comes before the adversarial review, so the review reads the words the buyer will see; production and review of the actual render follow. A video adds the build layers in `references/video-build.md`.
 The method below is what each layer points at, and the quality gate is the whole-output
 check. Do not draft the finished output and check it afterward. Report the state the
 record supports, nothing stronger.
@@ -101,8 +101,8 @@ Read `references/creative-passes.md`, `references/opening-dynamics.md`,
 `references/claims-and-policy.md` before drafting, and `references/video-build.md` for
 any video that will be produced or briefed.
 The required sequence is fundamentals -> premises -> independent casting/treatment ->
-visual stop -> connected hook/turn/offer -> adversarial concept review -> authorized
-production/render review. Each pass is a layer in the work order: it produces its line in
+visual stop -> connected hook/turn/offer -> (the copy per placement, when copy is asked
+for) -> adversarial concept review -> authorized production/render review. Each pass is a layer in the work order: it produces its line in
 the layer record and has a return path. Do not collapse them into one checklist performed
 after writing. Steps below supply the brief, truth checks, copy and production mechanics
 inside those passes.
@@ -154,7 +154,9 @@ Complete Passes 2–4 of `references/creative-passes.md` before polishing langua
 compare distinct premises, choose cast separately from rendering, and test the actual
 opening image. Pass 5 connects the opening, turn, product payoff and action. Pass 6
 rejects failures before presenting concepts or producing assets; use its explicit
-thresholds and revision paths. Concepts mode stops there.
+thresholds and revision paths. Concepts mode stops there. When copy is asked for, it is
+written after Pass 5 and the claims gate and before Pass 6, so the review reads every
+field the buyer will see.
 
 For production copy, the hook first. A hook is three things at once, what the viewer reads, what they hear,
 and what is in the first frame (Observed, hooks review); write all three, even for a

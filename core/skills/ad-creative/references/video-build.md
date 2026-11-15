@@ -1,8 +1,9 @@
 # Video build: from a passed concept to a watched file
 
-Load for any video ad that will be produced or handed off as a production brief, after
-the concept has passed Pass 6 in [creative-passes.md](creative-passes.md). It splits
-Pass 7 for video into parts, because a video is several things that fail separately: a
+Load for any video ad that will be produced or handed off as a production brief. Part 1,
+the script, is written after Pass 5 and before Pass 6 in
+[creative-passes.md](creative-passes.md), so the review reads every spoken and on-screen
+line; Parts 2 to 7 follow once Pass 6 passes. It splits Pass 7 for video into parts, because a video is several things that fail separately: a
 sequence that does not progress, a first frame nobody stops for, a scene that drifts, a
 caption with a wrong word, sound that fights the voice, a cut that buries the turn, a
 shape that crops the product out.
@@ -68,7 +69,8 @@ inside the safe zones; the ad makes sense with the sound off; with the sound on,
 line is audible over the music; required strings are present where the format has room.
 
 **If it fails:** fix the layer that is wrong. A caption fix does not regenerate a good
-scene; a music change does not re-record a good voice.
+scene; a music change does not re-record a good voice. A spoken or on-screen line the
+reviewed script and copy do not hold goes back to the review as a re-check.
 
 ## Part 5. The edit
 

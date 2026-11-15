@@ -41,8 +41,8 @@ Also, when it applies:
 4. **Visual stop and hierarchy** (`visual-stop`): The actual first frame or single image, described concretely: focal point, action or contrast, what is understood at once, the question it raises; then its hierarchy: first read, supporting cue, product or action read.
 5. **Connected payoff** (`connection`): The hook as image, text and sound; then opening, development, turn, product payoff and action for video, or one complete proposition for a static; key copy and call to action.
 6. **Claims and permissions** (`claims`): The claims map: every factual thing the ad says, shows or implies (a number, rating, review, credential, guarantee, price, result, story, comparison, urgency, and a result the picture implies without saying it, such as a before and after) set against the offer's proof, with the permission behind any review, testimonial or customer story; then the policy check.
-7. **Adversarial review and revision** (`review`): A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; its findings are repaired at the layer each one names and reviewed again as the review brief says. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.
-8. **Copy per placement** (`copy`): The fields each placement needs, within the platform layer's lengths: hook as text, first frame and sound; primary text; headlines; description; call to action; required strings; the final claims map.
+7. **Copy per placement** (`copy`): The fields each placement needs, within the platform layer's lengths: hook as text, first frame and sound; primary text; headlines; description; call to action; required strings; the final claims map.
+8. **Adversarial review and revision** (`review`): A separate review of each concept as a distracted viewer, reading every word the buyer will read or hear that the work order writes before it (the timed beats and the fields each placement needs: primary text, headlines, description, call to action): attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; each blocking finding is repaired at the layer it names, opened again with --repair, and re-checked as the review brief says. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.
 9. **Ad against destination** (`destination`): The ad read beside the page it sends people to.
 10. **Whole output** (`whole`): the assembled output, checked last.
 
@@ -60,17 +60,17 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | If this changes | Check again | Note |
 | --- | --- | --- |
-| A claim, the price, an offer term or a proof row changes | `claims`, `copy`, `destination`, `whole`, work order [`launch`](launch.md) | Every field that carried the old claim, the page match, and any approval that covered the old wording. Assets with the old words in them go back through their own work order. |
-| A hook, on-image line, headline or primary text is rewritten, after review included | `visual-stop`, `connection`, `review`, `copy`, `whole` | The review runs again on the new words; a self-check of them is not a review. |
+| A claim, the price, an offer term or a proof row changes | `claims`, `copy`, `review`, `destination`, `whole`, work order [`launch`](launch.md) | Every field that carried the old claim, the page match, and any approval that covered the old wording. Assets with the old words in them go back through their own work order. |
+| A hook, on-image line, headline or primary text is rewritten, after review included | `visual-stop`, `connection`, `copy`, `review`, `whole` | The review re-checks the new words; a self-check of them is not a review. |
 | The landing page changes | `fundamentals`, `destination` | The promise and the next action must still match. |
-| A placement is added or removed | `copy` | Only that placement's fields. |
-| The audience, the awareness level or the test variable changes | `fundamentals`, `premises`, `review`, `copy` | Treat it as a new concept: every later layer follows. |
+| A placement is added or removed | `copy`, `review` | Only that placement's fields, and a re-check of them. |
+| The audience, the awareness level or the test variable changes | `fundamentals`, `premises`, `copy`, `review` | Treat it as a new concept: every later layer follows. |
 
 ## What it can be called
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| copy-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, **`claims`**, `review`, **`copy`**, `whole` | Copy and claims map are done. No asset has been made or inspected. Untested. A destination that was not checked is named beside the state. |
+| copy-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, **`claims`**, **`copy`**, `review`, `whole` | Copy and claims map are done. No asset has been made or inspected. Untested. A destination that was not checked is named beside the state. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
 
 A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. Any layer that failed, was not checked or is partial, the whole row included, is named by its id after `State:`; the checker fails a record that leaves one out. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
@@ -92,8 +92,8 @@ Date: <YYYY-MM-DD>
 | 4 visual-stop |  |  |  |
 | 5 connection |  |  |  |
 | 6 claims |  |  |  |
-| 7 review |  |  |  |
-| 8 copy |  |  |  |
+| 7 copy |  |  |  |
+| 8 review |  |  |  |
 | 9 destination |  |  |  |
 | whole |  |  |  |
 State:

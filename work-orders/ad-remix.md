@@ -33,8 +33,8 @@ Also, when it applies:
 
 1. **Name what stays fixed** (`fixed`): The proven element named exactly (the body, or the hook), the one variable that changes, and the remix row.
 2. **Develop the change** (`change`): The new hooks or the new body, as real alternatives on the one variable.
-3. **Review the whole ad** (`review`): The adversarial review of each remixed ad, fixed element and change together. Made as the review brief says: a fresh agent when one can be started, otherwise a separate pass answered in the notes file.
-4. **Copy per placement** (`copy`): The fields the remix changes, within the platform layer's lengths, and the claims map for anything new.
+3. **Copy per placement** (`copy`): The fields the remix changes, within the platform layer's lengths, and the claims map for anything new.
+4. **Review the whole ad** (`review`): The adversarial review of each remixed ad, fixed element, change and the new copy together. Made as the review brief says: a fresh agent when one can be started, otherwise a separate pass answered in the notes file.
 5. **Authorised production** (`production`): Only the new assets the request authorises, or the production brief when nothing here can make them.
 6. **Render review** (`render-review`): An inspection of each new file at the size it will be seen.
 7. **Whole output** (`whole`): the assembled output, checked last.
@@ -53,22 +53,22 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | If this changes | Check again | Note |
 | --- | --- | --- |
-| The original's claim or proof changes | `fixed`, `copy`, `whole`, work order [`launch`](launch.md) | The fixed element is only fixed while it is still true. |
+| The original's claim or proof changes | `fixed`, `copy`, `review`, `whole`, work order [`launch`](launch.md) | The fixed element is only fixed while it is still true. |
 | A new result changes which element is proven | `fixed`, `change` | Ask ad-strategy for the row. |
 
 ## What it can be called
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| copy-ready | **`fixed`**, `change`, `review`, **`copy`** | The remix's copy and claims are done; new assets are not made or not inspected. |
-| creative-ready | **`fixed`**, `change`, `review`, **`copy`**, **`production`**, **`render-review`**, **`whole`** | Every authorised shape exists and was inspected. Not approved, not live, untested. |
+| copy-ready | **`fixed`**, `change`, **`copy`**, `review` | The remix's copy and claims are done; new assets are not made or not inspected. |
+| creative-ready | **`fixed`**, `change`, **`copy`**, `review`, **`production`**, **`render-review`**, **`whole`** | Every authorised shape exists and was inspected. Not approved, not live, untested. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
 
 A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. Any layer that failed, was not checked or is partial, the whole row included, is named by its id after `State:`; the checker fails a record that leaves one out. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
 
 ## Layer record
 
-Where it goes: In ads/creative/<batch>/<ID>.md under ## Layer record. For a video remix, add the video-ad work order's build layers after copy.
+Where it goes: In ads/creative/<batch>/<ID>.md under ## Layer record. For a video remix, add the video-ad work order's build layers after review.
 
 ```markdown
 ## Layer record
@@ -79,8 +79,8 @@ Date: <YYYY-MM-DD>
 | --- | --- | --- | --- |
 | 1 fixed |  |  |  |
 | 2 change |  |  |  |
-| 3 review |  |  |  |
-| 4 copy |  |  |  |
+| 3 copy |  |  |  |
+| 4 review |  |  |  |
 | 5 production |  |  |  |
 | 6 render-review |  |  |  |
 | whole |  |  |  |
