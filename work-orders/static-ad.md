@@ -106,7 +106,7 @@ Also, when it applies:
 - **Build:** The ad read beside the page it sends people to.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 1 fundamentals before creative"](../core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative)
 - **Check:** Does the page deliver what the ad promises: the same offer, price, qualifications and next action?
-- **Evidence:** The opened page beside the ad; or the page copy held in the business repo; or the operator's dated confirmation of what the page says.
+- **Evidence:** The opened page beside the ad; or the copy of the live page held in the business repo; or the operator's dated confirmation of what the page says. The page as it is live now: a draft of its next version is not the destination.
 - **If it fails:** A mismatch is fixed at the connection layer or reported to the business as a page gap; the offer is never changed to match an ad. A page that cannot be seen from here is not checked: name it as an open item and say who can open it.
 
 ### 10. Authorised production (`production`)
