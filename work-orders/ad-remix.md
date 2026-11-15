@@ -2,7 +2,7 @@
 
 # Work order: Remix of a proven ad (`ad-remix`)
 
-**When the ask is:** "new hooks on our winning ad", "remix the winning ad", "put the proven hook on a new body", "make variants of the ad that worked", "iterate on the winner"
+**When the ask is:** "new hooks on our winning ad", "remix the winning ad", "put the proven hook on a new body", "make variants of the ad that worked", "iterate on the winner", "remix our best ad", "remix this ad", "a new version of our best ad", "more versions of the winner"
 
 **Owner:** `ad-creative` (Remix)
 **Part of:** [`ad-batch`](ad-batch.md)

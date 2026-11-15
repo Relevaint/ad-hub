@@ -2,7 +2,7 @@
 
 # Work order: Audit of the live ads by class (`ad-audit`)
 
-**When the ask is:** "audit our ads", "classify the live ads", "what are we missing in the account", "what kinds of ads are we running"
+**When the ask is:** "audit our ads", "classify the live ads", "what are we missing in the account", "what kinds of ads are we running", "audit my ad account", "audit the ad account", "audit the account", "review what is running in the account"
 
 **Owner:** `ad-strategy` (Audit)
 **Live account:** not reached

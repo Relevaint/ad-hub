@@ -282,7 +282,7 @@
       "id": "ad-program",
       "name": "Ads for a business or an offer, end to end",
       "say": [
-        "help me get customers with ads",
+        "help me get more customers with ads",
         "help me get bookings with ads",
         "get more leads with ads",
         "set up ads for this business",
@@ -290,7 +290,13 @@
         "where do we start with ads",
         "I want more bookings, leads or sales",
         "start advertising this offer",
-        "take us from nothing to live ads"
+        "take us from nothing to live ads",
+        "I need ads for my new offer",
+        "run ads for my business",
+        "bring in customers through advertising",
+        "start advertising",
+        "ads for my new product",
+        "I want to start running ads"
       ],
       "not_for": "A request that names one job (write three ads, check our tracking, how are the ads doing) goes straight to that job's work order.",
       "owner": "start-here",
@@ -529,7 +535,11 @@
         "record this offer",
         "what is still missing",
         "new business intake",
-        "onboard this business for ads"
+        "onboard this business for ads",
+        "is the business ready to run ads",
+        "are we ready for ads",
+        "can we start running ads yet",
+        "what is missing before ads can run"
       ],
       "owner": "start-here",
       "mode": "Record, Readiness or Route",
@@ -881,7 +891,11 @@
         "audience research",
         "voice of customer",
         "what do buyers say in their own words",
-        "customer research for the ads"
+        "customer research for the ads",
+        "who is our customer",
+        "who is the customer",
+        "who are we selling to",
+        "describe our buyer"
       ],
       "owner": "audience-research",
       "part_of": [
@@ -1436,7 +1450,11 @@
         "audit our ads",
         "classify the live ads",
         "what are we missing in the account",
-        "what kinds of ads are we running"
+        "what kinds of ads are we running",
+        "audit my ad account",
+        "audit the ad account",
+        "audit the account",
+        "review what is running in the account"
       ],
       "owner": "ad-strategy",
       "mode": "Audit",
@@ -1616,9 +1634,16 @@
       "say": [
         "write the ads for this batch",
         "make the batch",
-        "make the planned ads",
+        "make the ads from the plan",
         "create the ads in the plan",
-        "produce this batch of ads"
+        "produce this batch of ads",
+        "make three ads",
+        "make ads for the sale",
+        "create new ads for this offer",
+        "a set of ads",
+        "several ads for the campaign",
+        "a couple of new ads",
+        "a few new ads for the promotion"
       ],
       "owner": "ad-creative",
       "mode": "Batch",
@@ -2079,7 +2104,10 @@
         "make the ad with its image",
         "design an ad",
         "make an ad from this story",
-        "carousel ad"
+        "carousel ad",
+        "make me an ad",
+        "create a facebook ad",
+        "one ad for the feed"
       ],
       "not_for": "A row or a request that says video uses the video-ad work order. With no image tool connected this still runs: it ends at copy-ready with a production brief.",
       "owner": "ad-creative",
@@ -2272,7 +2300,9 @@
         "produce the video for this ad",
         "UGC video ad",
         "make a reel ad",
-        "story-driven video ad"
+        "story-driven video ad",
+        "make a video ad for the product",
+        "a short video ad"
       ],
       "owner": "ad-creative",
       "mode": "Batch or Quick",
@@ -2478,7 +2508,11 @@
         "remix the winning ad",
         "put the proven hook on a new body",
         "make variants of the ad that worked",
-        "iterate on the winner"
+        "iterate on the winner",
+        "remix our best ad",
+        "remix this ad",
+        "a new version of our best ad",
+        "more versions of the winner"
       ],
       "owner": "ad-creative",
       "mode": "Remix",
@@ -2675,7 +2709,12 @@
         "policy check",
         "claims check",
         "is this ad compliant",
-        "review this ad before it runs"
+        "review this ad before it runs",
+        "is this claim ok to use in an ad",
+        "can we say this in an ad",
+        "is this claim allowed",
+        "can I use this review in an ad",
+        "check this claim"
       ],
       "not_for": "A check diagnoses. It rewrites nothing unless asked.",
       "owner": "ad-creative",
@@ -2818,7 +2857,12 @@
         "set up tracking",
         "set up the ad account",
         "campaign structure",
-        "what can you do in our ad account"
+        "what can you do in our ad account",
+        "set up the pixel",
+        "set up the pixel and conversions",
+        "set up conversion tracking",
+        "install the pixel",
+        "are conversions tracked"
       ],
       "owner": "ad-setup",
       "part_of": [
@@ -3465,7 +3509,14 @@
         "manage the ads",
         "budget moves",
         "raise the budget",
-        "replace the weak ads"
+        "replace the weak ads",
+        "what should we change in the account this week",
+        "this week's changes to the account",
+        "scale the winning ad",
+        "scale the winner",
+        "turn off the ads that are wasting money",
+        "cut the wasted spend",
+        "increase the budget on the best ad"
       ],
       "owner": "ad-manage",
       "mode": "Session",
@@ -3678,7 +3729,10 @@
         "roll back the last change",
         "undo the last change",
         "revert the ads to how they were",
-        "put it back"
+        "put it back",
+        "go back to how the account was",
+        "put the account back the way it was",
+        "revert the account to last week"
       ],
       "owner": "ad-manage",
       "mode": "Rollback",
@@ -3777,7 +3831,15 @@
         "the ads stopped working",
         "why is performance down",
         "troubleshoot the ads",
-        "what went wrong with the ads"
+        "what went wrong with the ads",
+        "why did my cost per lead go up",
+        "cost per result went up",
+        "results dropped, what happened",
+        "what happened to the ads",
+        "my ads stopped getting leads",
+        "the leads dried up",
+        "sales from the ads fell",
+        "the numbers got worse"
       ],
       "owner": "ad-manage",
       "mode": "Troubleshooting",

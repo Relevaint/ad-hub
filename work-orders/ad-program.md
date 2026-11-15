@@ -2,7 +2,7 @@
 
 # Work order: Ads for a business or an offer, end to end (`ad-program`)
 
-**When the ask is:** "help me get customers with ads", "help me get bookings with ads", "get more leads with ads", "set up ads for this business", "run ads for us", "where do we start with ads", "I want more bookings, leads or sales", "start advertising this offer", "take us from nothing to live ads"
+**When the ask is:** "help me get more customers with ads", "help me get bookings with ads", "get more leads with ads", "set up ads for this business", "run ads for us", "where do we start with ads", "I want more bookings, leads or sales", "start advertising this offer", "take us from nothing to live ads", "I need ads for my new offer", "run ads for my business", "bring in customers through advertising", "start advertising", "ads for my new product", "I want to start running ads"
 
 **Not this:** A request that names one job (write three ads, check our tracking, how are the ads doing) goes straight to that job's work order.
 

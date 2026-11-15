@@ -2,7 +2,7 @@
 
 # Work order: New business or offer, and what still blocks going live (`readiness`)
 
-**When the ask is:** "what do you still need before we can run ads", "are we ready to launch", "add a new offer", "add a second offer", "record this offer", "what is still missing", "new business intake", "onboard this business for ads"
+**When the ask is:** "what do you still need before we can run ads", "are we ready to launch", "add a new offer", "add a second offer", "record this offer", "what is still missing", "new business intake", "onboard this business for ads", "is the business ready to run ads", "are we ready for ads", "can we start running ads yet", "what is missing before ads can run"
 
 **Owner:** `start-here` (Record, Readiness or Route)
 **Part of:** [`ad-program`](ad-program.md)

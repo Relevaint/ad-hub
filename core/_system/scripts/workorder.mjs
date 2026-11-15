@@ -297,24 +297,34 @@ export function stale(hub) {
 
 // ---------------------------------------------------------------- matching
 
-export function match(hub, request) {
+// A word few work orders use says more about which one is meant than a word they all use,
+// so each word counts by how rare it is across the map.
+const MATCH_MIN = 1.6;
+const MATCH_GAP = 0.4;
+
+export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP) {
   const map = loadMap(hub);
   const g = words(request);
-  const scored = list(map.work_orders).map((o) => {
+  const orders = list(map.work_orders);
+  const vocab = orders.map((o) => words([o.name, o.id.replace(/-/g, " "), ...list(o.say)].join(" ")));
+  const df = new Map();
+  for (const v of vocab) for (const x of v) df.set(x, (df.get(x) || 0) + 1);
+  const weight = (x) => Math.log(1 + orders.length / (df.get(x) || orders.length));
+  const sum = (xs) => xs.reduce((n, x) => n + weight(x), 0);
+  const scored = orders.map((o, i) => {
     let best = 0;
     for (const p of list(o.say)) {
-      const w = words(p);
-      if (!w.size) continue;
-      const hit = [...w].filter((x) => g.has(x)).length;
-      best = Math.max(best, (hit / w.size) * hit);
+      const w = [...words(p)];
+      if (!w.length) continue;
+      const hit = sum(w.filter((x) => g.has(x)));
+      best = Math.max(best, (hit / sum(w)) * hit);
     }
-    const all = words([o.name, o.id.replace(/-/g, " "), ...list(o.say)].join(" "));
-    const spread = [...g].filter((x) => all.has(x)).length;
+    const spread = sum([...g].filter((x) => vocab[i].has(x)));
     return { o, score: best + spread * 0.25 };
   }).sort((a, b) => b.score - a.score);
   const [top, second] = scored;
-  const clear = top && top.score >= 1 && (!second || top.score - second.score >= 0.5);
-  return { map, top: clear ? top.o : null, candidates: scored.filter((x) => x.score > 0).slice(0, 5).map((x) => x.o) };
+  const clear = top && top.score >= min && (!second || top.score - second.score >= gap);
+  return { map, top: clear ? top.o : null, candidates: scored.filter((x) => x.score > 0).slice(0, 5).map((x) => x.o), scored };
 }
 
 // ---------------------------------------------------------------- records

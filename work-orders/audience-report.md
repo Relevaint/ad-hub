@@ -2,7 +2,7 @@
 
 # Work order: Who buys, in their own words (`audience-report`)
 
-**When the ask is:** "who should we target", "who buys this", "who are our customers and what do they say", "audience research", "voice of customer", "what do buyers say in their own words", "customer research for the ads"
+**When the ask is:** "who should we target", "who buys this", "who are our customers and what do they say", "audience research", "voice of customer", "what do buyers say in their own words", "customer research for the ads", "who is our customer", "who is the customer", "who are we selling to", "describe our buyer"
 
 **Owner:** `audience-research`
 **Part of:** [`ad-program`](ad-program.md)

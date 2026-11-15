@@ -2,7 +2,7 @@
 
 # Work order: Scheduled management session (`management-session`)
 
-**When the ask is:** "run the session", "which ads should go", "kill the ads", "kill the ads that are not working", "pause the losers and scale the winners", "manage the ads", "budget moves", "raise the budget", "replace the weak ads"
+**When the ask is:** "run the session", "which ads should go", "kill the ads", "kill the ads that are not working", "pause the losers and scale the winners", "manage the ads", "budget moves", "raise the budget", "replace the weak ads", "what should we change in the account this week", "this week's changes to the account", "scale the winning ad", "scale the winner", "turn off the ads that are wasting money", "cut the wasted spend", "increase the budget on the best ad"
 
 **Owner:** `ad-manage` (Session)
 **Part of:** [`ad-program`](ad-program.md)

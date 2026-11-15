@@ -2,7 +2,7 @@
 
 # Work order: Result signal, tracking and account structure (`tracking-setup`)
 
-**When the ask is:** "make sure we can tell which ads make sales", "check our tracking", "which result should we send back to the ad platform", "set up tracking", "set up the ad account", "campaign structure", "what can you do in our ad account"
+**When the ask is:** "make sure we can tell which ads make sales", "check our tracking", "which result should we send back to the ad platform", "set up tracking", "set up the ad account", "campaign structure", "what can you do in our ad account", "set up the pixel", "set up the pixel and conversions", "set up conversion tracking", "install the pixel", "are conversions tracked"
 
 **Owner:** `ad-setup`
 **Part of:** [`ad-program`](ad-program.md)
