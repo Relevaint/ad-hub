@@ -146,6 +146,7 @@ Where it goes: In the last change entry the session writes (the dry run when it 
 ```markdown
 ## Layer record
 Work order: launch
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 gates |  |  |  |

@@ -112,6 +112,7 @@ Where it goes: In ads/creative/<batch>/<ID>.md under ## Layer record. For a vide
 ```markdown
 ## Layer record
 Work order: ad-remix
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 fixed |  |  |  |

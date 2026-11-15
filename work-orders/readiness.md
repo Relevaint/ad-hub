@@ -103,6 +103,7 @@ Where it goes: In the reply, as one line. The offer file's Gaps section holds th
 ```markdown
 ## Layer record
 Work order: readiness
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 offer |  |  |  |

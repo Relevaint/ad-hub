@@ -87,6 +87,7 @@ Numbers checked twice: yes, on YYYY-MM-DD.
 
 ## Layer record
 Work order: results-review
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 snapshot |  |  |  |

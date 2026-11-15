@@ -73,6 +73,7 @@ Where it goes: In the revert's change entry, under ## Layer record.
 ```markdown
 ## Layer record
 Work order: rollback
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 last-good |  |  |  |

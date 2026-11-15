@@ -58,6 +58,7 @@ For ad-strategy. Origin tag: modelled on a competitor. Adapt the structure, neve
 
 ## Layer record
 Work order: competitor-report
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 question |  |  |  |

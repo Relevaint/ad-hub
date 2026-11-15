@@ -123,6 +123,7 @@ Where it goes: At the end of ads/platform/<platform>.md, under ## Layer record.
 ```markdown
 ## Layer record
 Work order: tracking-setup
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 signal |  |  |  |

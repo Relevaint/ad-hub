@@ -70,6 +70,7 @@ Where it goes: In the pull request description and the HANDOFF.md Last Session b
 ```markdown
 ## Layer record
 Work order: plays-refresh
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 source-review |  |  |  |

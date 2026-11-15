@@ -77,7 +77,7 @@ Also, when it applies:
 
 - **Build:** The claims map: every factual thing the ad says, shows or implies (a number, rating, review, credential, guarantee, price, result, story, comparison, urgency, and a result the picture implies without saying it, such as a before and after) set against the offer's proof, with the permission behind any review, testimonial or customer story; then the policy check.
 - **Method:** [ad-creative/SKILL.md, "2 run the claims gate before writing a word"](../core/skills/ad-creative/SKILL.md#2-run-the-claims-gate-before-writing-a-word); [ad-creative/SKILL.md, "3 run the policy and rules check"](../core/skills/ad-creative/SKILL.md#3-run-the-policy-and-rules-check); [ad-creative/references/claims-and-policy.md, "the gate"](../core/skills/ad-creative/references/claims-and-policy.md#the-gate)
-- **Check:** Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?
+- **Check:** Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, carrying in the ad itself the conditions its proof attaches, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?
 - **Evidence:** The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file.
 - **If it fails:** An unsupported claim is cut or becomes a marked blank. A review or story with no recorded permission is withheld and named as a blank for the business, whatever status its proof row carries. A personal attribute is rewritten around the situation. An idea that only works with the unsupported claim returns to the connection layer.
 
@@ -122,6 +122,7 @@ Where it goes: In the reply, as one line. When concepts are saved, in the concep
 ```markdown
 ## Layer record
 Work order: ad-concepts
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 fundamentals |  |  |  |

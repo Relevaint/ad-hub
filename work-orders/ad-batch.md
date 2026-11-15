@@ -101,6 +101,7 @@ Where it goes: In ads/creative/<batch>/batch-review.md, under ## Layer record.
 ```markdown
 ## Layer record
 Work order: ad-batch
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 briefs |  |  |  |

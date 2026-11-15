@@ -110,6 +110,7 @@ Where it goes: At the end of the dated section in ads/strategy/test-plan.md, und
 ```markdown
 ## Layer record
 Work order: test-plan
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 diagnosis |  |  |  |

@@ -119,6 +119,7 @@ Where it goes: In the session's closing change entry, under ## Layer record; in 
 ```markdown
 ## Layer record
 Work order: management-session
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 numbers |  |  |  |

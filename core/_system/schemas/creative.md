@@ -22,6 +22,7 @@ Planned ad ID: <existing ID if any; otherwise not assigned>
 
 ## Layer record
 Work order: ad-concepts
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 fundamentals | | audience/situation, awareness/surface, desire, offer, proof limits, one message/action, constraints and deliverables; destination/brand sources actually reviewed, gaps and provisional choices | |
@@ -67,6 +68,7 @@ Untested. Nothing here predicts performance; the test plan says how it will be j
 
 ## Layer record
 Work order: <ad-copy | static-ad | video-ad | ad-remix>
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | <one row per layer in the work order, in order> | pass / fail / n/a / not checked | <the decision and what was looked at: the premise chosen and the one rejected; cast and rendering and the alternative; the visual stop and its question; the connected turn and payoff; the review verdicts> | <what changed, or the layer it went back to> |
@@ -159,6 +161,7 @@ corrected, or the matched pair named as deliberate.>
 
 ## Layer record
 Work order: ad-batch
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 briefs |  |  |  |

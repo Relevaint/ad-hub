@@ -32,6 +32,9 @@ credential; "trusted by" implies a count.
    or story row shows that it was said; quoting it or retelling it in an ad also needs
    step 4.
 3. Anything unmapped is cut, or becomes a marked blank `[confirm: ...]` in the draft.
+   A mapped claim keeps the conditions its source attaches (an "as of" date, a scope, a
+   start condition, who it applies to): they appear in the ad itself, in any of its
+   fields. The landing page's small print does not carry them.
 4. Testimonials and purported real customer stories: a named, real person who gave permission the business
    recorded. The record names the person and the permission to use their words in
    advertising, in the proof row or beside it; a status of `Owner-confirmed` on a review

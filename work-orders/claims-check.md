@@ -91,6 +91,7 @@ Where it goes: In the check report in the batch folder, under ## Layer record; i
 ```markdown
 ## Layer record
 Work order: claims-check
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 claims-list |  |  |  |

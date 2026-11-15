@@ -121,6 +121,7 @@ Where it goes: At the end of ads/results/<date>-review.md, under ## Layer record
 ```markdown
 ## Layer record
 Work order: results-review
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 snapshot |  |  |  |

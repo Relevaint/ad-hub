@@ -35,7 +35,7 @@ export const MAP = "core/_system/work-orders.json";
 export const OUT = "work-orders";
 const VERDICTS = ["pass", "fail", "n/a", "not checked", "carried"];
 // Evidence that says the check was not made cannot sit behind a pass.
-const NOT_DONE = /\b(?:not (?:read|opened|open|viewed|watched|played|inspected|checked|seen|verified)|(?:could not|couldn't|cannot|can't|unable to)(?: be)? (?:open|opened|read|view|viewed|watch|watched|play|played|inspect|inspected|check|checked|reach|reached|see|seen|verify|verified))\b/i;
+const NOT_DONE = /\b(?:not (?:read|opened|open|viewed|watched|played|inspected|checked|checkable|seen|verified|rendered|produced)|(?:could not|couldn't|cannot|can't|unable to)(?: be)? (?:open|opened|read|view|viewed|watch|watched|play|played|inspect|inspected|check|checked|reach|reached|see|seen|verify|verified))\b/i;
 const UNIVERSAL_STATE = "not ready";
 const WEAK = /^(ok(ay)?|done|yes|y|good|great|fine|looks (good|fine|ok(ay)?|great)|all good|checked|verified|reviewed|passe?d?|n\/?a|none|tbd|-+|—|✓|✔)[.!]?$/i;
 // A reason that says nothing: an n/a or a not checked needs the why.
@@ -246,7 +246,7 @@ export function render(o, map, prefix = "") {
   L.push(`| ${UNIVERSAL_STATE} | nothing yet | A layer failed or could not be checked; say which and what it needs. |`, "");
   L.push("A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.", "");
 
-  L.push("## Layer record", "", `Where it goes: ${o.record}`, "", "```markdown", "## Layer record", `Work order: ${o.id}`);
+  L.push("## Layer record", "", `Where it goes: ${o.record}`, "", "```markdown", "## Layer record", `Work order: ${o.id}`, "Date: <YYYY-MM-DD>");
   L.push("| Layer | Verdict | Evidence: what was looked at | Fix made or return |", "| --- | --- | --- | --- |");
   list(o.layers).forEach((l, i) => L.push(`| ${i + 1} ${l.id} |  |  |  |`));
   L.push("| whole |  |  |  |", "State:", "```", "");
@@ -325,7 +325,10 @@ function readVerdict(cell) {
   if (!found.length) return { verdict: null, mixed: false };
   const last = found[found.length - 1];
   const mixed = found.slice(0, -1).some((v) => v !== last && !(v === "fail" && (last === "pass" || last === "carried")));
-  return { verdict: last, mixed };
+  // One verdict exactly: "pass after a fix" hides a repair that belongs in the record as "fail, then pass".
+  const plain = String(cell).toLowerCase().replace(/[`*_]/g, "").replace(/\s+,/g, ",").replace(/\s+/g, " ").replace(/[.;:,\s]+$/, "").trim();
+  const extra = !mixed && !/^(?:pass|fail|n\/a|not checked|carried|fail, then (?:pass|carried))$/.test(plain);
+  return { verdict: last, mixed, extra, said: plain };
 }
 
 export function parseRecords(text) {
@@ -397,7 +400,10 @@ export function checkRecord(hub, text, forcedId) {
       if (!VERDICTS.includes(r.verdict)) { errors.push(`${at}: layer "${l.id}" has no verdict (${VERDICTS.join(", ")})`); continue; }
       final[l.id] = r.verdict;
       if (r.mixed) errors.push(`${at}: layer "${l.id}" carries two verdicts; one verdict per row (a result that is part passed and part unchecked is not checked, with what remains)`);
+      if (r.extra) errors.push(`${at}: layer "${l.id}" has the verdict "${r.said}"; write one verdict only (a repair that worked is "fail, then pass") and put everything else in the evidence${rec.compact ? ", in brackets" : " or fix column"}`);
+      if (r.verdict === "pass" && !r.extra && !r.mixed && /^fail(?:ed|s)?\b/i.test(r.fix.trim())) errors.push(`${at}: layer "${l.id}" is marked pass but its fix column records a failure; a repair that worked is "fail, then pass"`);
       const ev = r.evidence.trim();
+      if (r.verdict === "carried" && !/\b\d{4}-\d{2}-\d{2}\b/.test(ev)) errors.push(`${at}: layer "${l.id}" is carried without the date of the record it passed in (YYYY-MM-DD)`);
       if (r.verdict === "pass" || r.verdict === "carried") {
         if (ev.length < 6 || WEAK.test(ev)) errors.push(`${at}: layer "${l.id}" passes with no evidence ("${ev}"); name what was looked at`);
         else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked`);

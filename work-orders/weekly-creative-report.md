@@ -81,6 +81,7 @@ Where it goes: At the end of ads/results/<date>-weekly.md, under ## Layer record
 ```markdown
 ## Layer record
 Work order: weekly-creative-report
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 money |  |  |  |

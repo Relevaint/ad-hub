@@ -86,6 +86,7 @@ Where it goes: In the reply, as one line. An emergency pause also carries it in 
 ```markdown
 ## Layer record
 Work order: daily-watch
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 numbers |  |  |  |

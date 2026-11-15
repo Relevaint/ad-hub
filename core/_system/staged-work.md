@@ -23,7 +23,9 @@ skipped layer visible to the agent itself and to whoever reads the result.
    from the evidence it names, write its line in the layer record, then move on. When the
    output writes a file, the layer's result goes into that file before the next layer
    starts: the finished piece is assembled from the layer results, never drafted first
-   and labelled afterward.
+   and labelled afterward. Order is the agent's word: neither the files nor the checker
+   can prove which layer was built first, which is why each result is written down as it
+   is reached.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
    not to polishing a later layer. After a repair, check again every later layer that
    rested on it.
@@ -118,6 +120,7 @@ evidence in brackets, then the state. The work order prints the line to fill in.
 ```markdown
 ## Layer record
 Work order: <id>
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 <layer id> | pass | <the thing looked at, specifically> | |
@@ -131,7 +134,9 @@ State: <one of the work order's states>
 One verdict per row: `pass`, `fail`, `n/a`, `not checked`, or `carried` (it passed in an
 earlier record and nothing it rests on has changed; name that record's date). A `pass`
 names its evidence. A `fail` names what was changed or where it went back; "fail, then
-pass" records a repair that worked. A result that is part passed and part unchecked is
+pass" records a repair that worked. The verdict cell holds the verdict and nothing else:
+"pass after a fix" is written "fail, then pass". The date line is what a later `carried`
+row points back to. A result that is part passed and part unchecked is
 `not checked`, with what remains. Keep each cell to a line; this is a proof trail, not an
 essay.
 

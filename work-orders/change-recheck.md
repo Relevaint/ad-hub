@@ -88,6 +88,7 @@ Where it goes: In the reply, as one line, followed by the list of dependents: on
 ```markdown
 ## Layer record
 Work order: change-recheck
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 record |  |  |  |

@@ -88,6 +88,7 @@ Where it goes: In the reply, as one line.
 ```markdown
 ## Layer record
 Work order: troubleshooting
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 signal |  |  |  |
