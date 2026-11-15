@@ -58,7 +58,7 @@ Also, when it applies:
 - **Build:** For the strongest premises: who or what acts, and separately how it is rendered, with the materially different alternative that was rejected.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 3 cast and treatment are independent decisions"](../core/skills/ad-creative/references/creative-passes.md#pass-3-cast-and-treatment-are-independent-decisions)
 - **Check:** Were cast and rendering chosen as two separate decisions, each for a stated reason tied to the brief and the brand evidence, not by default?
-- **Evidence:** The chosen cast and treatment, the rejected alternative and the reason, read against the fundamentals source note.
+- **Evidence:** The chosen cast and the cast that was rejected; the chosen rendering and, separately, the rendering that was rejected for that cast; the reason for each, read against the fundamentals source note.
 - **If it fails:** A default choice returns to treatment exploration here. A cast that changes the idea's logic returns to premises.
 
 ### 4. Visual stop and hierarchy (`visual-stop`)
@@ -69,15 +69,23 @@ Also, when it applies:
 - **Evidence:** The frame description read alone with the copy hidden; the named reason to pause; the competing details removed, subordinated or kept on purpose.
 - **If it fails:** A weak idea returns to premises or cast and treatment, never to headline polishing. Competing details are recomposed here.
 
-### 5. Connected payoff and claims (`connection`)
+### 5. Connected payoff (`connection`)
 
-- **Build:** The hook as image, text and sound; then opening, development, turn, product payoff and action for video, or one complete proposition for a static; key copy and call to action; every factual claim mapped to a proof row or left as a marked blank.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 5 connect opening turn payoff and action"](../core/skills/ad-creative/references/creative-passes.md#pass-5-connect-opening-turn-payoff-and-action); [ad-creative/SKILL.md, "2 run the claims gate before writing a word"](../core/skills/ad-creative/SKILL.md#2-run-the-claims-gate-before-writing-a-word); [ad-creative/SKILL.md, "3 run the policy and rules check"](../core/skills/ad-creative/SKILL.md#3-run-the-policy-and-rules-check)
-- **Check:** Does the payoff answer the opening's promise with the product, and does every claim map to the offer's proof or stand as a marked blank?
-- **Evidence:** The sequence or composition read start to end; the claims map against the offer file's proof table; the policy check: no personal attribute, required strings exact.
-- **If it fails:** A payoff that does not fulfil the opening returns to premises or the visual stop. An unsupported claim is cut or becomes a marked blank. A policy failure is rewritten around the situation.
+- **Build:** The hook as image, text and sound; then opening, development, turn, product payoff and action for video, or one complete proposition for a static; key copy and call to action.
+- **Method:** [ad-creative/references/creative-passes.md, "pass 5 connect opening turn payoff and action"](../core/skills/ad-creative/references/creative-passes.md#pass-5-connect-opening-turn-payoff-and-action)
+- **Check:** Does the payoff answer the opening's promise with the product, so a viewer remembers the benefit and not only the opening?
+- **Evidence:** The sequence or composition read start to end as a stranger would meet it.
+- **If it fails:** A payoff that does not fulfil the opening returns to premises or the visual stop. Never attach a product screen to an unrelated opening.
 
-### 6. Adversarial review and revision (`review`)
+### 6. Claims and permissions (`claims`)
+
+- **Build:** The claims map: every factual thing the ad says, shows or implies (a number, rating, review, credential, guarantee, price, result, story, comparison, urgency, and a result the picture implies without saying it, such as a before and after) set against the offer's proof, with the permission behind any review, testimonial or customer story; then the policy check.
+- **Method:** [ad-creative/SKILL.md, "2 run the claims gate before writing a word"](../core/skills/ad-creative/SKILL.md#2-run-the-claims-gate-before-writing-a-word); [ad-creative/SKILL.md, "3 run the policy and rules check"](../core/skills/ad-creative/SKILL.md#3-run-the-policy-and-rules-check); [ad-creative/references/claims-and-policy.md, "the gate"](../core/skills/ad-creative/references/claims-and-policy.md#the-gate)
+- **Check:** Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?
+- **Evidence:** The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file.
+- **If it fails:** An unsupported claim is cut or becomes a marked blank. A review or story with no recorded permission is withheld and named as a blank for the business, whatever status its proof row carries. A personal attribute is rewritten around the situation. An idea that only works with the unsupported claim returns to the connection layer.
+
+### 7. Adversarial review and revision (`review`)
 
 - **Build:** A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 6 adversarial concept review then revision"](../core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision); [ad-creative/references/copy-and-hooks.md, "the rubric"](../core/skills/ad-creative/references/copy-and-hooks.md#the-rubric)
@@ -85,15 +93,23 @@ Also, when it applies:
 - **Evidence:** The seven verdicts with their reasons, the rubric scores, who reviewed (a fresh reviewer or self-review), and what changed in each revision cycle.
 - **If it fails:** Return to the pass that failed, change that part, review the connected whole again. Three cycles at most, then withhold the concept and report the shortfall.
 
-### 7. Copy per placement (`copy`)
+### 8. Copy per placement (`copy`)
 
 - **Build:** The fields each placement needs, within the platform layer's lengths: hook as text, first frame and sound; primary text; headlines; description; call to action; required strings; the final claims map.
 - **Method:** [ad-creative/SKILL.md, "4 develop and reject concepts then write the copy"](../core/skills/ad-creative/SKILL.md#4-develop-and-reject-concepts-then-write-the-copy); [ad-creative/references/copy-and-hooks.md, "the hook"](../core/skills/ad-creative/references/copy-and-hooks.md#the-hook); [ad-creative/references/claims-and-policy.md, "the gate"](../core/skills/ad-creative/references/claims-and-policy.md#the-gate)
 - **Check:** Is every word a person will read true to the claims map, free of personal attributes, in the business's voice and the copy standard, and does the hook still carry the concept that passed?
-- **Evidence:** Each field read against the claims map and the offer file; required strings compared character by character with the business's file; the rubric scores.
+- **Evidence:** Each field read against the claims map; a quote appears only where the claims layer recorded its permission; required strings compared character by character with the business's file; the rubric scores.
 - **If it fails:** Rewrite the failing field here. A claim with no proof row is cut or marked blank. Copy that only works by changing the idea returns to the connection layer.
 
-### 8. Authorised production (`production`)
+### 9. Ad against destination (`destination`)
+
+- **Build:** The ad read beside the page it sends people to.
+- **Method:** [ad-creative/references/creative-passes.md, "pass 1 fundamentals before creative"](../core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative)
+- **Check:** Does the page deliver what the ad promises: the same offer, price, qualifications and next action?
+- **Evidence:** The opened page beside the ad; or the page copy held in the business repo; or the operator's dated confirmation of what the page says.
+- **If it fails:** A mismatch is fixed at the connection layer or reported to the business as a page gap; the offer is never changed to match an ad. A page that cannot be seen from here is not checked: name it as an open item and say who can open it.
+
+### 10. Authorised production (`production`)
 
 - **Build:** Only the image and the shapes the request authorises, in the platform layer's dimensions, with text and logos inside the safe zones; or, when nothing here can make it, the production brief.
 - **Method:** [ad-creative/SKILL.md, "5 make only the authorized asset"](../core/skills/ad-creative/SKILL.md#5-make-only-the-authorized-asset); [ad-creative/references/creative-passes.md, "pass 7 authorized production and execution review"](../core/skills/ad-creative/references/creative-passes.md#pass-7-authorized-production-and-execution-review)
@@ -101,7 +117,7 @@ Also, when it applies:
 - **Evidence:** Each file opened; its dimensions; its on-image text read against the gated copy.
 - **If it fails:** Regenerate or recompose that asset. An idea that cannot survive production returns to the visual stop. With no tool, write the production brief and mark this layer not checked.
 
-### 9. Render review (`render-review`)
+### 11. Render review (`render-review`)
 
 - **Build:** An inspection of each actual file at the size it will be seen: a phone-width feed card or a full-screen vertical.
 - **Method:** [ad-creative/SKILL.md, "6 inspect the render"](../core/skills/ad-creative/SKILL.md#6-inspect-the-render); [ad-creative/references/composition-review.md, "make and challenge the hierarchy"](../core/skills/ad-creative/references/composition-review.md#make-and-challenge-the-hierarchy)
@@ -112,9 +128,9 @@ Also, when it applies:
 ### Whole output (`whole`)
 
 - **Method:** [ad-creative/SKILL.md, "quality gate"](../core/skills/ad-creative/SKILL.md#quality-gate)
-- **Check:** Does the finished ad, copy and image together in each placement, do the one job in its row and promise only what the destination delivers?
-- **Evidence:** The ad as a buyer sees it in each placement, beside the opened destination page; the creative file's Checks; the ledger row.
-- **If it fails:** A page mismatch returns to connection or goes to the business as a destination gap. A missing authorised shape keeps the row at copy-ready with the shape named.
+- **Check:** Does the finished ad, copy and image together in each placement, do the one job in its row and say only what the claims map allows?
+- **Evidence:** The ad as a buyer sees it in each placement; the creative file's Checks; the ledger row.
+- **If it fails:** A missing authorised shape keeps the row at copy-ready with the shape named. A claim that slipped into the image or the copy returns to claims.
 
 ## When something changes
 
@@ -122,20 +138,22 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | If this changes | Check again | Note |
 | --- | --- | --- |
-| A claim, the price, an offer term or a proof row changes | `connection`, `copy`, `render-review`, `whole`, work order [`launch`](launch.md) | Fields and pixels that carry the old claim, the destination match, and any approval that covered the old version. Regenerate only assets with the changed words or facts in them. |
+| A claim, the price, an offer term or a proof row changes | `claims`, `copy`, `destination`, `render-review`, `whole`, work order [`launch`](launch.md) | Fields and pixels that carry the old claim, the page match, and any approval that covered the old version. Regenerate only assets with the changed words or facts in them. |
 | The headline or on-image text changes | `copy`, `production`, `render-review`, `whole` | Only the shapes that show that text. |
 | The image changes | `render-review`, `whole` | Copy that still fits is not rewritten. |
 | A placement shape is added | `production`, `render-review`, `whole` | Only the new shape; a dedicated edit, not a crop. |
-| The landing page changes | `fundamentals`, `whole` | The promise and the next action must still match. |
+| The landing page changes | `fundamentals`, `destination` | The promise and the next action must still match. |
 | The audience, the awareness level or the test variable changes | `fundamentals`, `premises`, `review` | Treat it as a new concept: every later layer follows. |
 
 ## What it can be called
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| copy-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, `review`, `copy` | Copy and claims are done; the asset is not made, not inspected, or a planned shape is missing. |
-| creative-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, `review`, `copy`, `production`, `render-review`, `whole` | Every authorised shape exists and was inspected at delivery size. Not approved, not live, untested. |
+| copy-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, **`claims`**, `review`, **`copy`** | Copy and claims are done; the asset is not made, not inspected, or a planned shape is missing. |
+| creative-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, **`claims`**, `review`, **`copy`**, **`production`**, **`render-review`**, **`whole`** | Every authorised shape exists and was inspected at delivery size. Not approved, not live, untested. A destination that was not checked is named beside the state and closed before launch. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -151,14 +169,22 @@ Work order: static-ad
 | 3 cast-treatment |  |  |  |
 | 4 visual-stop |  |  |  |
 | 5 connection |  |  |  |
-| 6 review |  |  |  |
-| 7 copy |  |  |  |
-| 8 production |  |  |  |
-| 9 render-review |  |  |  |
+| 6 claims |  |  |  |
+| 7 review |  |  |  |
+| 8 copy |  |  |  |
+| 9 destination |  |  |  |
+| 10 production |  |  |  |
+| 11 render-review |  |  |  |
 | whole |  |  |  |
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (static-ad): fundamentals pass · premises pass · cast-treatment pass · visual-stop pass · connection pass · review pass · copy pass · production pass · render-review pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (static-ad):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (static-ad): fundamentals pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

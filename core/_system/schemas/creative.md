@@ -28,8 +28,9 @@ Work order: ad-concepts
 | 2 premises | | mechanism, product-connected payoff; the materially different route rejected | |
 | 3 cast-treatment | | cast and rendering as separate choices with reasons; the alternative considered | |
 | 4 visual-stop | | actual first frame/image, focal point, question; visual-alone stop reason for cold visual feeds, or the applicable test with its reason; hierarchy, competing details changed or kept | |
-| 5 connection | | opening/development/turn/payoff/action for video, or the complete composition for a static; key copy, CTA, claims mapped to supplied proof | |
-| 6 review | | self or independent; the seven verdicts with concrete reasons; batch sameness when applicable; revisions and the passes returned to | |
+| 5 connection | | opening/development/turn/payoff/action for video, or the complete composition for a static; key copy and CTA | |
+| 6 claims | | every claim mapped to supplied proof or left as a marked blank; where the permission behind any review or story is recorded; policy | |
+| 7 review | | self or independent; the seven verdicts with concrete reasons; batch sameness when applicable; revisions and the passes returned to | |
 | whole | | the set read as the operator sees it; nothing generated, no row promoted | |
 State: concept-ready | not ready, because ...
 

@@ -72,10 +72,12 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| no emergency | `numbers`, `emergencies`, `action`, `whole` | Nothing changed, nothing written. The next session date is named. |
-| emergency paused | `emergencies`, `action`, `whole` | Spend was paused under the pre-approved emergency stop; the platform confirmed it; the entry has its undo. |
-| pause list prepared | `emergencies`, `action` | An emergency condition is met and nothing was carried out: the stop is not pre-approved, or no tool is connected. The list and the question are in the reply. |
+| no emergency | **`numbers`**, **`emergencies`**, `action`, **`whole`** | Nothing changed, nothing written. The next session date is named. |
+| emergency paused | `emergencies`, **`action`**, `whole` | Spend was paused under the pre-approved emergency stop; the platform confirmed it; the entry has its undo. |
+| pause list prepared | **`emergencies`**, **`action`** | An emergency condition is met and nothing was carried out: the stop is not pre-approved, or no tool is connected. The list and the question are in the reply. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -93,6 +95,12 @@ Work order: daily-watch
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (daily-watch): numbers pass · emergencies pass · action pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (daily-watch):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (daily-watch): numbers pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

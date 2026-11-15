@@ -21,6 +21,7 @@ Build this one layer at a time, in order, under [staged work](../core/_system/st
 Also, when it applies:
 
 - the business runs on Meta, before writing the change list: [meta-system/SKILL.md](../meta-system/SKILL.md)
+- the business runs on Meta, for the call and its status on each step of the change list: [meta-system/references/action-map.md](../meta-system/references/action-map.md)
 
 ## Needs
 
@@ -31,19 +32,19 @@ Also, when it applies:
 
 ### 1. Check the eight gates (`gates`)
 
-- **Build:** Each gate named with its state: authority, level, approval, measurable result, finished ads, category, spend, the ID thread.
+- **Build:** Each of the eight gates named clear or open: authority, level, approval, measurable result, finished ads, category, spend, the ID thread.
 - **Method:** [ad-launch/SKILL.md, "the gates"](../core/skills/ad-launch/SKILL.md#the-gates); [ad-launch/references/launch-sequence.md, "checking each gate"](../core/skills/ad-launch/references/launch-sequence.md#checking-each-gate)
-- **Check:** Is each of the eight gates named with its state, read from the files, with any open gate stopping activation?
-- **Evidence:** For each gate, the line that settles it: authority.md, the offer file, the platform file's result test, the creative files' verdicts, the ledger, the calendar.
-- **If it fails:** Stop at the dry run. Say what clears the gate and who. Never activate past it.
+- **Check:** Is each of the eight gates named clear or open, read from the files, with the open ones listed by number?
+- **Evidence:** For each gate, the line that settles it: authority.md, the offer file, the platform file's result test, the creative files' verdicts and any destination gap they left open, the ledger, the calendar. Then `all clear`, or `open: <numbers>` with what clears each and who.
+- **If it fails:** A gate that was not read is read now from its file; one that cannot be read here counts as open. An open gate is not a fail of this layer: it decides how far the session may go. Nothing is created without authority on file, and nothing is activated while any gate is open.
 
 ### 2. Build the change list (`change-list`)
 
 - **Build:** Every object to create or change, in order, with settings in plain words and before and after values.
-- **Method:** [ad-launch/SKILL.md, "1 build the change list"](../core/skills/ad-launch/SKILL.md#1-build-the-change-list)
-- **Check:** Is every object listed in order, created paused, named by ID with the ID on its link, with the plan's safe-to-bold mix kept?
-- **Evidence:** The list against the platform file's change list and the test plan's batch.
-- **If it fails:** Correct the list before anything is validated.
+- **Method:** [ad-launch/SKILL.md, "1 build the change list"](../core/skills/ad-launch/SKILL.md#1-build-the-change-list); [ad-launch/references/launch-sequence.md, "the dry run"](../core/skills/ad-launch/references/launch-sequence.md#the-dry-run)
+- **Check:** Is every object listed in order, created paused, named by ID with the ID on its link, each with the platform layer's call and that call's status, and the plan's safe-to-bold mix kept?
+- **Evidence:** The list against the platform file's change list, the test plan's batch and the platform layer's action map; any budget in plain money beside the number the tool takes; the preview step named with who can run it.
+- **If it fails:** Correct the list before anything is validated. A step with no call named is looked up in the platform layer, never guessed.
 
 ### 3. Validate as a dry run (`dry-run`)
 
@@ -57,7 +58,7 @@ Also, when it applies:
 
 - **Build:** Each object created paused through the business's connected tools, with the identifiers the platform returns.
 - **Method:** [ad-launch/SKILL.md, "3 create paused"](../core/skills/ad-launch/SKILL.md#3-create-paused)
-- **Check:** Did the platform confirm each object as created and paused, and are its identifiers recorded?
+- **Check:** With authority on file for this offer and a level that allows creating paused objects, did the platform confirm each object as created and paused, and are its identifiers recorded?
 - **Evidence:** The platform's own response for each object.
 - **If it fails:** A creation that failed is logged as failed. Nothing is retried around a rejection. With no tool this layer is not checked and the list stands as prepared.
 
@@ -77,25 +78,33 @@ Also, when it applies:
 - **Evidence:** The approvals log line.
 - **If it fails:** No line, a relayed approval the business's rules do not accept, or a restricted category without a fresh approval: nothing is activated.
 
-### 7. Activate (`activate`)
+### 7. Read the gates again before activating (`all-clear`)
+
+- **Build:** The eight gates read again once the approval is recorded, just before anything is turned on.
+- **Method:** [ad-launch/SKILL.md, "the gates"](../core/skills/ad-launch/SKILL.md#the-gates); [ad-launch/SKILL.md, "5 record the approval then activate"](../core/skills/ad-launch/SKILL.md#5-record-the-approval-then-activate)
+- **Check:** Is every one of the eight gates clear at this moment?
+- **Evidence:** The eight gates with the line that settles each, read after the approval was written: `all clear`, or the open ones by number.
+- **If it fails:** Do not activate. The objects stay paused. Say what clears each open gate and who.
+
+### 8. Activate (`activate`)
 
 - **Build:** Exactly what the approval covers, activated.
 - **Method:** [ad-launch/SKILL.md, "5 record the approval then activate"](../core/skills/ad-launch/SKILL.md#5-record-the-approval-then-activate)
-- **Check:** Was exactly what the approval covers activated, and did the platform confirm it?
+- **Check:** With the all-clear row passed, was exactly what the approval covers activated, and did the platform confirm it?
 - **Evidence:** The platform's confirmation for each object.
 - **If it fails:** An activation the platform did not confirm is logged as failed, never as live.
 
-### 8. Log every change (`log`)
+### 9. Log every change (`log`)
 
-- **Build:** One change entry per change with before, after, authority, result and undo; the last known good.
+- **Build:** One change entry per change with before, after, authority, result and undo; the last known good. On a dry run that changed nothing on the account this is n/a: the dry-run entry belongs to the dry-run layer.
 - **Method:** [ad-launch/SKILL.md, "6 log every change"](../core/skills/ad-launch/SKILL.md#6-log-every-change); [ad-launch/references/launch-sequence.md, "last known good"](../core/skills/ad-launch/references/launch-sequence.md#last-known-good)
 - **Check:** Does every change have an entry with its undo, and does the activating entry record the last known good?
 - **Evidence:** The entries in ads/changes/.
 - **If it fails:** Write the missing entry now, marked as written after the fact.
 
-### 9. Move the ledger rows (`rows`)
+### 10. Move the ledger rows (`rows`)
 
-- **Build:** Rows moved to approved when the line is written and to live when the platform confirms.
+- **Build:** Rows moved to approved when the line is written and to live when the platform confirms. On a dry run that changed nothing this is n/a: the rows stay where they are, and the account was not read.
 - **Method:** [ad-launch/SKILL.md, "7 move the ledger rows"](../core/skills/ad-launch/SKILL.md#7-move-the-ledger-rows)
 - **Check:** Do the ledger statuses match what is true on the account?
 - **Evidence:** The ledger beside the platform's confirmations.
@@ -114,8 +123,8 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | If this changes | Check again | Note |
 | --- | --- | --- |
-| An ad's copy, claim or asset changes after approval | `gates`, `preview`, `approval` | The approval covered the old version. |
-| The level, a ceiling or who can approve changes | `gates`, `approval` | Read authority.md again. |
+| An ad's copy, claim or asset changes after approval | `gates`, `preview`, `approval`, `all-clear` | The approval covered the old version. |
+| The level, a ceiling or who can approve changes | `gates`, `approval`, `all-clear` | Read authority.md again. |
 | The result signal changes or goes silent | `gates`, work order [`tracking-setup`](tracking-setup.md) | Gate 4 is open until the real result is seen again. |
 | The calendar adds a capacity hold | `gates` | Gate 7. |
 
@@ -123,10 +132,12 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| dry run only | `gates`, `change-list`, `dry-run` | Nothing was sent: a gate is open or no tool is connected. The list is prepared, not carried out. |
-| created paused | `gates`, `change-list`, `dry-run`, `create-paused`, `preview`, `log` | Objects exist on the account, paused. Nothing spends. Activation waits for a recorded approval. |
-| live | `gates`, `change-list`, `dry-run`, `create-paused`, `preview`, `approval`, `activate`, `log`, `rows`, `whole` | The platform confirmed activation of exactly what was approved. |
+| dry run only | **`gates`**, **`change-list`**, **`dry-run`** | Nothing was sent: a gate is open (the gates row lists which) or no tool is connected. The list is prepared, not carried out. |
+| created paused | **`gates`**, **`change-list`**, `dry-run`, **`create-paused`**, `preview`, **`log`** | Objects exist on the account, paused. Nothing spends. Activation waits for a recorded approval. |
+| live | **`gates`**, `change-list`, `dry-run`, `create-paused`, `preview`, **`approval`**, **`all-clear`**, **`activate`**, **`log`**, **`rows`**, **`whole`** | The platform confirmed activation of exactly what was approved. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -143,13 +154,20 @@ Work order: launch
 | 4 create-paused |  |  |  |
 | 5 preview |  |  |  |
 | 6 approval |  |  |  |
-| 7 activate |  |  |  |
-| 8 log |  |  |  |
-| 9 rows |  |  |  |
+| 7 all-clear |  |  |  |
+| 8 activate |  |  |  |
+| 9 log |  |  |  |
+| 10 rows |  |  |  |
 | whole |  |  |  |
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (launch): gates pass · change-list pass · dry-run pass · create-paused pass · preview pass · approval pass · activate pass · log pass · rows pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (launch):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (launch): gates pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

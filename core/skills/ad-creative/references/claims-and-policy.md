@@ -28,10 +28,14 @@ credential; "trusted by" implies a count.
    come from the offer file's `Owner-confirmed` lines. Anything that supports a claim
    about quality, results, trust or scale (a rating, a review, a credential, a number of
    customers, a story, a result) comes from the offer's proof table, `Owner-confirmed`
-   or `Observed` with its source. A `Proposed` line is not proof of anything.
+   or `Observed` with its source. A `Proposed` line is not proof of anything. A review
+   or story row shows that it was said; quoting it or retelling it in an ad also needs
+   step 4.
 3. Anything unmapped is cut, or becomes a marked blank `[confirm: ...]` in the draft.
 4. Testimonials and purported real customer stories: a named, real person who gave permission the business
-   recorded. No permission, no use, in any disguise, paraphrase or composite. Say so in
+   recorded. The record names the person and the permission to use their words in
+   advertising, in the proof row or beside it; a status of `Owner-confirmed` on a review
+   row is not that permission. No permission, no use, in any disguise, paraphrase or composite. Say so in
    one line and offer what is cleared. Clearly fictional sketches, casts and
    illustrative demonstration details are allowed, not disguised private stories or
    invented customer evidence. The scene cannot imply unproved product capabilities.

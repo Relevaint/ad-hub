@@ -21,7 +21,9 @@ the row stays `copy-ready`, and the record says which parts were not made.
 
 Write the whole ad as timed beats before any asset: opening, development, turn, product
 payoff, action. For each beat: what is seen, what is heard, what is on screen, how long.
-Lines are the gated copy, word for word.
+Every spoken and on-screen line carries only what the claims map allows; these lines
+become the copy the captions are checked against. The fields each placement needs
+(primary text, headline, description) are written after the beats, not before.
 
 **Check:** read the beats in order with nothing else. Does each beat change what the
 viewer knows or wants, does the turn earn the product, and could the beats be shuffled

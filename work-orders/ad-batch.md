@@ -51,10 +51,10 @@ Build this one layer at a time, in order, under [staged work](../core/_system/st
 
 ### 4. Ad against destination (`destination`)
 
-- **Build:** Each ad read beside the page it sends people to.
+- **Build:** Each ad's destination verdict collected in one table, with any mismatch across ads that point at the same page.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 1 fundamentals before creative"](../core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative)
-- **Check:** Does every ad promise what its landing page delivers: the same offer, price, qualifications and next action?
-- **Evidence:** Each ad beside its opened destination page, or the page gap named.
+- **Check:** Does every ad promise what its landing page delivers, or is each page that could not be seen named as an open item with who can open it?
+- **Evidence:** Each ad's own destination row; the opened page, the page copy on file, or the operator's dated confirmation.
 - **If it fails:** Fix the ad at its connection layer, or report the page gap to the business. The offer is never changed to match an ad.
 
 ### 5. Move the rows (`rows`)
@@ -86,11 +86,13 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| batch concept-ready | `briefs`, `ads`, `distinctness`, `whole` | Concepts only; nothing generated, no ledger row promoted. |
-| batch copy-ready | `briefs`, `ads`, `distinctness`, `destination`, `rows`, `whole` | Every ready row has gated copy; assets are not made or not inspected. |
-| batch creative-ready | `briefs`, `ads`, `distinctness`, `destination`, `rows`, `whole` | Every ready row has every authorised shape made and inspected. Not approved, not live, untested. |
-| batch partly ready | `briefs`, `ads` | Some rows are ready and some are withheld; the review names each and why. |
+| batch concept-ready | **`briefs`**, **`ads`**, **`distinctness`**, **`whole`** | Concepts only; nothing generated, no ledger row promoted. |
+| batch copy-ready | **`briefs`**, **`ads`**, **`distinctness`**, **`rows`**, **`whole`** | Every ready row has gated copy; assets are not made or not inspected. Destination gaps are named. |
+| batch creative-ready | `briefs`, **`ads`**, `distinctness`, `rows`, **`whole`** | Every ready row has every authorised shape made and inspected. Not approved, not live, untested. Destination gaps are named and closed before launch. |
+| batch partly ready | **`briefs`**, **`ads`** | Some rows are ready and some are withheld; the review names each and why. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -110,6 +112,12 @@ Work order: ad-batch
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (ad-batch): briefs pass · ads pass · distinctness pass · destination pass · rows pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (ad-batch):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (ad-batch): briefs pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

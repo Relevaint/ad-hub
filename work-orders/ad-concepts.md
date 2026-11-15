@@ -54,7 +54,7 @@ Also, when it applies:
 - **Build:** For the strongest premises: who or what acts, and separately how it is rendered, with the materially different alternative that was rejected.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 3 cast and treatment are independent decisions"](../core/skills/ad-creative/references/creative-passes.md#pass-3-cast-and-treatment-are-independent-decisions)
 - **Check:** Were cast and rendering chosen as two separate decisions, each for a stated reason tied to the brief and the brand evidence, not by default?
-- **Evidence:** The chosen cast and treatment, the rejected alternative and the reason, read against the fundamentals source note.
+- **Evidence:** The chosen cast and the cast that was rejected; the chosen rendering and, separately, the rendering that was rejected for that cast; the reason for each, read against the fundamentals source note.
 - **If it fails:** A default choice returns to treatment exploration here. A cast that changes the idea's logic returns to premises.
 
 ### 4. Visual stop and hierarchy (`visual-stop`)
@@ -65,15 +65,23 @@ Also, when it applies:
 - **Evidence:** The frame description read alone with the copy hidden; the named reason to pause; the competing details removed, subordinated or kept on purpose.
 - **If it fails:** A weak idea returns to premises or cast and treatment, never to headline polishing. Competing details are recomposed here.
 
-### 5. Connected payoff and claims (`connection`)
+### 5. Connected payoff (`connection`)
 
-- **Build:** The hook as image, text and sound; then opening, development, turn, product payoff and action for video, or one complete proposition for a static; key copy and call to action; every factual claim mapped to a proof row or left as a marked blank.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 5 connect opening turn payoff and action"](../core/skills/ad-creative/references/creative-passes.md#pass-5-connect-opening-turn-payoff-and-action); [ad-creative/SKILL.md, "2 run the claims gate before writing a word"](../core/skills/ad-creative/SKILL.md#2-run-the-claims-gate-before-writing-a-word); [ad-creative/SKILL.md, "3 run the policy and rules check"](../core/skills/ad-creative/SKILL.md#3-run-the-policy-and-rules-check)
-- **Check:** Does the payoff answer the opening's promise with the product, and does every claim map to the offer's proof or stand as a marked blank?
-- **Evidence:** The sequence or composition read start to end; the claims map against the offer file's proof table; the policy check: no personal attribute, required strings exact.
-- **If it fails:** A payoff that does not fulfil the opening returns to premises or the visual stop. An unsupported claim is cut or becomes a marked blank. A policy failure is rewritten around the situation.
+- **Build:** The hook as image, text and sound; then opening, development, turn, product payoff and action for video, or one complete proposition for a static; key copy and call to action.
+- **Method:** [ad-creative/references/creative-passes.md, "pass 5 connect opening turn payoff and action"](../core/skills/ad-creative/references/creative-passes.md#pass-5-connect-opening-turn-payoff-and-action)
+- **Check:** Does the payoff answer the opening's promise with the product, so a viewer remembers the benefit and not only the opening?
+- **Evidence:** The sequence or composition read start to end as a stranger would meet it.
+- **If it fails:** A payoff that does not fulfil the opening returns to premises or the visual stop. Never attach a product screen to an unrelated opening.
 
-### 6. Adversarial review and revision (`review`)
+### 6. Claims and permissions (`claims`)
+
+- **Build:** The claims map: every factual thing the ad says, shows or implies (a number, rating, review, credential, guarantee, price, result, story, comparison, urgency, and a result the picture implies without saying it, such as a before and after) set against the offer's proof, with the permission behind any review, testimonial or customer story; then the policy check.
+- **Method:** [ad-creative/SKILL.md, "2 run the claims gate before writing a word"](../core/skills/ad-creative/SKILL.md#2-run-the-claims-gate-before-writing-a-word); [ad-creative/SKILL.md, "3 run the policy and rules check"](../core/skills/ad-creative/SKILL.md#3-run-the-policy-and-rules-check); [ad-creative/references/claims-and-policy.md, "the gate"](../core/skills/ad-creative/references/claims-and-policy.md#the-gate)
+- **Check:** Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?
+- **Evidence:** The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file.
+- **If it fails:** An unsupported claim is cut or becomes a marked blank. A review or story with no recorded permission is withheld and named as a blank for the business, whatever status its proof row carries. A personal attribute is rewritten around the situation. An idea that only works with the unsupported claim returns to the connection layer.
+
+### 7. Adversarial review and revision (`review`)
 
 - **Build:** A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 6 adversarial concept review then revision"](../core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision); [ad-creative/references/copy-and-hooks.md, "the rubric"](../core/skills/ad-creative/references/copy-and-hooks.md#the-rubric)
@@ -94,7 +102,7 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | If this changes | Check again | Note |
 | --- | --- | --- |
-| The brief, the offer, the proof table or a claim changes | `fundamentals`, `connection`, `review`, `whole` | A concept whose payoff rested on the changed fact is reviewed again from the connection layer. |
+| The brief, the offer, the proof table or a claim changes | `fundamentals`, `claims`, `review`, `whole` | A concept whose payoff rested on the changed fact is also checked again at the connection layer. |
 | The destination page or brand direction changes | `fundamentals`, `cast-treatment`, `review` | Continuity is judged against what the page shows now. |
 | The operator fixes the cast, the style or the test variable | `cast-treatment`, `visual-stop`, `connection`, `review` | A fixed choice stays fixed; name the conflict if it prevents a viable ad. |
 
@@ -102,8 +110,10 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| concept-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, `review`, `whole` | A document verdict: untested, not a ledger status, not copy-ready and not a finished asset. |
+| concept-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, **`claims`**, **`review`**, `whole` | A document verdict: untested, not a ledger status, not copy-ready and not a finished asset. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -119,11 +129,18 @@ Work order: ad-concepts
 | 3 cast-treatment |  |  |  |
 | 4 visual-stop |  |  |  |
 | 5 connection |  |  |  |
-| 6 review |  |  |  |
+| 6 claims |  |  |  |
+| 7 review |  |  |  |
 | whole |  |  |  |
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (ad-concepts): fundamentals pass · premises pass · cast-treatment pass · visual-stop pass · connection pass · review pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (ad-concepts):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (ad-concepts): fundamentals pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

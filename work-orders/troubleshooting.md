@@ -75,9 +75,11 @@ Also, when it applies:
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| cause found | `signal`, `outside-events`, `whole` | The most likely cause is named with its evidence and handed to its owner. |
-| inconclusive | `signal`, `outside-events` | The steps checked did not show a cause; the reply says what would settle it and when. |
+| cause found | **`signal`**, **`outside-events`**, **`whole`** | The most likely cause is named with its evidence and handed to its owner. |
+| inconclusive | **`signal`**, **`outside-events`** | The steps checked did not show a cause; the reply says what would settle it and when. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -97,6 +99,12 @@ Work order: troubleshooting
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (troubleshooting): signal pass · outside-events pass · offer-page pass · fatigue pass · creative pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (troubleshooting):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (troubleshooting): signal pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

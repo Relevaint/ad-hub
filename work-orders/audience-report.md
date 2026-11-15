@@ -76,10 +76,12 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| findings ready | `question`, `source-walk`, `customer-types`, `findings`, `whole` | At least one type is a finding: several lines from more than one source read this run. |
-| leads only | `question`, `source-walk`, `findings`, `whole` | Sources were thin; every type is a lead to confirm. |
-| model knowledge only | `question`, `findings` | Nothing could be read; everything is an assumption to test. Verify before spending. |
+| findings ready | **`question`**, **`source-walk`**, `customer-types`, **`findings`**, **`whole`** | At least one type is a finding: several lines from more than one source read this run. |
+| leads only | **`question`**, **`source-walk`**, **`findings`**, **`whole`** | Sources were thin; every type is a lead to confirm. |
+| model knowledge only | **`question`**, **`findings`** | Nothing could be read; everything is an assumption to test. Verify before spending. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -98,6 +100,12 @@ Work order: audience-report
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (audience-report): question pass · source-walk pass · customer-types pass · findings pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (audience-report):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (audience-report): question pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

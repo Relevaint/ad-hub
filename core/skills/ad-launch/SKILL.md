@@ -142,8 +142,9 @@ platform's own interface before approving.
 
 ### 5. Record the approval, then activate
 
-Write the approval line to the approvals log first. Then activate exactly what the line
-covers, nothing more: the ads named, and the ad set and campaign they sit in when those
+Write the approval line to the approvals log first. Then read the eight gates once more:
+every one must be clear now, not only when the session began. Then activate exactly what
+the line covers, nothing more: the ads named, and the ad set and campaign they sit in when those
 are part of the approval. Pre-approved level 2 activation covers ads already approved
 inside an existing set and nothing else.
 

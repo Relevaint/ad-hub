@@ -40,9 +40,9 @@ Also, when it applies:
 
 - **Build:** Funnel type, result source, the result that counts and the deciding metric.
 - **Method:** [start-here/SKILL.md, "2 work out the result loop"](../core/skills/start-here/SKILL.md#2-work-out-the-result-loop)
-- **Check:** Does the funnel type match how the business actually gets paid, and is the result source a real system the business named?
-- **Evidence:** The business's own words or file for how a sale completes, and the system it named.
-- **If it fails:** Record the missing result source as the first live gap and offer the lightest options as Proposed. Do not pick one for them.
+- **Check:** Does the funnel type match how the business actually gets paid, and is the result source either a real system the business named or recorded as the first live gap?
+- **Evidence:** The business's own words or file for how a sale completes; the system it named, or the gap line with who clears it.
+- **If it fails:** A guessed result source is removed and the gap recorded as the first live gap, with the lightest options offered as Proposed. Do not pick one for them.
 
 ### 3. Record what was supplied (`facts`)
 
@@ -89,10 +89,12 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| routed | `offer`, `first-move` | The first move was made or named; nothing needed recording. |
-| recorded, live gaps open | `offer`, `result-loop`, `facts`, `gaps`, `first-move`, `whole` | Supplied facts are on file with status and source; the live gaps are named with who clears each. |
-| recorded, no live gaps here | `offer`, `result-loop`, `facts`, `gaps`, `first-move`, `whole` | Nothing this skill records is missing; the remaining gates belong to ad-setup, ad-creative, ad-launch and the business. |
+| routed | **`offer`**, **`first-move`** | The first move was made or named; nothing needed recording. |
+| recorded, live gaps open | **`offer`**, **`result-loop`**, **`facts`**, **`gaps`**, **`first-move`**, **`whole`** | Supplied facts are on file with status and source; the live gaps are named with who clears each. |
+| recorded, no live gaps here | **`offer`**, **`result-loop`**, **`facts`**, **`gaps`**, **`first-move`**, **`whole`** | Nothing this skill records is missing; the remaining gates belong to ad-setup, ad-creative, ad-launch and the business. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -112,6 +114,12 @@ Work order: readiness
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (readiness): offer pass · result-loop pass · facts pass · gaps pass · first-move pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (readiness):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (readiness): offer pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

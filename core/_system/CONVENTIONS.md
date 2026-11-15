@@ -179,6 +179,12 @@ two disagree. Keep it true in the same PR as the skill:
   two layers.
 - A layer points at its method with `file#heading`. Rename the heading and the map
   together. Never paste the method into the map: each rule is stated once, in the skill.
-- A state names the layers that must have passed before the output may be called that.
+- `n/a` needs a real reason and never carries a state: the whole-output row is never
+  `n/a`, and a state cannot rest on `n/a` rows alone.
+- A state names the layers it needs before the output may be called that. `must_pass`
+  lists the ones that must be `pass` or `carried`, where `n/a` is not accepted: the
+  layers the state would be false without.
+- A layer whose job is to find a gap is worded so that naming the gap is the pass. A
+  check that can only pass by pretending is a bug in the map.
 - Layers shared by several outputs live once under `layer_sets` and are pulled in with
   `{"use": "<set>"}`.

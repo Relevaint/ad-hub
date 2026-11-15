@@ -4,7 +4,7 @@
 //   node <hub>/core/_system/scripts/workorder.mjs --for "<what was asked for>"
 //   node <hub>/core/_system/scripts/workorder.mjs --id <work order>
 //   node <hub>/core/_system/scripts/workorder.mjs --list
-//   node <hub>/core/_system/scripts/workorder.mjs --record <file> [--id <work order>]
+//   node <hub>/core/_system/scripts/workorder.mjs --record <file | -> [--id <work order>]
 //   node <hub>/core/_system/scripts/workorder.mjs --check
 //   node <hub>/core/_system/scripts/workorder.mjs --write
 //   node <hub>/core/_system/scripts/workorder.mjs --headings <hub file>
@@ -19,7 +19,8 @@
 //   word match, a convenience for finding the page, not a substitute for reading the
 //   request: no clear winner prints the candidates and points at start-here.
 // --record checks a "## Layer record" table (or the one-line form used in a reply) in a
-//   file: every layer present, every pass with evidence, the state supported by the rows.
+//   file, or on standard input with "-": every layer present, one verdict per row, every
+//   pass with evidence that the check was made, the state supported by the rows.
 // --check validates the map against the hub (the build gate runs it). Exit 1 on failure.
 // --write regenerates work-orders/README.md and work-orders/<id>.md from the map. The
 //   gate fails when they are out of date, so edit the JSON, never the generated files.
@@ -32,9 +33,13 @@ import { words } from "./route.mjs";
 
 export const MAP = "core/_system/work-orders.json";
 export const OUT = "work-orders";
-const VERDICTS = ["pass", "fail", "n/a", "not checked"];
+const VERDICTS = ["pass", "fail", "n/a", "not checked", "carried"];
+// Evidence that says the check was not made cannot sit behind a pass.
+const NOT_DONE = /\b(?:not (?:read|opened|open|viewed|watched|played|inspected|checked|seen|verified)|(?:could not|couldn't|cannot|can't|unable to)(?: be)? (?:open|opened|read|view|viewed|watch|watched|play|played|inspect|inspected|check|checked|reach|reached|see|seen|verify|verified))\b/i;
 const UNIVERSAL_STATE = "not ready";
 const WEAK = /^(ok(ay)?|done|yes|y|good|great|fine|looks (good|fine|ok(ay)?|great)|all good|checked|verified|reviewed|passe?d?|n\/?a|none|tbd|-+|—|✓|✔)[.!]?$/i;
+// A reason that says nothing: an n/a or a not checked needs the why.
+const THIN = /^(skipped|skip|not needed|not applicable|does not apply|doesn't apply|not relevant|no need)[.!]?$/i;
 
 // The map as stored, with each {"use": "<layer set>"} replaced by that set's layers, so a
 // run of layers shared by several outputs (the creative passes) is written once.
@@ -160,6 +165,7 @@ export function validate(hub) {
       text(s, `${where} state`, "state");
       text(s, `${where} state ${s.state}`, "means");
       for (const x of list(s.needs)) if (!known.includes(x)) errors.push(`${where}: state "${s.state}" needs unknown layer "${x}"`);
+      for (const x of list(s.must_pass)) if (!list(s.needs).includes(x)) errors.push(`${where}: state "${s.state}" must_pass names "${x}", which is not in its needs`);
     }
   }
   for (const s of skills) if (!orders.some((o) => o.owner === s)) errors.push(`skill ${s} owns no work order`);
@@ -231,15 +237,21 @@ export function render(o, map, prefix = "") {
   }
 
   L.push("## What it can be called", "", "| State | Only when these passed | Means |", "| --- | --- | --- |");
-  for (const s of list(o.states)) L.push(`| ${s.state} | ${list(s.needs).map((x) => `\`${x}\``).join(", ") || "nothing yet"} | ${s.means} |`);
+  for (const s of list(o.states)) {
+    const strict = list(s.must_pass);
+    L.push(`| ${s.state} | ${list(s.needs).map((x) => (strict.includes(x) ? `**\`${x}\`**` : `\`${x}\``)).join(", ") || "nothing yet"} | ${s.means} |`);
+  }
   L.push(`| ${UNIVERSAL_STATE} | nothing yet | A layer failed or could not be checked; say which and what it needs. |`, "");
+  L.push("A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.", "");
 
   L.push("## Layer record", "", `Where it goes: ${o.record}`, "", "```markdown", "## Layer record", `Work order: ${o.id}`);
   L.push("| Layer | Verdict | Evidence: what was looked at | Fix made or return |", "| --- | --- | --- | --- |");
   list(o.layers).forEach((l, i) => L.push(`| ${i + 1} ${l.id} |  |  |  |`));
   L.push("| whole |  |  |  |", "State:", "```", "");
-  L.push(`Verdicts: \`pass\` (name the evidence), \`fail\` (name the fix or where it went back), \`n/a\` (say why), \`not checked\` (say why and who can). In a reply with no file, one line: \`Layers (${o.id}): ${list(o.layers).map((l) => `${l.id} pass`).join(" · ")} · whole pass. State: ...\``, "");
-  L.push(`Check a saved record: \`node ${prefix ? "<hub>/" : ""}core/_system/scripts/workorder.mjs --record <file>\``, "");
+  L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.", "");
+  L.push(`In a reply with no file, put the record on its own line, starting with \`Layers (${o.id}):\`, every layer in order with a few words of evidence in brackets:`, "");
+  L.push("```", `Layers (${o.id}): ${list(o.layers)[0].id} pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>`, "```", "");
+  L.push(`Check it before you send it: \`node ${prefix ? "<hub>/" : ""}core/_system/scripts/workorder.mjs --record <file>\`, or pipe the reply in with \`--record -\`.`, "");
   void by;
   return L.join("\n");
 }
@@ -305,9 +317,13 @@ export function match(hub, request) {
 
 // ---------------------------------------------------------------- records
 
-function finalVerdict(cell) {
-  const found = [...String(cell).toLowerCase().matchAll(/not checked|n\/a|pass|fail/g)].map((m) => m[0]);
-  return found.length ? found[found.length - 1] : null;
+// One verdict per row. "fail, then pass" is the one allowed pair: a repair that worked.
+function readVerdict(cell) {
+  const found = [...String(cell).toLowerCase().matchAll(/not checked|carried|n\/a|pass|fail/g)].map((m) => m[0]);
+  if (!found.length) return { verdict: null, mixed: false };
+  const last = found[found.length - 1];
+  const mixed = found.slice(0, -1).some((v) => v !== last && !(v === "fail" && (last === "pass" || last === "carried")));
+  return { verdict: last, mixed };
 }
 
 export function parseRecords(text) {
@@ -326,20 +342,30 @@ export function parseRecords(text) {
         if (t.startsWith("|")) {
           const cells = t.split("|").slice(1, -1).map((c) => c.trim());
           if (cells.length < 2 || /^-+$/.test(cells[0].replace(/[: ]/g, "")) || /^layer$/i.test(cells[0])) continue;
-          rec.rows.push({ layer: norm(cells[0]), verdict: finalVerdict(cells[1]), evidence: cells[2] || "", fix: cells[3] || "" });
+          rec.rows.push({ layer: norm(cells[0]), ...readVerdict(cells[1]), evidence: cells[2] || "", fix: cells[3] || "" });
         }
       }
       records.push(rec);
     }
-    const one = lines[i].match(/^\s*Layers\s*\(`?([a-z0-9-]+)`?\)\s*:\s*(.+)$/i);
+    // The one-line form used in a reply. It may sit anywhere on its line.
+    const one = lines[i].match(/Layers\s*\(`?([a-z0-9-]+)`?\)\s*:\s*(.+)$/i);
     if (one) {
       const rec = { line: i + 1, id: one[1], rows: [], state: null, compact: true };
       let body = one[2];
       const st = body.match(/\bState:\s*(.*)$/i);
       if (st) { rec.state = st[1].trim(); body = body.slice(0, st.index); }
-      for (const item of body.split(/\s*[·;|]\s*/)) {
-        const m = item.trim().replace(/\.$/, "").match(/^(.*?)[\s:]+(not checked|n\/a|pass|fail)\b(.*)$/i);
-        if (m) rec.rows.push({ layer: norm(m[1]), verdict: m[2].toLowerCase(), evidence: m[3].replace(/^[\s,(:-]+|[)\s]+$/g, ""), fix: "" });
+      else {
+        const before = lines[i].slice(0, one.index).match(/State:\s*([^.]*)/i);
+        const after = [lines[i + 1], lines[i + 2]].map((l) => String(l || "").match(/^\s*State:\s*(.*)$/i)).find(Boolean);
+        if (before) rec.state = before[1].trim();
+        else if (after) rec.state = after[1].trim();
+      }
+      for (const item of body.split(body.includes("·") ? /\s*·\s*/ : /\s*;\s*/)) {
+        const m = item.trim().replace(/\.$/, "").match(/^(.*?)[\s:]+(not checked|carried|n\/a|pass|fail)\b(.*)$/i);
+        if (!m) continue;
+        const outside = m[3].replace(/\([^)]*\)/g, " ");
+        const inside = (m[3].match(/\(([^)]*)\)/) || [])[1];
+        rec.rows.push({ layer: norm(m[1]), ...readVerdict(`${m[2]} ${outside}`), evidence: (inside ?? m[3].replace(/^[\s,:-]+/, "")).trim(), fix: "" });
       }
       records.push(rec);
     }
@@ -368,13 +394,14 @@ export function checkRecord(hub, text, forcedId) {
       if (!r) { errors.push(`${at}: layer "${l.id}" has no row; a layer that does not apply is n/a with the reason, never left out`); continue; }
       if (!VERDICTS.includes(r.verdict)) { errors.push(`${at}: layer "${l.id}" has no verdict (${VERDICTS.join(", ")})`); continue; }
       final[l.id] = r.verdict;
-      if (rec.compact) {
-        if ((r.verdict === "n/a" || r.verdict === "not checked") && !r.evidence) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason`);
-        continue;
-      }
+      if (r.mixed) errors.push(`${at}: layer "${l.id}" carries two verdicts; one verdict per row (a result that is part passed and part unchecked is not checked, with what remains)`);
       const ev = r.evidence.trim();
-      if (r.verdict === "pass" && (ev.length < 10 || WEAK.test(ev))) errors.push(`${at}: layer "${l.id}" passes with no evidence ("${ev}"); name what was looked at`);
-      if ((r.verdict === "n/a" || r.verdict === "not checked") && ev.length < 5) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason`);
+      if (r.verdict === "pass" || r.verdict === "carried") {
+        if (ev.length < 6 || WEAK.test(ev)) errors.push(`${at}: layer "${l.id}" passes with no evidence ("${ev}"); name what was looked at`);
+        else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked`);
+      }
+      if ((r.verdict === "n/a" || r.verdict === "not checked") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);
+      if (l.id === "whole" && r.verdict === "n/a") errors.push(`${at}: the whole-output row is never n/a; check the assembled output, or mark it not checked with the reason`);
       if (r.verdict === "fail" && !ev && !r.fix.trim()) errors.push(`${at}: layer "${l.id}" fails with nothing said about what failed`);
     }
     if (!rec.state) { errors.push(`${at}: no "State:" line`); continue; }
@@ -386,10 +413,14 @@ export function checkRecord(hub, text, forcedId) {
       continue;
     }
     for (const need of list(claimed.needs)) {
-      if (final[need] && final[need] !== "pass" && final[need] !== "n/a") {
-        errors.push(`${at}: state "${claimed.state}" needs layer "${need}" to pass; it is ${final[need]}`);
+      const v = final[need];
+      const strict = list(claimed.must_pass).includes(need);
+      if (v && v !== "pass" && v !== "carried" && (strict || v !== "n/a")) {
+        errors.push(`${at}: state "${claimed.state}" needs layer "${need}" to pass; it is ${v}`);
       }
     }
+    const needed = list(claimed.needs);
+    if (needed.length && needed.every((n) => final[n] === "n/a")) errors.push(`${at}: state "${claimed.state}" rests only on n/a rows; n/a alone cannot support a state`);
   }
   return { errors, records };
 }
@@ -428,8 +459,8 @@ export function main(argv) {
     return 0;
   }
   if (args.record) {
-    const file = path.resolve(args.record);
-    if (!existsSync(file)) throw new UsageError(`file not found: ${args.record}`);
+    const file = args.record === "-" ? 0 : path.resolve(args.record);
+    if (file !== 0 && !existsSync(file)) throw new UsageError(`file not found: ${args.record}`);
     const { errors, records } = checkRecord(hub, readFileSync(file, "utf8"), args.id);
     for (const e of errors) console.log(`FAIL  ${e}`);
     console.log(`${errors.length ? "Record failed" : "Record passed"}: ${records.length} layer record(s), ${errors.length} problem(s).`);

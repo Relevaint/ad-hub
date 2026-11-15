@@ -39,9 +39,17 @@ skipped layer visible to the agent itself and to whoever reads the result.
   arithmetic shown. "Looks good", a prompt, a plan, a file's existence and a thumbnail are
   not evidence.
 - **A layer that does not apply is `n/a` with the reason.** Sound on a static image, a
-  platform read with no tool connected. It is never dropped silently.
+  budget move when the business set no band, the change log on a dry run that changed
+  nothing. It is never dropped silently, and `n/a` is
+  never a way around a layer the state depends on.
 - **A check that could not be made is `not checked` with the reason,** and the state drops
-  to match (doctrine 15). An unchecked layer never reads as a pass.
+  to match (doctrine 15): a platform read with no tool connected, a page that could not
+  be opened, a file that could not be played. An unchecked layer never reads as a pass,
+  and a pass whose evidence says the check was not made is a `not checked`.
+- **Naming a gap is a pass.** A layer whose job is to find out whether something is
+  there (a result source, a second set of numbers, permission to quote a review) passes
+  when it records the gap plainly with who clears it. Writing as if the thing were
+  there is the fail.
 - **A part passing does not pass its parent.** A good hook and a good product shot can tell
   unrelated stories; two good ads can test the same thing by accident; a good ad can promise
   what its page does not deliver.
@@ -67,14 +75,27 @@ skipped layer visible to the agent itself and to whoever reads the result.
 A price, a claim, a proof row, an offer term, the landing page, the audience or the brief
 changes after work has passed. The work order is `change-recheck`:
 
-1. Record the change where the fact lives, with its status, source and date. Keep the old
-   value with its date.
+1. Record the change in the `ads/` file that owns the fact, with its status, source and
+   date. Keep the old value with its date. A fact that lives in the business's own files
+   outside `ads/` is the business's to change: list it, never edit it.
 2. List what rested on the old version: search the business's `ads/` folder for the old
    value and its wording. Each hit has an owner and a work order, and that work order's
    "When something changes" table names the layers to check again.
-3. Take each dependent back through those layers and update its layer record.
-4. Set each state to what its new record supports. An approval that covered the old
-   version does not cover the new one.
+3. Correct each dependent under its own work order. An ad that has not been approved or
+   run is corrected in place and its layer record updated. An ad that has been approved
+   or has run is never edited: the change is a revision from `ad-strategy`
+   ([ledger-row.md](schemas/ledger-row.md)), so the approval and the results stay with
+   the version that earned them.
+4. In the updated record, a layer the change did not touch is `carried`, with the date
+   of the record it passed in. Only the layers the change table names are run again.
+   Work made before layer records existed carries from its dated checks section only
+   where that section shows the layer's check, and the row says so. A layer the old
+   checks never covered is run again, not carried.
+5. Set each state to what its new record supports. An approval that covered the old
+   version does not cover the new one. A live ad that still carries the old claim goes
+   at the top of the reply with a prepared pause list. Pausing it needs the go-ahead of
+   someone who can approve: the emergency stop covers only the conditions on its own
+   list.
 
 Work the change did not touch is left as it is: a new price does not regenerate an image
 with no price in it.
@@ -83,8 +104,9 @@ with no price in it.
 
 One row per layer in the work order, in order, then the whole-output row and the state.
 It goes at the end of the file the output writes, under the heading below. An output that
-writes no file carries it in the reply as one line: every layer by name with its verdict,
-then the state.
+writes no file carries it in the reply on its own line, starting with
+`Layers (<work order>):`, every layer by name with its verdict and a few words of
+evidence in brackets, then the state. The work order prints the line to fill in.
 
 ```markdown
 ## Layer record
@@ -99,11 +121,20 @@ Work order: <id>
 State: <one of the work order's states>
 ```
 
-Verdicts are `pass`, `fail`, `n/a` and `not checked`. A `pass` names its evidence. A `fail`
-names what was changed or where it went back. Keep each cell to a line; this is a proof
-trail, not an essay. Check a saved record with
-`node <hub>/core/_system/scripts/workorder.mjs --record <file>`: it fails on a missing layer,
-a pass with no evidence, or a state the rows do not support.
+One verdict per row: `pass`, `fail`, `n/a`, `not checked`, or `carried` (it passed in an
+earlier record and nothing it rests on has changed; name that record's date). A `pass`
+names its evidence. A `fail` names what was changed or where it went back; "fail, then
+pass" records a repair that worked. A result that is part passed and part unchecked is
+`not checked`, with what remains. Keep each cell to a line; this is a proof trail, not an
+essay.
+
+Check a record before sending it:
+`node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe a reply in with
+`--record -`. It fails on a missing layer, a pass with no evidence, a pass whose evidence
+says the check was not made, two verdicts in one row, or a state the rows do not support.
+Each state lists the layers it needs. The ones the work order shows in bold must be
+`pass` or `carried`; `n/a` is not accepted there. The whole-output row is never `n/a`,
+and no state stands on `n/a` rows alone.
 
 Business facts in a record stay in the business repo with the file they belong to. Nothing
 from a record is written into the hub.

@@ -34,9 +34,9 @@ Also, when it applies:
 
 - **Build:** The window's numbers by ad ID: the platform's figures and the business's own results side by side, with unmatched results listed.
 - **Method:** [ad-review/SKILL.md, "1 two sources kept apart"](../core/skills/ad-review/SKILL.md#1-two-sources-kept-apart)
-- **Check:** Are the platform's numbers and the business's result source both shown per ad ID, kept apart, with unmatched results visible and the settling days set aside?
-- **Evidence:** The two sources named with their pull dates; the unmatched list.
-- **If it fails:** A missing or stale source is named and the review says how old its numbers are. An unmatched result stays unmatched.
+- **Check:** Are the platform's numbers and the business's result source both shown per ad ID and kept apart, with unmatched results visible and every missing source or unsettled day named as a limit?
+- **Evidence:** The two sources named with their pull dates; the unmatched list; the limits line.
+- **If it fails:** A source or a date that was passed over is named as a limit, and the reading that follows is no stronger than the limit allows. An unmatched result stays unmatched.
 
 ### 2. Judge on the deciding metric (`metric`)
 
@@ -52,7 +52,7 @@ Also, when it applies:
 - **Method:** [ad-review/SKILL.md, "3 explain with the secondary metrics"](../core/skills/ad-review/SKILL.md#3-explain-with-the-secondary-metrics)
 - **Check:** Is every secondary-metric reading labelled as an explanation, never as the verdict?
 - **Evidence:** The Explained, not decided section.
-- **If it fails:** Relabel it; remove a verdict that rests on an explaining metric.
+- **If it fails:** Relabel it; remove a verdict that rests on an explaining metric. With no explaining metrics in the snapshot this layer is not checked, and the review says who can pull them.
 
 ### 4. Roll up by tag (`rollups`)
 
@@ -107,10 +107,12 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 
 | State | Only when these passed | Means |
 | --- | --- | --- |
-| call above the bar | `snapshot`, `metric`, `explain`, `outside-events`, `hand-backs`, `learnings`, `whole` | The sample supports a call on the deciding metric. It is a reading of this window, not a forecast. |
-| direction only | `snapshot`, `metric`, `outside-events`, `hand-backs`, `whole` | The numbers lean one way and cannot settle it. No winner, no loser, no learning. |
-| inconclusive | `snapshot`, `metric`, `whole` | Too few results, or a source is missing. A finished answer: the review says what would settle it and when. |
+| call above the bar | `snapshot`, **`metric`**, `explain`, `outside-events`, `hand-backs`, `learnings`, **`whole`** | The sample supports a call on the deciding metric. It is a reading of this window, not a forecast. |
+| direction only | **`snapshot`**, **`metric`**, **`outside-events`**, `hand-backs`, **`whole`** | The numbers lean one way and cannot settle it. No winner, no loser, no learning. |
+| inconclusive | **`snapshot`**, **`metric`**, **`whole`** | Too few results, or a source is missing. A finished answer: the review says what would settle it and when. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
 
 ## Layer record
 
@@ -132,6 +134,12 @@ Work order: results-review
 State:
 ```
 
-Verdicts: `pass` (name the evidence), `fail` (name the fix or where it went back), `n/a` (say why), `not checked` (say why and who can). In a reply with no file, one line: `Layers (results-review): snapshot pass · metric pass · explain pass · rollups pass · outside-events pass · hand-backs pass · learnings pass · whole pass. State: ...`
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
 
-Check a saved record: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`
+In a reply with no file, put the record on its own line, starting with `Layers (results-review):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (results-review): snapshot pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.
