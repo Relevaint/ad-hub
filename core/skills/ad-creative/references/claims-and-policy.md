@@ -18,7 +18,9 @@ Anything a reader could take as a fact about the business, the product or its re
 - any statement about what the product does or does not do
 
 Implied claims count: a photo of a crowd implies customers; a lab coat implies a
-credential; "trusted by" implies a count.
+credential; "trusted by" implies a count. Naming a problem and then presenting the offer as
+the answer implies the offer fixes it: cut or reword the line unless the offer file
+supports that.
 
 ## The gate
 
