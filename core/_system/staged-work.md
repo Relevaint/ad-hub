@@ -20,7 +20,10 @@ skipped layer visible to the agent itself and to whoever reads the result.
 2. **Load everything it lists.** The owner skill and each file under "Load first", in full,
    plus the conditional ones that apply. Reading a file in an earlier session does not count.
 3. **Work the layers in order.** For each layer: build that layer only, answer its check
-   from the evidence it names, write its line in the layer record, then move on.
+   from the evidence it names, write its line in the layer record, then move on. When the
+   output writes a file, the layer's result goes into that file before the next layer
+   starts: the finished piece is assembled from the layer results, never drafted first
+   and labelled afterward.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
    not to polishing a later layer. After a repair, check again every later layer that
    rested on it.
@@ -134,7 +137,8 @@ Check a record before sending it:
 says the check was not made, two verdicts in one row, or a state the rows do not support.
 Each state lists the layers it needs. The ones the work order shows in bold must be
 `pass` or `carried`; `n/a` is not accepted there. The whole-output row is never `n/a`,
-and no state stands on `n/a` rows alone.
+and no state stands on `n/a` rows alone. A state takes no exceptions: `rechecked, except the
+live ads` is not `rechecked`. Claim the weaker state and name what remains.
 
 Business facts in a record stay in the business repo with the file they belong to. Nothing
 from a record is written into the hub.

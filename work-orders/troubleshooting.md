@@ -79,7 +79,7 @@ Also, when it applies:
 | inconclusive | **`signal`**, **`outside-events`** | The steps checked did not show a cause; the reply says what would settle it and when. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
 
-A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
 
 ## Layer record
 
