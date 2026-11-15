@@ -10,7 +10,7 @@
 **Contains:** [`readiness`](readiness.md), [`audience-report`](audience-report.md), [`competitor-report`](competitor-report.md), [`test-plan`](test-plan.md), [`ad-batch`](ad-batch.md), [`tracking-setup`](tracking-setup.md), [`launch`](launch.md), [`daily-watch`](daily-watch.md), [`management-session`](management-session.md), [`results-review`](results-review.md)
 **Live account:** only through launch and management, under recorded authority
 
-Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
+Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: open it with `--layer` when it is reached, build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
 
 ## Load first
 
@@ -24,75 +24,23 @@ Build this one layer at a time, in order, under [staged work](../core/_system/st
 
 ## Layers
 
-### 1. Readiness (`readiness`)
+1. **Readiness** (`readiness`): The offer, its result loop, the supplied facts with a status on each, and the gaps split by what they block. Runs [`readiness`](readiness.md).
+2. **Research the plan needs** (`research`): Buyer language from sources actually read, and what others run, when the plan would otherwise rest on the business's own description. Runs [`audience-report`](audience-report.md), [`competitor-report`](competitor-report.md) (as the decision needs it; skipping it is n/a with the reason).
+3. **Plan the batch** (`plan`): The diagnosis, the batch with IDs, tags and reasons, and the test design from this offer's numbers. Runs [`test-plan`](test-plan.md).
+4. **Make the batch** (`creative`): Each planned ad through its own work order, then the batch checks. Runs [`ad-batch`](ad-batch.md).
+5. **Make the result measurable** (`measurement`): The signal, the verified path and a test of the real result seen arriving. Runs [`tracking-setup`](tracking-setup.md).
+6. **Launch** (`launch`): Gates checked, objects created paused, previews shown, approval recorded, then activation. Runs [`launch`](launch.md).
+7. **Watch and manage** (`run`): A daily watch that acts only on emergencies, and scheduled sessions under the rulebook. Runs [`daily-watch`](daily-watch.md), [`management-session`](management-session.md).
+8. **Review and learn** (`learn`): Results by ad ID from both sources, judged on the deciding metric, with hand-backs. Runs [`results-review`](results-review.md).
+9. **Whole output** (`whole`): the assembled output, checked last.
 
-- **Build:** The offer, its result loop, the supplied facts with a status on each, and the gaps split by what they block.
-- **Run:** [`readiness`](readiness.md)
-- **Check:** Is there one offer with a real result source, and is every live gap named with who clears it?
-- **Evidence:** The offer file and the gap lists.
-- **If it fails:** Stay here until the offer and its result loop are settled. Nothing downstream is planned on a guessed offer.
+Open the first layer:
 
-### 2. Research the plan needs (`research`)
+```
+node <hub>/core/_system/scripts/workorder.mjs --id ad-program --layer readiness --notes <notes file>
+```
 
-- **Build:** Buyer language from sources actually read, and what others run, when the plan would otherwise rest on the business's own description.
-- **Run:** [`audience-report`](audience-report.md), [`competitor-report`](competitor-report.md) (as the decision needs it; skipping it is n/a with the reason)
-- **Check:** Does the plan have buyer language and alternatives from sources that were read, or is the gap stated as an assumption?
-- **Evidence:** The research files with their data labels, or the plan's assumption line.
-- **If it fails:** Run the research work order, or carry the gap forward as a labelled assumption. Never fill it from general knowledge.
-
-### 3. Plan the batch (`plan`)
-
-- **Build:** The diagnosis, the batch with IDs, tags and reasons, and the test design from this offer's numbers.
-- **Run:** [`test-plan`](test-plan.md)
-- **Check:** Does every planned ad have an ID and a reason no other row shares, with the bar and spend taken from the offer and authority files?
-- **Evidence:** The ledger rows and the test plan.
-- **If it fails:** Back to the test-plan work order at the layer that failed.
-
-### 4. Make the batch (`creative`)
-
-- **Build:** Each planned ad through its own work order, then the batch checks.
-- **Run:** [`ad-batch`](ad-batch.md)
-- **Check:** Is every row at the state its file and assets support, with the batch checked for sameness and each ad checked against its destination?
-- **Evidence:** The batch review and each creative file's layer record.
-- **If it fails:** Back to the ad's own work order at the layer that failed.
-
-### 5. Make the result measurable (`measurement`)
-
-- **Build:** The signal, the verified path and a test of the real result seen arriving.
-- **Run:** [`tracking-setup`](tracking-setup.md)
-- **Check:** Has the real result been seen arriving on the platform on a stated date, or is it recorded as not yet seen with who clears it?
-- **Evidence:** The platform file's result-signal section.
-- **If it fails:** Nothing goes live. The gap goes to the tracking-setup work order or to the person who can run the test.
-
-### 6. Launch (`launch`)
-
-- **Build:** Gates checked, objects created paused, previews shown, approval recorded, then activation.
-- **Run:** [`launch`](launch.md)
-- **Check:** Was every gate named, and is anything live covered by an approval line written before it was activated?
-- **Evidence:** The gates table, the approvals log and the change entries.
-- **If it fails:** Stop at the dry run and say what clears the open gate and who.
-
-### 7. Watch and manage (`run`)
-
-- **Build:** A daily watch that acts only on emergencies, and scheduled sessions under the rulebook.
-- **Run:** [`daily-watch`](daily-watch.md), [`management-session`](management-session.md)
-- **Check:** Did every change come from an emergency condition or a scheduled session, with an entry and an undo?
-- **Evidence:** The change log.
-- **If it fails:** Roll back to the last known good, then find the cause with the troubleshooting work order.
-
-### 8. Review and learn (`learn`)
-
-- **Build:** Results by ad ID from both sources, judged on the deciding metric, with hand-backs.
-- **Run:** [`results-review`](results-review.md)
-- **Check:** Does the review say which reading the sample supports, and was a learning written only at the bar?
-- **Evidence:** The review file.
-- **If it fails:** Back to the results-review work order; an inconclusive review is a finished answer when it says what would settle it.
-
-### Whole output (`whole`)
-
-- **Check:** Does one promise run from the ad to the page to the result that is measured, does every ad carry its ID from the ledger to its link to the snapshot, and is nothing live that a gate should have held?
-- **Evidence:** An ad read beside its destination page; one ID followed through the ledger, the creative file, the platform name and the link; the gates table from launch.
-- **If it fails:** Go to the work order that owns the break: a promise mismatch to ad-batch or the offer, an ID gap to test-plan, an open gate to tracking-setup or the business.
+A layer's method, check and evidence are printed when it is opened, and it opens once every layer before it has its section in the notes file. `--all` prints every layer at once: it is for a person reading, and for a session that cannot write a notes file at all.
 
 ## When something changes
 
@@ -142,7 +90,7 @@ State:
 
 One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
 
-Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it, and the loading layer names every file under Load first.
+Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it and the `opened:` line `--layer` wrote when it was opened, in the work order's order, and the loading layer names every file under Load first.
 
 In a reply with no file, put the record on its own line, starting with `Layers (ad-program):`, every layer in order with a few words of evidence in brackets:
 

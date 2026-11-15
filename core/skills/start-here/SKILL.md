@@ -67,8 +67,8 @@ them is this skill's job.
 
 Every output of this skill is built in layers under
 [staged work](../../_system/staged-work.md): build one layer, answer its check from the
-evidence it names, write its line in the layer record, then build the next. Get the work
-order before starting:
+evidence it names, write its line in the layer record, then open the next with `--layer`
+as it is reached. Get the work order before starting:
 
 ```
 node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"

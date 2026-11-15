@@ -10,7 +10,7 @@
 **Part of:** [`ad-program`](ad-program.md)
 **Live account:** read-only, under ads/authority.md
 
-Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
+Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: open it with `--layer` when it is reached, build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
 
 ## Load first
 
@@ -30,68 +30,22 @@ Also, when it applies:
 
 ## Layers
 
-### 1. Two sources, kept apart (`snapshot`)
+1. **Two sources, kept apart** (`snapshot`): The window's numbers by ad ID: the platform's figures and the business's own results side by side, with unmatched results listed.
+2. **Judge on the deciding metric** (`metric`): The deciding metric against break-even for the account and per ad, and the sample statement.
+3. **Explain with the secondary metrics** (`explain`): What the hook rate, click rate, landing views and frequency suggest about why.
+4. **Roll up by tag** (`rollups`): Results pooled by the ledger's tags.
+5. **Outside events before blame** (`outside-events`): The change log, the calendar and anything the business names, for the window.
+6. **Hand back, pause nothing** (`hand-backs`): Evidence handed to ad-strategy, ad-manage and ad-setup.
+7. **Learnings, at the bar only** (`learnings`): A learning line with sample size and source, or none.
+8. **Whole output** (`whole`): the assembled output, checked last.
 
-- **Build:** The window's numbers by ad ID: the platform's figures and the business's own results side by side, with unmatched results listed.
-- **Method:** [ad-review/SKILL.md, "1 two sources kept apart"](../core/skills/ad-review/SKILL.md#1-two-sources-kept-apart)
-- **Check:** Are the platform's numbers and the business's result source both shown per ad ID and kept apart, with unmatched results visible and every missing source or unsettled day named as a limit?
-- **Evidence:** The two sources named with their pull dates; the unmatched list; the limits line.
-- **If it fails:** A source or a date that was passed over is named as a limit, and the reading that follows is no stronger than the limit allows. An unmatched result stays unmatched.
+Open the first layer:
 
-### 2. Judge on the deciding metric (`metric`)
+```
+node <hub>/core/_system/scripts/workorder.mjs --id results-review --layer snapshot --notes <notes file>
+```
 
-- **Build:** The deciding metric against break-even for the account and per ad, and the sample statement.
-- **Method:** [ad-review/SKILL.md, "2 judge on the deciding metric"](../core/skills/ad-review/SKILL.md#2-judge-on-the-deciding-metric); [ad-review/references/reading-results.md, "what the sample can say"](../core/skills/ad-review/references/reading-results.md#what-the-sample-can-say)
-- **Check:** Is the reading on the deciding metric against the quoted break-even, with the sample statement saying which of three readings holds: a call above the bar, direction only, or too few to say?
-- **Evidence:** The offer file's break-even with its working; the result count; the bar from the test plan; what the lag allows by now.
-- **If it fails:** Below the bar the answer is direction only or too few to say, and that is a finished answer: say what would settle it and when.
-
-### 3. Explain with the secondary metrics (`explain`)
-
-- **Build:** What the hook rate, click rate, landing views and frequency suggest about why.
-- **Method:** [ad-review/SKILL.md, "3 explain with the secondary metrics"](../core/skills/ad-review/SKILL.md#3-explain-with-the-secondary-metrics)
-- **Check:** Is every secondary-metric reading labelled as an explanation, never as the verdict?
-- **Evidence:** The Explained, not decided section.
-- **If it fails:** Relabel it; remove a verdict that rests on an explaining metric. With no explaining metrics in the snapshot this layer is not checked, and the review says who can pull them.
-
-### 4. Roll up by tag (`rollups`)
-
-- **Build:** Results pooled by the ledger's tags.
-- **Method:** [ad-review/SKILL.md, "4 roll up by tag"](../core/skills/ad-review/SKILL.md#4-roll-up-by-tag); [ad-review/references/reading-results.md, "roll ups"](../core/skills/ad-review/references/reading-results.md#roll-ups)
-- **Check:** Does every roll-up carry its count of ads and results?
-- **Evidence:** The roll-up table.
-- **If it fails:** Add the counts; drop a roll-up that has none.
-
-### 5. Outside events before blame (`outside-events`)
-
-- **Build:** The change log, the calendar and anything the business names, for the window.
-- **Method:** [ad-review/SKILL.md, "5 outside events before blame"](../core/skills/ad-review/SKILL.md#5-outside-events-before-blame)
-- **Check:** Were the change log and the calendar checked before any change was blamed or any ad credited?
-- **Evidence:** The entries and events in the window, listed.
-- **If it fails:** Check them now and revise any cause that rested on a coincidence.
-
-### 6. Hand back, pause nothing (`hand-backs`)
-
-- **Build:** Evidence handed to ad-strategy, ad-manage and ad-setup.
-- **Method:** [ad-review/SKILL.md, "6 hand back pause nothing"](../core/skills/ad-review/SKILL.md#6-hand-back-pause-nothing); [ad-review/references/reading-results.md, "which questions belong to which skill"](../core/skills/ad-review/references/reading-results.md#which-questions-belong-to-which-skill)
-- **Check:** Does each hand-back name its skill and carry its evidence, with nothing paused or changed from the review?
-- **Evidence:** The Hand-backs section; the untouched ledger statuses and change log.
-- **If it fails:** Undo nothing on the account from here: report it, and move the decision to its skill.
-
-### 7. Learnings, at the bar only (`learnings`)
-
-- **Build:** A learning line with sample size and source, or none.
-- **Method:** [ad-review/SKILL.md, "8 learnings at the bar only"](../core/skills/ad-review/SKILL.md#8-learnings-at-the-bar-only); [ad-review/references/reading-results.md, "learnings"](../core/skills/ad-review/references/reading-results.md#learnings)
-- **Check:** Does each learning clear the bar with a sample size and a source, or was none written?
-- **Evidence:** The learning line against the sample statement.
-- **If it fails:** Move it to Direction, not yet a learning, with what would make it one.
-
-### Whole output (`whole`)
-
-- **Method:** [ad-review/SKILL.md, "quality gate"](../core/skills/ad-review/SKILL.md#quality-gate)
-- **Check:** Were the numbers checked twice, and does the review answer the question that was asked, including saying plainly when it cannot be answered yet?
-- **Evidence:** A second pass that looks for errors in the first: totals re-added and each cost per result recomputed.
-- **If it fails:** Say whether an input, the arithmetic or an inference was wrong, fix that layer, and re-read everything that rested on it.
+A layer's method, check and evidence are printed when it is opened, and it opens once every layer before it has its section in the notes file. `--all` prints every layer at once: it is for a person reading, and for a session that cannot write a notes file at all.
 
 ## When something changes
 
@@ -138,7 +92,7 @@ State:
 
 One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
 
-Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it, and the loading layer names every file under Load first.
+Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it and the `opened:` line `--layer` wrote when it was opened, in the work order's order, and the loading layer names every file under Load first.
 
 In a reply with no file, put the record on its own line, starting with `Layers (results-review):`, every layer in order with a few words of evidence in brackets:
 

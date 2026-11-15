@@ -48,9 +48,10 @@ function pointer(skill, hubRef, owned = []) {
     ? `3. Build in layers. Get the work order for what was asked:
    \`node ${p("core/_system/scripts/workorder.mjs")} --for "<the request>"\`
    (or open \`${p("work-orders/README.md")}\`). This skill owns: ${owned.join(", ")}.
-   Load everything the work order lists, then work one layer at a time: build it, answer
-   its check from the evidence it names, write its line in the layer record. Do not draft
-   the finished output and check it afterward. The rules are in
+   Load everything the work order lists, then work one layer at a time, opening each with
+   \`--layer\` as it is reached (the work order prints the command): build it, answer its
+   check from the evidence it names, write its result in the notes file and its line in
+   the layer record. Do not draft the finished output and check it afterward. The rules are in
    \`${p("core/_system/staged-work.md")}\`.
 `
     : "";

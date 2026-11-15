@@ -3,6 +3,8 @@
 //
 //   node <hub>/core/_system/scripts/workorder.mjs --for "<what was asked for>"
 //   node <hub>/core/_system/scripts/workorder.mjs --id <work order>
+//   node <hub>/core/_system/scripts/workorder.mjs --id <work order> --layer <layer id | whole> --notes <file>
+//   node <hub>/core/_system/scripts/workorder.mjs --id <work order> --all
 //   node <hub>/core/_system/scripts/workorder.mjs --list
 //   node <hub>/core/_system/scripts/workorder.mjs --record <file | -> [--id <work order>]
 //   node <hub>/core/_system/scripts/workorder.mjs --check
@@ -18,12 +20,22 @@
 // --for matches a request against each entry's phrases and prints the work order. It is a
 //   word match, a convenience for finding the page, not a substitute for reading the
 //   request: no clear winner prints the candidates and points at start-here.
+// --for and --id print the summary: each layer's number, id, name and what is built, and the
+//   command that opens the first layer. Method, check and evidence are not in it.
+// --layer opens one layer (with --id, or after --for) and needs --notes. It opens only when
+//   every layer before it has its section in the notes file (a heading with its id and 15
+//   words, or a section beginning n/a, not checked or partial with the reason); the first
+//   time, it appends "<!-- opened: <work order>/<layer> <UTC time> -->" to the notes file.
+//   --layer whole opens the whole-output check.
+// --all prints the full page, every layer at once: for a person reading, and for a session
+//   that cannot write a notes file at all.
 // --record checks a "## Layer record" table (or the one-line form used in a reply) in a
 //   file, or on standard input with "-": every layer present, one verdict per row, every
 //   pass with evidence that the check was made, the state supported by the rows, every
 //   failed or unchecked layer named beside the state, the evidence items a layer asks for,
 //   and, when the record names a notes file, a heading per passed layer in it with the
-//   loading layer naming every file under "Load first".
+//   loading layer naming every file under "Load first", and an "opened:" line per passed
+//   layer, in the work order's order.
 // --check validates the map against the hub (the build gate runs it). Exit 1 on failure.
 // --write regenerates work-orders/README.md and work-orders/<id>.md from the map. The
 //   gate fails when they are out of date, so edit the JSON, never the generated files.
@@ -195,11 +207,11 @@ export function validate(hub) {
 
 const link = (prefix, target, label) => `[${label || target}](${prefix}${target})`;
 
-function methodLinks(prefix, methods) {
+function methodLinks(prefix, methods, hub = null) {
   return list(methods).map((m) => {
     const [file, anchor] = String(m).split("#");
     const base = file.replace(/^core\/skills\//, "").replace(/^core\/_system\//, "_system/");
-    return link(prefix, m, anchor ? `${base}, "${anchor.replace(/-/g, " ")}"` : base);
+    return link(prefix, m, anchor ? `${base}, "${anchor.replace(/-/g, " ")}"` : base) + fileLabel(hub, file);
   }).join("; ");
 }
 
@@ -216,8 +228,39 @@ function fileLabel(hub, f) {
 
 const itemLine = (items) => `- The row's evidence gives each of these as \`name: what was found\`: ${list(items).map((x) => `\`${x}\``).join(", ")}`;
 
-export function render(o, map, prefix = "", hub = null) {
-  const by = Object.fromEntries(list(map.work_orders).map((x) => [x.id, x]));
+// The command that runs this tool: the hub's real path in live output, "<hub>/" on a generated page.
+const tool = (hub) => (hub ? `node ${path.join(hub, "core/_system/scripts/workorder.mjs")}` : "node <hub>/core/_system/scripts/workorder.mjs");
+
+// One layer's full block: what --layer prints and what --all shows for every layer.
+export function layerBlock(o, l, i, map, prefix = "", hub = null) {
+  const wo = (id) => (prefix ? `[\`${id}\`](${id}.md)` : `\`${id}\``);
+  const L = [];
+  L.push(`### ${i + 1}. ${l.name} (\`${l.id}\`)`, "");
+  L.push(`- **Build:** ${l.build}`);
+  if (list(l.work_orders).length) L.push(`- **Run:** ${list(l.work_orders).map(wo).join(", ")}${l.optional ? ` (${l.optional})` : ""}`);
+  if (list(l.method).length) L.push(`- **Method:** ${methodLinks(prefix, l.method, hub)}`);
+  L.push(`- **Check:** ${l.check}`);
+  L.push(`- **Evidence:** ${l.evidence}`);
+  if (list(l.evidence_items).length) L.push(itemLine(l.evidence_items));
+  if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.");
+  L.push(`- **If it fails:** ${l.on_fail}`, "");
+  void map;
+  return L.join("\n");
+}
+
+export function wholeBlock(o, prefix = "", hub = null) {
+  const L = ["### Whole output (`whole`)", ""];
+  if (list(o.whole.method).length) L.push(`- **Method:** ${methodLinks(prefix, o.whole.method, hub)}`);
+  L.push(`- **Check:** ${o.whole.check}`);
+  L.push(`- **Evidence:** ${o.whole.evidence}`);
+  if (list(o.whole.evidence_items).length) L.push(itemLine(o.whole.evidence_items));
+  L.push(`- **If it fails:** ${o.whole.on_fail}`, "");
+  return L.join("\n");
+}
+
+// The page. Without `all` it is the summary: each layer's number, id, name and what is built,
+// and the command that opens the first layer. Method, check and evidence come with --layer.
+export function render(o, map, prefix = "", hub = null, all = false) {
   const wo = (id) => (prefix ? `[\`${id}\`](${id}.md)` : `\`${id}\``);
   const L = [];
   L.push(`# Work order: ${o.name} (\`${o.id}\`)`, "");
@@ -228,7 +271,7 @@ export function render(o, map, prefix = "", hub = null) {
   if (list(o.contains).length) L.push(`**Contains:** ${list(o.contains).map(wo).join(", ")}`);
   if (list(o.parts).length) L.push(`**Its parts:** ${list(o.parts).join("; ")}`);
   L.push(`**Live account:** ${o.live || "not reached"}`, "");
-  L.push(`Build this one layer at a time, in order, under ${link(prefix, "core/_system/staged-work.md", "staged work")}. For each layer: build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. \`head\`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.`, "");
+  L.push(`Build this one layer at a time, in order, under ${link(prefix, "core/_system/staged-work.md", "staged work")}. For each layer: open it with \`--layer\` when it is reached, build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. \`head\`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.`, "");
 
   L.push("## Load first", "");
   list(o.load).forEach((f, i) => L.push(`${i + 1}. ${link(prefix, f)}${fileLabel(hub, f)}`));
@@ -243,23 +286,18 @@ export function render(o, map, prefix = "", hub = null) {
   }
 
   L.push("", "## Layers", "");
-  list(o.layers).forEach((l, i) => {
-    L.push(`### ${i + 1}. ${l.name} (\`${l.id}\`)`, "");
-    L.push(`- **Build:** ${l.build}`);
-    if (list(l.work_orders).length) L.push(`- **Run:** ${list(l.work_orders).map(wo).join(", ")}${l.optional ? ` (${l.optional})` : ""}`);
-    if (list(l.method).length) L.push(`- **Method:** ${methodLinks(prefix, l.method)}`);
-    L.push(`- **Check:** ${l.check}`);
-    L.push(`- **Evidence:** ${l.evidence}`);
-    if (list(l.evidence_items).length) L.push(itemLine(l.evidence_items));
-    if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.");
-    L.push(`- **If it fails:** ${l.on_fail}`, "");
-  });
-  L.push("### Whole output (`whole`)", "");
-  if (list(o.whole.method).length) L.push(`- **Method:** ${methodLinks(prefix, o.whole.method)}`);
-  L.push(`- **Check:** ${o.whole.check}`);
-  L.push(`- **Evidence:** ${o.whole.evidence}`);
-  if (list(o.whole.evidence_items).length) L.push(itemLine(o.whole.evidence_items));
-  L.push(`- **If it fails:** ${o.whole.on_fail}`, "");
+  if (all) {
+    list(o.layers).forEach((l, i) => L.push(layerBlock(o, l, i, map, prefix, hub)));
+    L.push(wholeBlock(o, prefix, hub));
+  } else {
+    list(o.layers).forEach((l, i) => {
+      const run = list(l.work_orders).length ? ` Runs ${list(l.work_orders).map(wo).join(", ")}${l.optional ? ` (${l.optional})` : ""}.` : "";
+      L.push(`${i + 1}. **${l.name}** (\`${l.id}\`): ${l.build}${run}`);
+    });
+    L.push(`${list(o.layers).length + 1}. **Whole output** (\`whole\`): the assembled output, checked last.`, "");
+    L.push("Open the first layer:", "", "```", `${tool(hub)} --id ${o.id} --layer ${list(o.layers)[0].id} --notes <notes file>`, "```", "");
+    L.push("A layer's method, check and evidence are printed when it is opened, and it opens once every layer before it has its section in the notes file. `--all` prints every layer at once: it is for a person reading, and for a session that cannot write a notes file at all.", "");
+  }
 
   if (list(o.recheck).length) {
     L.push("## When something changes", "", "An old pass does not carry over. Check these again; leave unaffected work alone.", "");
@@ -284,11 +322,10 @@ export function render(o, map, prefix = "", hub = null) {
   list(o.layers).forEach((l, i) => L.push(`| ${i + 1} ${l.id} |  |  |  |`));
   L.push("| whole |  |  |  |", "State:", "```", "");
   L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.", "");
-  L.push("Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it, and the loading layer names every file under Load first.", "");
+  L.push("Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it and the `opened:` line `--layer` wrote when it was opened, in the work order's order, and the loading layer names every file under Load first.", "");
   L.push(`In a reply with no file, put the record on its own line, starting with \`Layers (${o.id}):\`, every layer in order with a few words of evidence in brackets:`, "");
   L.push("```", `Layers (${o.id}): ${list(o.layers)[0].id} pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>. Notes: <path>`, "```", "");
   L.push(`Check it before you send it: \`node ${prefix ? "<hub>/" : ""}core/_system/scripts/workorder.mjs --record <file>\`, or pipe the reply in with \`--record -\`.`, "");
-  void by;
   return L.join("\n");
 }
 
@@ -296,6 +333,7 @@ export function renderIndex(map) {
   const L = [];
   L.push("# Work orders", "");
   L.push("One page per output this hub makes. Each page lists what to load and the layers to build and check, in order. The rules are in [staged work](../core/_system/staged-work.md). Find the row for what was asked, open its page, and work it one layer at a time. An unclear or multi-step request starts with `start-here`.", "");
+  L.push("Each page is the summary: a layer's method, check and evidence are printed by `workorder.mjs --id <work order> --layer <layer id> --notes <file>` when that layer is reached, and `--all` prints the full page.", "");
   L.push("```", 'node <hub>/core/_system/scripts/workorder.mjs --for "<what was asked for>"', "```", "");
   L.push("| When the ask is | Work order | Owner | Layers |", "| --- | --- | --- | --- |");
   for (const o of list(map.work_orders)) {
@@ -445,13 +483,25 @@ export function reportsBlocking(findings) {
   return false;
 }
 // Review rows: what was reviewed, what changed after, and whether a blocking finding is recorded as a repair.
-function reviewErrors(at, lid, r, values) {
+function reviewErrors(at, lid, r, values, verdictOf = () => null) {
   const errors = [];
+  // "findings: 4 blocking [premises, copy], all repaired": the layers the blocking findings sent work back to.
+  if (values.findings && reportsBlocking(values.findings)) {
+    const named = [...values.findings.matchAll(/\[([^\]]+)\]/g)].flatMap((m) => m[1].split(/\s*(?:,|\band\b)\s*/)).map((x) => x.trim().replace(/[`*]/g, "")).filter(Boolean);
+    if (!named.length) errors.push(`${at}: layer "${lid}" reports blocking findings with no layer named; write the layers they sent work back to in square brackets, for example "findings: 3 blocking [premises, copy], all repaired"`);
+    for (const x of named) {
+      const said = verdictOf(x);
+      if (said === null) errors.push(`${at}: layer "${lid}" findings name "${x}", which is not a layer of this work order`);
+      else if (/^(?:pass|carried)$/.test(said)) errors.push(`${at}: layer "${lid}" findings sent work back to "${x}", but "${x}" is a plain ${said}; a layer a blocking finding sent back is "fail, then pass" (or fail, or not checked)`);
+    }
+  }
   const reviewer = values.reviewer, after = values["after review"];
   if (reviewer && after && !/\bself\b/i.test(reviewer) && !/^[`"*]*(?:nothing|none|no change)/i.test(after)) errors.push(`${at}: layer "${lid}" passes on a fresh review, but text changed after it ("after review: ${after.slice(0, 60)}"); run the review again on what changed, or record the row as partial and name the changed lines`);
   if (values.findings && reportsBlocking(values.findings) && !/^fail\b/.test(r.said || "")) errors.push(`${at}: layer "${lid}" records blocking findings ("${values.findings.slice(0, 60)}") under a plain pass; a review that found blocking problems and was repaired is "fail, then pass"`);
   return errors;
 }
+// A repair named in a pass row: the check failed first, so the row is "fail, then pass".
+const REPAIRED = /\b(?:returned (?:from|to) [a-z-]+|sent back to [a-z-]+|failed (?:first|at first|the check|its check|initially)|repaired after|fixed after (?:the |a )?(?:review|check|fail))/i;
 // Own words: a line the maker marked "reworded" is rewritten before the row can pass.
 const REWORDED = /(?<!\b(?:not|no|none)\s+)\breworded\b/i;
 
@@ -467,9 +517,55 @@ function sections(text) {
   for (const line of text.split("\n")) {
     if (/^\s*```/.test(line)) fence = !fence;
     const h = !fence && line.match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
-    if (h) { cur = { heading: h[1], body: [] }; out.push(cur); } else if (cur) cur.body.push(line);
+    if (h) { cur = { heading: h[1], body: [] }; out.push(cur); } else if (cur && !/^\s*<!--.*-->\s*$/.test(line)) cur.body.push(line);
   }
   return out;
+}
+
+// ---------------------------------------------------------------- gated layers
+
+// "<!-- opened: <work order>/<layer> <UTC time> -->", written by --layer the first time a layer is opened.
+const STAMP = /<!--\s*opened:\s*([a-z0-9-]+)\/([a-z0-9-]+)\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\s*-->/g;
+export function stamps(text, id) {
+  const out = {};
+  for (const m of String(text).matchAll(STAMP)) if (m[1] === id && !(m[2] in out)) out[m[2]] = m[3];
+  return out;
+}
+
+// A layer is written down when the notes file has a heading naming it with 15 words under it,
+// or a section that begins n/a, not checked or partial with a reason of three words or more.
+export function written(secs, lid) {
+  return secs.filter((s) => namesWord(s.heading, lid)).some((s) => {
+    const body = s.body.join("\n");
+    if (wordCount(body) >= 15) return true;
+    const m = body.match(/^[\s>*_`-]*(n\/a|not checked|partial)\b[`*_]*[\s:,.;()-]*([\s\S]*)$/i);
+    return Boolean(m && wordCount(m[2]) >= 3);
+  });
+}
+
+// Open one layer: the gate, the stamp, then the block.
+export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = new Date()) {
+  const layers = list(o.layers);
+  const at = lid === "whole" ? layers.length : layers.findIndex((l) => l.id === lid);
+  if (at < 0) throw new UsageError(`work order ${o.id} has no layer "${lid}"; its layers: ${layers.map((l) => l.id).join(", ")}, whole`);
+  const file = path.resolve(cwd, notes);
+  const text = existsSync(file) ? readFileSync(file, "utf8") : "";
+  const secs = sections(text);
+  const missing = layers.slice(0, at).filter((l) => !written(secs, l.id));
+  if (missing.length) {
+    return { code: 1, out: `Layer "${lid}" is not open yet: layer "${missing[0].id}" has no section in ${notes}. Write its result under a heading with "${missing[0].id}" (15 words or more), or a section that begins "n/a", "not checked" or "partial" with the reason, then open "${lid}" again.` };
+  }
+  if (!(lid in stamps(text, o.id))) {
+    mkdirSync(path.dirname(file), { recursive: true });
+    const line = `<!-- opened: ${o.id}/${lid} ${now.toISOString().replace(/\.\d{3}Z$/, "Z")} -->\n`;
+    writeFileSync(file, text && !text.endsWith("\n") ? `${text}\n${line}` : text + line);
+  }
+  const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
+  const next = at < layers.length - 1 ? layers[at + 1].id : at === layers.length - 1 ? "whole" : null;
+  const L = [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block];
+  L.push(`Write this layer's result in ${notes} under a heading with \`${lid}\` before opening the next.`);
+  L.push(next ? `Next: ${tool(hub)} --id ${o.id} --layer ${next} --notes ${notes}` : `Then check the record: ${tool(hub)} --record <file> (or --record - for a reply).`);
+  return { code: 0, out: L.join("\n") };
 }
 
 // The notes file behind a record: a heading per passed layer with real sentences under it,
@@ -483,7 +579,17 @@ function checkNotes(o, rec, final, at, cwd) {
   }
   const file = path.resolve(cwd, given);
   if (!given || !existsSync(file)) return [`${at}: the notes file "${given}" was not found (paths are relative to the current directory, or absolute)`];
-  const secs = sections(readFileSync(file, "utf8"));
+  const raw = readFileSync(file, "utf8");
+  const secs = sections(raw);
+  // Each passed layer was opened with --layer, and the opens run in the work order's order.
+  const opened = stamps(raw, o.id);
+  let prev = null;
+  for (const l of [...list(o.layers), { id: "whole" }]) {
+    if (final[l.id] === "pass" && !opened[l.id]) errors.push(`${at}: layer "${l.id}" passes, but the notes file has no "opened: ${o.id}/${l.id}" line; open each layer with --layer as it is reached, so its method and check come after the layers before it`);
+    if (!opened[l.id]) continue;
+    if (prev && opened[l.id] < prev.time) errors.push(`${at}: layer "${l.id}" was opened at ${opened[l.id]}, before layer "${prev.id}" (${prev.time}), which comes earlier in the work order; open each layer with --layer as it is reached`);
+    prev = { id: l.id, time: opened[l.id] };
+  }
   for (const l of list(o.layers)) {
     if (final[l.id] !== "pass") continue;
     const mine = secs.filter((s) => namesWord(s.heading, l.id));
@@ -599,7 +705,9 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
       final[l.id] = r.verdict;
       if (r.mixed) errors.push(`${at}: layer "${l.id}" carries two verdicts; one verdict per row (a layer checked only in part is partial, with what was done and what remains)`);
       if (r.extra) errors.push(`${at}: layer "${l.id}" has the verdict "${r.said}"; write one verdict only (a repair that worked is "fail, then pass") and put everything else in the evidence${rec.compact ? ", in brackets" : " or fix column"}`);
-      if (r.verdict === "pass" && !r.extra && !r.mixed && /^fail(?:ed|s)?\b/i.test(r.fix.trim())) errors.push(`${at}: layer "${l.id}" is marked pass but its fix column records a failure; a repair that worked is "fail, then pass"`);
+      const plainPass = r.verdict === "pass" && !r.extra && !r.mixed && !/^fail\b/.test(r.said || "");
+      if (plainPass && (/^fail(?:ed|s)?\b/i.test(r.fix.trim()) || REPAIRED.test(r.fix))) errors.push(`${at}: layer "${l.id}" is marked pass but its fix column records a failure or a repair; a repair made after a failed check is "fail, then pass"`);
+      else if (plainPass && REPAIRED.test(r.evidence)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence names a repair after a failed check ("${r.evidence.match(REPAIRED)[0]}"); that is "fail, then pass"`);
       const ev = r.evidence.trim();
       if (r.verdict === "carried" && !/\b\d{4}-\d{2}-\d{2}\b/.test(ev)) errors.push(`${at}: layer "${l.id}" is carried without the date of the record it passed in (YYYY-MM-DD)`);
       if (r.verdict === "pass" || r.verdict === "carried") {
@@ -611,7 +719,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
         const miss = missingItems(items, ev);
         if (miss.length) errors.push(`${at}: layer "${l.id}" passes without these evidence items: ${miss.map((x) => `"${x}:"`).join(", ")}; give each as "name: what was found", at least three words`);
         const values = itemValues(items, ev);
-        if (items.includes("reviewer")) errors.push(...reviewErrors(at, l.id, r, values));
+        if (items.includes("reviewer")) errors.push(...reviewErrors(at, l.id, r, values, (x) => { const row = list(o.layers).some((y) => y.id === norm(x)) || norm(x) === "whole" ? find({ id: x, name: x }) : null; return row ? row.said || "" : null; }));
         if (values.audience && !/^[`"*]*any\b/i.test(values.audience)) audiences.push(values.audience);
         if (values["own words"] && REWORDED.test(values["own words"])) errors.push(`${at}: layer "${l.id}" passes with a line its own words item marks reworded; rewrite the line, or record the row as failed`);
       }
@@ -662,7 +770,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
 // ---------------------------------------------------------------- CLI
 
 export function main(argv) {
-  const args = parseArgs(argv, ["list", "check", "write"]);
+  const args = parseArgs(argv, ["list", "check", "write", "all"]);
   const hub = path.resolve(args.hub || DEFAULT_HUB);
   if (args.check) {
     const { errors, count } = validate(hub);
@@ -700,16 +808,25 @@ export function main(argv) {
     console.log(`${errors.length ? "Record failed" : "Record passed"}: ${records.length} layer record(s), ${errors.length} problem(s).`);
     return errors.length ? 1 : 0;
   }
+  // --layer opens one layer of the work order named by --id (or matched by --for).
+  const openOne = (o, map) => {
+    if (!args.notes) throw new UsageError("--layer needs --notes <path to the notes file>; a session that cannot write a notes file at all reads the page with --all");
+    const r = openLayer(hub, o, map, String(args.layer), args.notes);
+    console.log(r.out);
+    return r.code;
+  };
   if (args.id) {
     const map = loadMap(hub);
     const o = list(map.work_orders).find((x) => x.id === args.id);
     if (!o) throw new UsageError(`no work order "${args.id}"; --list shows them`);
+    if (args.layer) return openOne(o, map);
     console.log(`Paths are relative to the hub: ${hub}\n`);
-    console.log(render(o, map, "", hub));
+    console.log(render(o, map, "", hub, Boolean(args.all)));
     return 0;
   }
   if (args.for) {
     const { map, top, candidates } = match(hub, args.for);
+    if (top && args.layer) return openOne(top, map);
     if (!top) {
       console.log("No single work order matches clearly.");
       if (candidates.length) {
@@ -724,10 +841,10 @@ export function main(argv) {
     const others = candidates.filter((o) => o.id !== top.id).slice(0, 3);
     console.log(`Matched: ${top.id}${others.length ? `. Also close: ${others.map((o) => o.id).join(", ")}` : ""}.`);
     console.log(`A word match, not a reading of the request: if this is the wrong output, use --list. Paths are relative to the hub: ${hub}\n`);
-    console.log(render(top, map, "", hub));
+    console.log(render(top, map, "", hub, Boolean(args.all)));
     return 0;
   }
-  throw new UsageError('usage: workorder.mjs (--for "<request>" | --id <work order> | --list | --record <file> | --check | --write | --headings <file>)');
+  throw new UsageError('usage: workorder.mjs (--for "<request>" | --id <work order>) [--layer <layer id> --notes <file> | --all] | --list | --record <file> | --check | --write | --headings <file>');
 }
 
 if (isMain(import.meta.url)) run(main);
