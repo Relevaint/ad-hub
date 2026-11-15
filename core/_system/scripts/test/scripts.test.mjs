@@ -510,7 +510,7 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
   const os = await import("node:os");
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-record-"));
   const row = (l, v, e, f = "") => `| ${l} | ${v} | ${e} | ${f} |`;
-  const REVIEW = "reviewer: self-review in a separate pass, no fresh agent here; findings: two, one blocking (glance), both repaired; reviewed: the draft in this file; after review: nothing changed; audience: any; hook: 4, the frost image stops the scroll; glance: 4, the offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
+  const REVIEW = "reviewer: self-review in a separate pass, no fresh agent here; findings: two, one blocking (glance) [visual-stop], both repaired; reviewed: the draft in this file; after review: nothing changed; audience: any; hook: 4, the frost image stops the scroll; glance: 4, the offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
   const COPY = "each field read against the claims map; own words: closest passages are the offer page intro and the spring email, neither reused; corrections: none on file for this channel";
   const GOOD = "copy-ready; destination, production, render-review and whole not checked";
   const NONE = " Notes: none (cannot write files here)";
@@ -586,7 +586,7 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
     const odd = check("odd.md", "Layers (change-recheck): record pass (offer file read back, old value kept) · dependents pass (ads searched for the old wording, hits listed) · recheck mostly fine (two October ads corrected) · states pass (ledger beside the updated records) · whole pass (second search of ads finds no old wording). State: partly rechecked\n");
     assert.equal(odd.code, 1);
     assert.match(odd.out, /layer "recheck" has the verdict "mostly fine", which is not one of/);
-    const dotted = check("dotted.md", `Layers (ad-concepts): fundamentals pass (offer file and proof table read) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (footer strings checked: Instant download · 30-day refund; review withheld) · review fail, then pass (${REVIEW}) · whole pass (set read as the operator sees it). State: concept-ready.${NONE}\n`);
+    const dotted = check("dotted.md", `Layers (ad-concepts): fundamentals pass (offer file and proof table read) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop fail, then pass (frame read with copy hidden after the glance repair) · connection pass (read start to end) · claims pass (footer strings checked: Instant download · 30-day refund; review withheld) · review fail, then pass (${REVIEW}) · whole pass (set read as the operator sees it). State: concept-ready.${NONE}\n`);
     assert.equal(dotted.code, 0, dotted.out);
     // Older work with no layer record carries from its dated status; it is not left unchecked for want of a record.
     const noRecord = check("norecord.md", doc(swap("2 premises", row("2 premises", "not checked", "earlier work predates layer records; the change does not touch the premise")), "not ready"));
@@ -607,7 +607,7 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
     assert.equal(wholeNa.code, 1);
     assert.match(wholeNa.out, /whole-output row is never n\/a/);
     // The one-line form used in a reply: evidence in brackets, anywhere on its line.
-    const items = "fundamentals pass (offer file and proof table read) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (claims map against proof rows; review withheld) · review fail, then pass (" + REVIEW + ") · whole pass (set read as the operator sees it)";
+    const items = "fundamentals pass (offer file and proof table read) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop fail, then pass (frame read with copy hidden after the glance repair) · connection pass (read start to end) · claims pass (claims map against proof rows; review withheld) · review fail, then pass (" + REVIEW + ") · whole pass (set read as the operator sees it)";
     const line = check("line.md", `Three concepts below.\n\nLayers (ad-concepts): ${items}. State: concept-ready, untested.${NONE}\n`);
     assert.equal(line.code, 0, line.out);
     const stateFirst = check("statefirst.md", `State: concept-ready. Layers (ad-concepts): ${items}.${NONE}\n`);
@@ -645,10 +645,12 @@ test("work orders: a record names its notes, its evidence items and every failed
   const failed = "Layers (ad-copy): fundamentals pass (brief offer block and the owner's correction, channel note, preferences, voice profile, audience and creative kit read; offer page read from its repo source, earlier ad images viewed; the missing offer file named as a gap) · premises pass (eight premises side by side, four kept, four rejected with reasons) · cast-treatment pass (cast and rendering chosen separately for four concepts, each with a rejected alternative) · visual-stop pass (each first frame described and read with copy hidden) · connection pass (each concept read start to end; two glance failures found and fixed) · claims pass (claims map read row by row against the brief and the email drafts; no testimonials, no people) · review pass (separate self-review pass, no fresh reviewer available; Hook and Glance 4 or more, One job and Proof 3 or more, two revisions made) · copy pass (every field read against the claims map; character counts run; no em dashes) · destination fail (offer page source has no offer mention; reported as a page gap, offer not changed) · whole pass (four concepts read as a set; distinct mechanisms; nothing generated). State: copy-ready\n";
   const LOAD = ["core/skills/ad-creative/SKILL.md", "references/creative-passes.md", "opening-dynamics.md", "copy-and-hooks.md", "composition-review.md", "claims-and-policy.md", "core/_system/schemas/creative.md"];
   const para = (id) => `Result of the ${id} layer, written when it was reached: what was built, what was compared and rejected, and what the check found from the evidence opened.`;
-  const notes = (over = {}) => ["# Notes, spring offer ads", ...["fundamentals", "premises", "cast-treatment", "visual-stop", "connection", "claims", "review", "copy"].flatMap((id) => [`## ${id}`, over[id] !== undefined ? over[id] : para(id), ""])].join("\n");
+  // Each section follows the opened line --layer wrote when the layer was reached.
+  const opened = (id, n) => `<!-- opened: ad-copy/${id} 2026-11-15T10:${String(10 + n).padStart(2, "0")}:00Z -->`;
+  const notes = (over = {}) => ["# Notes, spring offer ads", ...["fundamentals", "premises", "cast-treatment", "visual-stop", "connection", "claims", "review", "copy"].flatMap((id, n) => [opened(id, n), `## ${id}`, over[id] !== undefined ? over[id] : para(id), ""]), opened("destination", 8), opened("whole", 9)].join("\n");
   const readAll = (files) => `Read to the last line: ${files.join(", ")}; the business's channel note, each to its end.\nExamples: the two earlier ads the channel note names, each read to its end. The offer is the spring kit, sold until May 1.`;
-  const REVIEW = "reviewer: fresh agent given the review brief word for word; findings: five, two blocking (a repeated opening, an unsupported speed claim), both repaired at copy and claims; reviewed: concepts-draft-v2.md; after review: nothing changed; audience: any; hook: 4, the frozen seedling stops the scroll; glance: 4, offer reads in one second; one job: 4, one promise per ad; proof: 3, proof row 2 quoted with its condition";
-  const fixed = (notesLine) => `Layers (ad-copy): fundamentals pass (every Load first file and the business's channel note read to the last line, named in the notes) · premises pass (eight premises in the notes, four rejected with reasons) · cast-treatment pass (cast and rendering chosen per concept, alternatives in the notes) · visual-stop pass (first frames read with copy hidden) · connection pass (each concept read start to end) · claims pass (claims map against the proof table) · review fail, then pass (${REVIEW}) · copy pass (fields against the claims map; own words: closest are the spring email opening and the offer page intro, both rewritten; corrections: the owner's two channel corrections quoted, both followed) · destination fail (the live page does not show the offer; reported as a page gap) · whole pass (set: no primary text or headline repeats across the four ads, only the offer dates). State: copy-ready; destination fail, page gap reported to the business. ${notesLine}\n`;
+  const REVIEW = "reviewer: fresh agent given the review brief word for word; findings: five, two blocking (a repeated opening, an unsupported speed claim) [copy, claims], both repaired; reviewed: concepts-draft-v2.md; after review: nothing changed; audience: any; hook: 4, the frozen seedling stops the scroll; glance: 4, offer reads in one second; one job: 4, one promise per ad; proof: 3, proof row 2 quoted with its condition";
+  const fixed = (notesLine) => `Layers (ad-copy): fundamentals pass (every Load first file and the business's channel note read to the last line, named in the notes) · premises pass (eight premises in the notes, four rejected with reasons) · cast-treatment pass (cast and rendering chosen per concept, alternatives in the notes) · visual-stop pass (first frames read with copy hidden) · connection pass (each concept read start to end) · claims fail, then pass (claims map against the proof table; the speed claim cut after review) · review fail, then pass (${REVIEW}) · copy fail, then pass (fields against the claims map; own words: closest are the spring email opening and the offer page intro, both rewritten; corrections: the owner's two channel corrections quoted, both followed) · destination fail (the live page does not show the offer; reported as a page gap) · whole pass (set: no primary text or headline repeats across the four ads, only the offer dates). State: copy-ready; destination fail, page gap reported to the business. ${notesLine}\n`;
   try {
     // 1. The failed record now fails, for the reasons the grade found.
     const old = check("failed.md", failed);
@@ -709,9 +711,9 @@ test("work orders: a review covers the delivered words, and a reworded line does
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-review-"));
   const check = (name, text) => { const f = path.join(tmp, name); fs.writeFileSync(f, text); return wo("--record", f); };
   const SCORES = "hook: 4, the frozen seedling stops the scroll; glance: 4, offer reads in one second; one job: 4, one promise per ad; proof: 3, proof row 2 quoted with its condition";
-  const review = ({ verdict = "fail, then pass", reviewer = "fresh agent", findings = "13, 5 blocking, all repaired", after = "nothing changed", audience = "any" } = {}) => `review ${verdict} (reviewer: ${reviewer}; findings: ${findings}; reviewed: draft v1; after review: ${after}; audience: ${audience}; ${SCORES})`;
+  const review = ({ verdict = "fail, then pass", reviewer = "fresh agent", findings = "13, 5 blocking [premises], all repaired", after = "nothing changed", audience = "any" } = {}) => `review ${verdict} (reviewer: ${reviewer}; findings: ${findings}; reviewed: draft v1; after review: ${after}; audience: ${audience}; ${SCORES})`;
   const OWN = 'own words: "Frost comes early this year" beside "Beat the early frost" from the spring email: new; "Order by May 1" beside the offer file: offer term';
-  const record = ({ rev = review(), own = OWN, state = "copy-ready; destination fail, page gap reported" } = {}) => `Layers (ad-copy): fundamentals pass (every Load first file and the channel note read to the last line) · premises pass (eight premises, four rejected with reasons) · cast-treatment pass (cast and rendering chosen per concept) · visual-stop pass (first frames read with copy hidden) · connection pass (each concept read start to end) · claims pass (claims map against the proof table) · ${rev} · copy pass (fields against the claims map; ${own}; corrections: the owner's two channel corrections quoted, both followed) · destination fail (the live page does not show the offer; reported as a page gap) · whole pass (set: no primary text or headline repeats across the ads, only the offer dates). State: ${state}. Notes: none (cannot write files here)\n`;
+  const record = ({ rev = review(), own = OWN, state = "copy-ready; destination fail, page gap reported" } = {}) => `Layers (ad-copy): fundamentals pass (every Load first file and the channel note read to the last line) · premises fail, then pass (eight premises, four rejected with reasons) · cast-treatment pass (cast and rendering chosen per concept) · visual-stop pass (first frames read with copy hidden) · connection pass (each concept read start to end) · claims pass (claims map against the proof table) · ${rev} · copy pass (fields against the claims map; ${own}; corrections: the owner's two channel corrections quoted, both followed) · destination fail (the live page does not show the offer; reported as a page gap) · whole pass (set: no primary text or headline repeats across the ads, only the offer dates). State: ${state}. Notes: none (cannot write files here)\n`;
   try {
     // 1. A review that found blocking problems is a repair, not a plain pass.
     const plain = check("plain.md", record({ rev: review({ verdict: "pass" }) }));
@@ -740,6 +742,108 @@ test("work orders: a review covers the delivered words, and a reworded line does
     assert.equal(unnamed.code, 1);
     assert.match(unnamed.out, /the review's scores hold for one audience/);
     assert.equal(check("named.md", record({ rev: warm, state: "copy-ready for warm visitors; destination fail, page gap reported" })).code, 0);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("work orders: the tool hands out one layer at a time", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const { loadMap } = await import("../workorder.mjs");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-gate-"));
+  const by = Object.fromEntries(loadMap(hubRoot).work_orders.map((o) => [o.id, o]));
+  const check = (name, text) => { const f = path.join(tmp, name); fs.writeFileSync(f, text); return wo("--record", f); };
+  const stampsIn = (f) => (fs.readFileSync(f, "utf8").match(/<!-- opened: /g) || []).length;
+  try {
+    // 1. The summary names every layer and holds none of their checks or evidence; --all and the page agree.
+    const o = by["ad-copy"];
+    const summary = wo("--id", "ad-copy").out;
+    const page = fs.readFileSync(path.join(hubRoot, "work-orders/ad-copy.md"), "utf8");
+    const full = wo("--id", "ad-copy", "--all").out;
+    for (const l of o.layers) {
+      for (const text of [summary, page]) {
+        assert.ok(text.includes(`\`${l.id}\``) && text.includes(l.name), `summary lacks layer ${l.id}`);
+        assert.ok(!text.includes(l.check), `summary carries the check of ${l.id}`);
+        assert.ok(!text.includes(l.evidence), `summary carries the evidence of ${l.id}`);
+      }
+      assert.ok(full.includes(l.check) && full.includes(l.evidence), `--all lacks layer ${l.id}`);
+    }
+    assert.ok(!summary.includes(o.whole.check) && full.includes(o.whole.check));
+    assert.match(summary, /--id ad-copy --layer fundamentals --notes <notes file>/);
+    assert.match(summary, /`--all` prints every layer at once/);
+    assert.match(wo("--for", "write ad copy for the home valuation offer").out, /--id ad-copy --layer fundamentals --notes/);
+    // 2. The first layer opens with no notes file and stamps it; the second waits for the first's section.
+    const notes = path.join(tmp, "notes.md");
+    const first = wo("--id", "ad-copy", "--layer", "fundamentals", "--notes", notes);
+    assert.equal(first.code, 0, first.out);
+    assert.ok(first.out.includes(o.layers[0].check));
+    assert.match(first.out, /Next: .* --id ad-copy --layer premises --notes /);
+    assert.equal(stampsIn(notes), 1);
+    assert.match(fs.readFileSync(notes, "utf8"), /^<!-- opened: ad-copy\/fundamentals \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z -->$/m);
+    const early = wo("--id", "ad-copy", "--layer", "premises", "--notes", notes);
+    assert.equal(early.code, 1);
+    assert.match(early.out, /layer "fundamentals" has no section/);
+    assert.ok(!early.out.includes(o.layers[1].check), "a closed layer prints no check");
+    fs.appendFileSync(notes, "\n## fundamentals\nRead every file under Load first to its last line, and the business's brief and channel rules, before any premise.\n");
+    const second = wo("--id", "ad-copy", "--layer", "premises", "--notes", notes);
+    assert.equal(second.code, 0, second.out);
+    assert.ok(second.out.includes(o.layers[1].check));
+    assert.equal(stampsIn(notes), 2);
+    assert.equal(wo("--id", "ad-copy", "--layer", "fundamentals", "--notes", notes).code, 0);
+    assert.equal(stampsIn(notes), 2, "opening a layer again adds no line");
+    // The stamp lines do not count toward a section's words.
+    fs.appendFileSync(notes, "\n## premises\nFour kept.\n");
+    assert.equal(wo("--id", "ad-copy", "--layer", "cast-treatment", "--notes", notes).code, 1);
+    // 3. A section that begins n/a with a reason lets the next layer open; a bare n/a does not.
+    const na = path.join(tmp, "na.md");
+    fs.writeFileSync(na, "## claims-list\nn/a\n");
+    assert.equal(wo("--id", "claims-check", "--layer", "proof-map", "--notes", na).code, 1);
+    fs.writeFileSync(na, "## claims-list\nn/a: the copy makes no claims at all\n");
+    assert.equal(wo("--id", "claims-check", "--layer", "proof-map", "--notes", na).code, 0);
+    assert.equal(wo("--id", "ad-copy", "--layer", "fundamentals").code, 2, "--layer needs --notes");
+    // 4. The record checker reads the opened lines: missing, in order, swapped.
+    const c = by["ad-concepts"];
+    const ids = c.layers.map((l) => l.id);
+    const body = (id) => (id === "fundamentals" ? `Read to the last line: ${c.load.join(", ")}; the channel note, each to its end.\nExamples: the two earlier ads the channel note names, each read to its end.` : `Result of the ${id} layer, written when it was reached: what was built, compared and rejected, and what the check found.`);
+    const stamp = (id, n) => `<!-- opened: ad-concepts/${id} 2026-11-15T09:${String(10 + n).padStart(2, "0")}:00Z -->`;
+    const write = (name, withStamps, swap = false) => {
+      // Swapped: premises and cast-treatment trade times, so the later layer was opened first.
+      const order = [...ids, "whole"].map((id, n) => stamp(id, swap && n === 1 ? 2 : swap && n === 2 ? 1 : n));
+      const lines = ["# Notes", ...ids.flatMap((id, n) => [withStamps ? order[n] : "", `## ${id}`, body(id), ""]), withStamps ? order[ids.length] : ""];
+      fs.writeFileSync(path.join(tmp, name), lines.join("\n"));
+      return path.join(tmp, name);
+    };
+    const REV = "reviewer: fresh agent given the review brief word for word; findings: four, one blocking [visual-stop], repaired; reviewed: concepts-v1.md; after review: nothing changed; audience: any; hook: 4, the frost image stops the scroll; glance: 4, offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
+    const line = (notesFile) => `Layers (ad-concepts): fundamentals pass (every Load first file read to its end) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop fail, then pass (frame read with copy hidden after the glance repair) · connection pass (read start to end) · claims pass (claims map against proof rows) · review fail, then pass (${REV}) · whole pass (set read as the operator sees it). State: concept-ready. Notes: ${notesFile}\n`;
+    const bare = check("bare.md", line(write("n-bare.md", false)));
+    assert.equal(bare.code, 1);
+    assert.match(bare.out, /layer "fundamentals" passes, but the notes file has no "opened: ad-concepts\/fundamentals" line; open each layer with --layer/);
+    const inOrder = check("order.md", line(write("n-order.md", true)));
+    assert.equal(inOrder.code, 0, inOrder.out);
+    const swapped = check("swap.md", line(write("n-swap.md", true, true)));
+    assert.equal(swapped.code, 1);
+    assert.match(swapped.out, /layer "cast-treatment" was opened at .*, before layer "premises"/);
+    // 5. Blocking findings name the layers they sent work back to, and those layers record the repair.
+    const copyLine = (findings, copyVerdict) => `Layers (ad-copy): fundamentals pass (every Load first file and the channel note read to the last line) · premises pass (eight premises, four rejected with reasons) · cast-treatment pass (cast and rendering chosen per concept) · visual-stop pass (first frames read with copy hidden) · connection pass (each concept read start to end) · claims pass (claims map against the proof table) · review fail, then pass (reviewer: fresh agent; findings: ${findings}; reviewed: draft v1; after review: nothing changed; audience: any; hook: 4, the frozen seedling stops the scroll; glance: 4, offer reads in one second; one job: 4, one promise per ad; proof: 3, proof row 2 quoted with its condition) · copy ${copyVerdict} (fields against the claims map; own words: "Frost comes early this year" beside "Beat the early frost": new; corrections: the owner's two channel corrections quoted, both followed) · destination fail (the live page does not show the offer; reported as a page gap) · whole pass (set: no primary text or headline repeats across the ads, only the offer dates). State: copy-ready; destination fail, page gap reported. Notes: none (cannot write files here)\n`;
+    const unnamed = check("f1.md", copyLine("3 blocking, all repaired", "pass"));
+    assert.equal(unnamed.code, 1);
+    assert.match(unnamed.out, /reports blocking findings with no layer named/);
+    const plainCopy = check("f2.md", copyLine("3 blocking [copy], all repaired", "pass"));
+    assert.equal(plainCopy.code, 1);
+    assert.match(plainCopy.out, /findings sent work back to "copy", but "copy" is a plain pass/);
+    const repaired = check("f3.md", copyLine("3 blocking [copy], all repaired", "fail, then pass"));
+    assert.equal(repaired.code, 0, repaired.out);
+    assert.match(check("f4.md", copyLine("3 blocking [nowhere], all repaired", "fail, then pass")).out, /findings name "nowhere", which is not a layer/);
+    // 6. A pass that names a repair after a failed check is "fail, then pass".
+    const fixCell = ["## Layer record", "Work order: claims-check", "| Layer | Verdict | Evidence | Fix |", "| --- | --- | --- | --- |", "| claims-list | pass | every line of the copy listed with its claim | returned from review: the speed line added |", "| proof-map | pass | each claim beside its proof row |  |", "| policy | pass | personal attributes read line by line |  |", "| report | pass | the verdict table written for the operator |  |", "| whole | pass | the report read top to bottom |  |", "State: checked, clean", ""].join("\n");
+    const viaFix = check("g1.md", fixCell);
+    assert.equal(viaFix.code, 1);
+    assert.match(viaFix.out, /layer "claims-list" is marked pass but its fix column records a failure or a repair/);
+    const viaEvidence = check("g2.md", fixCell.replace("| returned from review: the speed line added |", "|  |").replace("each claim beside its proof row", "each claim beside its proof row, returned to claims-list for the missed speed line"));
+    assert.equal(viaEvidence.code, 1);
+    assert.match(viaEvidence.out, /layer "proof-map" is marked pass but its evidence names a repair after a failed check/);
+    assert.equal(check("g3.md", fixCell.replace("| returned from review: the speed line added |", "|  |")).code, 0);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

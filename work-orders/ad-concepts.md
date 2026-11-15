@@ -10,7 +10,7 @@
 **Part of:** [`ad-batch`](ad-batch.md)
 **Live account:** not reached
 
-Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
+Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: open it with `--layer` when it is reached, build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
 
 ## Load first
 
@@ -33,70 +33,22 @@ Also, when it applies:
 
 ## Layers
 
-### 1. Fundamentals (`fundamentals`)
+1. **Fundamentals** (`fundamentals`): A compact brief: audience and situation, awareness and surface, one desire or problem, the offer and its defensible benefit, proof available and claims forbidden, one message and action, constraints, the exact deliverables asked for; plus a source note for the destination page and brand material actually looked at.
+2. **Premises** (`premises`): Several materially different premises, one sentence each, with why this audience would care and why the product belongs in the resolution.
+3. **Cast and treatment** (`cast-treatment`): For the strongest premises: who or what acts, and separately how it is rendered, with the materially different alternative that was rejected.
+4. **Visual stop and hierarchy** (`visual-stop`): The actual first frame or single image, described concretely: focal point, action or contrast, what is understood at once, the question it raises; then its hierarchy: first read, supporting cue, product or action read.
+5. **Connected payoff** (`connection`): The hook as image, text and sound; then opening, development, turn, product payoff and action for video, or one complete proposition for a static; key copy and call to action.
+6. **Claims and permissions** (`claims`): The claims map: every factual thing the ad says, shows or implies (a number, rating, review, credential, guarantee, price, result, story, comparison, urgency, and a result the picture implies without saying it, such as a before and after) set against the offer's proof, with the permission behind any review, testimonial or customer story; then the policy check.
+7. **Adversarial review and revision** (`review`): A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; its findings are repaired at the layer each one names and reviewed again as the review brief says. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.
+8. **Whole output** (`whole`): the assembled output, checked last.
 
-- **Build:** A compact brief: audience and situation, awareness and surface, one desire or problem, the offer and its defensible benefit, proof available and claims forbidden, one message and action, constraints, the exact deliverables asked for; plus a source note for the destination page and brand material actually looked at.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 1 fundamentals before creative"](../core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative); [ad-creative/SKILL.md, "1 take the brief from the row"](../core/skills/ad-creative/SKILL.md#1-take-the-brief-from-the-row)
-- **Check:** Can this ad do one clear job for this audience inside the brief, with every unknown fact left unknown?
-- **Evidence:** The offer file's proof table and limits; the destination page opened and viewed, or the gap named; the ledger row's sentence when there is one. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.
-- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.
-- **If it fails:** Resolve the brief or ask only for the blocking choice. Never invent a customer story or a fact to move on.
+Open the first layer:
 
-### 2. Premises (`premises`)
+```
+node <hub>/core/_system/scripts/workorder.mjs --id ad-concepts --layer fundamentals --notes <notes file>
+```
 
-- **Build:** Several materially different premises, one sentence each, with why this audience would care and why the product belongs in the resolution.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 2 premises not polished headlines"](../core/skills/ad-creative/references/creative-passes.md#pass-2-premises-not-polished-headlines); [ad-creative/references/opening-dynamics.md, "the table awareness decides the opening"](../core/skills/ad-creative/references/opening-dynamics.md#the-table-awareness-decides-the-opening)
-- **Check:** Do the candidates differ in the underlying idea rather than the wording, and does each have a payoff the product is part of?
-- **Evidence:** The premises side by side, with the ones rejected and why.
-- **If it fails:** Write new premises here. A category slogan or a novelty with no product payoff is rejected, not polished.
-
-### 3. Cast and treatment (`cast-treatment`)
-
-- **Build:** For the strongest premises: who or what acts, and separately how it is rendered, with the materially different alternative that was rejected.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 3 cast and treatment are independent decisions"](../core/skills/ad-creative/references/creative-passes.md#pass-3-cast-and-treatment-are-independent-decisions)
-- **Check:** Were cast and rendering chosen as two separate decisions, each for a stated reason tied to the brief and the brand evidence, not by default?
-- **Evidence:** The chosen cast and the cast that was rejected; the chosen rendering and, separately, the rendering that was rejected for that cast; the reason for each, read against the fundamentals source note.
-- **If it fails:** A default choice returns to treatment exploration here. A cast that changes the idea's logic returns to premises.
-
-### 4. Visual stop and hierarchy (`visual-stop`)
-
-- **Build:** The actual first frame or single image, described concretely: focal point, action or contrast, what is understood at once, the question it raises; then its hierarchy: first read, supporting cue, product or action read.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 4 build the visual stop"](../core/skills/ad-creative/references/creative-passes.md#pass-4-build-the-visual-stop); [ad-creative/references/composition-review.md, "make and challenge the hierarchy"](../core/skills/ad-creative/references/composition-review.md#make-and-challenge-the-hierarchy)
-- **Check:** With the headline and sound taken away, would a distracted stranger have a specific reason to pause (or does the recorded opening dynamic's own test pass), and can the eye find the first read?
-- **Evidence:** The frame description read alone with the copy hidden; the named reason to pause; the competing details removed, subordinated or kept on purpose.
-- **If it fails:** A weak idea returns to premises or cast and treatment, never to headline polishing. Competing details are recomposed here.
-
-### 5. Connected payoff (`connection`)
-
-- **Build:** The hook as image, text and sound; then opening, development, turn, product payoff and action for video, or one complete proposition for a static; key copy and call to action.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 5 connect opening turn payoff and action"](../core/skills/ad-creative/references/creative-passes.md#pass-5-connect-opening-turn-payoff-and-action)
-- **Check:** Does the payoff answer the opening's promise with the product, so a viewer remembers the benefit and not only the opening?
-- **Evidence:** The sequence or composition read start to end as a stranger would meet it.
-- **If it fails:** A payoff that does not fulfil the opening returns to premises or the visual stop. Never attach a product screen to an unrelated opening.
-
-### 6. Claims and permissions (`claims`)
-
-- **Build:** The claims map: every factual thing the ad says, shows or implies (a number, rating, review, credential, guarantee, price, result, story, comparison, urgency, and a result the picture implies without saying it, such as a before and after) set against the offer's proof, with the permission behind any review, testimonial or customer story; then the policy check.
-- **Method:** [ad-creative/SKILL.md, "2 run the claims gate before writing a word"](../core/skills/ad-creative/SKILL.md#2-run-the-claims-gate-before-writing-a-word); [ad-creative/SKILL.md, "3 run the policy and rules check"](../core/skills/ad-creative/SKILL.md#3-run-the-policy-and-rules-check); [ad-creative/references/claims-and-policy.md, "the gate"](../core/skills/ad-creative/references/claims-and-policy.md#the-gate)
-- **Check:** Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, carrying in the ad itself the conditions its proof attaches, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?
-- **Evidence:** The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file. Also the ad's promise in one sentence, as a stranger reads the headline and the picture together ("buy this and ___"), with the proof row for that blank.
-- **If it fails:** An unsupported claim is cut or becomes a marked blank. A review or story with no recorded permission is withheld and named as a blank for the business, whatever status its proof row carries. A personal attribute is rewritten around the situation. An idea that only works with the unsupported claim returns to the connection layer.
-
-### 7. Adversarial review and revision (`review`)
-
-- **Build:** A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; its findings are repaired at the layer each one names and reviewed again as the review brief says. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.
-- **Method:** [ad-creative/references/creative-passes.md, "pass 6 adversarial concept review then revision"](../core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision); [ad-creative/references/copy-and-hooks.md, "the rubric"](../core/skills/ad-creative/references/copy-and-hooks.md#the-rubric); [_system/staged-work.md, "the review brief"](../core/_system/staged-work.md#the-review-brief)
-- **Check:** Does every gate pass with a concrete reason, with Hook and Glance at 4 or more and One job and Proof at 3 or more, and no average hiding a failed gate?
-- **Evidence:** The seven verdicts with their reasons and what changed in each revision cycle; the reviewer, the findings, the file or version reviewed, what changed after the last review and who re-checked it, the audience the scores hold for (any, or the one named), and the four scores, each score with its reason.
-- The row's evidence gives each of these as `name: what was found`: `reviewer`, `findings`, `reviewed`, `after review`, `audience`, `hook`, `glance`, `one job`, `proof`
-- **If it fails:** Return to the pass that failed, change that part, review the connected whole again. Three cycles at most, then withhold the concept and report the shortfall.
-
-### Whole output (`whole`)
-
-- **Method:** [ad-creative/SKILL.md, "quality gate"](../core/skills/ad-creative/SKILL.md#quality-gate)
-- **Check:** Across the set, are the surviving concepts really different ideas, does each stand without the working notes, and was nothing generated or promoted?
-- **Evidence:** The set read as the operator will see it; the ledger and the creative folder unchanged.
-- **If it fails:** A near-duplicate is replaced at premises. A shortfall against the requested count is reported, never padded.
+A layer's method, check and evidence are printed when it is opened, and it opens once every layer before it has its section in the notes file. `--all` prints every layer at once: it is for a person reading, and for a session that cannot write a notes file at all.
 
 ## When something changes
 
@@ -141,7 +93,7 @@ State:
 
 One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
 
-Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it, and the loading layer names every file under Load first.
+Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it and the `opened:` line `--layer` wrote when it was opened, in the work order's order, and the loading layer names every file under Load first.
 
 In a reply with no file, put the record on its own line, starting with `Layers (ad-concepts):`, every layer in order with a few words of evidence in brackets:
 

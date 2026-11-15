@@ -4,6 +4,8 @@
 
 One page per output this hub makes. Each page lists what to load and the layers to build and check, in order. The rules are in [staged work](../core/_system/staged-work.md). Find the row for what was asked, open its page, and work it one layer at a time. An unclear or multi-step request starts with `start-here`.
 
+Each page is the summary: a layer's method, check and evidence are printed by `workorder.mjs --id <work order> --layer <layer id> --notes <file>` when that layer is reached, and `--all` prints the full page.
+
 ```
 node <hub>/core/_system/scripts/workorder.mjs --for "<what was asked for>"
 ```

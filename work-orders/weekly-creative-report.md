@@ -7,7 +7,7 @@
 **Owner:** `ad-review` (Weekly creative report)
 **Live account:** read-only, under ads/authority.md
 
-Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
+Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: open it with `--layer` when it is reached, build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
 
 ## Load first
 
@@ -26,36 +26,18 @@ Also, when it applies:
 
 ## Layers
 
-### 1. Where the money went (`money`)
+1. **Where the money went** (`money`): Spend across ads for the seven days, by ID.
+2. **Movers and new hits** (`movers`): What rose or fell over seven days, and any ad that met the bar.
+3. **Lessons and hit rate** (`lessons`): The specific lessons, and the hit rate by batch over time.
+4. **Whole output** (`whole`): the assembled output, checked last.
 
-- **Build:** Spend across ads for the seven days, by ID.
-- **Method:** [ad-review/SKILL.md, "7 the weekly creative report"](../core/skills/ad-review/SKILL.md#7-the-weekly-creative-report); [ad-review/references/reading-results.md, "the weekly creative report claude workflows review"](../core/skills/ad-review/references/reading-results.md#the-weekly-creative-report-claude-workflows-review)
-- **Check:** Does the spend by ad add up to the account total for the window, from a named source?
-- **Evidence:** The snapshot or the platform read, with its date; the sum.
-- **If it fails:** Find the missing or doubled row before anything else is read.
+Open the first layer:
 
-### 2. Movers and new hits (`movers`)
+```
+node <hub>/core/_system/scripts/workorder.mjs --id weekly-creative-report --layer money --notes <notes file>
+```
 
-- **Build:** What rose or fell over seven days, and any ad that met the bar.
-- **Method:** [ad-review/SKILL.md, "7 the weekly creative report"](../core/skills/ad-review/SKILL.md#7-the-weekly-creative-report); [ad-review/references/reading-results.md, "what the sample can say"](../core/skills/ad-review/references/reading-results.md#what-the-sample-can-say)
-- **Check:** Is every mover shown with its counts, and is a hit only an ad that met the bar on the deciding metric?
-- **Evidence:** The counts beside each mover; the bar from the test plan.
-- **If it fails:** Below the bar it is a mover, not a hit.
-
-### 3. Lessons and hit rate (`lessons`)
-
-- **Build:** The specific lessons, and the hit rate by batch over time.
-- **Method:** [ad-review/references/reading-results.md, "the weekly creative report claude workflows review"](../core/skills/ad-review/references/reading-results.md#the-weekly-creative-report-claude-workflows-review)
-- **Check:** Is each lesson specific to an ad or a tag with its evidence, and is the hit rate launched ads that met the bar over ads launched?
-- **Evidence:** The hit-rate table; the ledger's batches.
-- **If it fails:** Cut the general remark; recompute the rate.
-
-### Whole output (`whole`)
-
-- **Method:** [ad-review/SKILL.md, "quality gate"](../core/skills/ad-review/SKILL.md#quality-gate)
-- **Check:** Was a second pass made that looks for errors in the first, before anything was reported?
-- **Evidence:** The second pass: totals re-added, rates recomputed.
-- **If it fails:** Fix the figure and everything that used it.
+A layer's method, check and evidence are printed when it is opened, and it opens once every layer before it has its section in the notes file. `--all` prints every layer at once: it is for a person reading, and for a session that cannot write a notes file at all.
 
 ## When something changes
 
@@ -94,7 +76,7 @@ State:
 
 One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
 
-Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it, and the loading layer names every file under Load first.
+Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it and the `opened:` line `--layer` wrote when it was opened, in the work order's order, and the loading layer names every file under Load first.
 
 In a reply with no file, put the record on its own line, starting with `Layers (weekly-creative-report):`, every layer in order with a few words of evidence in brackets:
 

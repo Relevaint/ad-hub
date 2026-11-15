@@ -71,8 +71,8 @@ a page that lists what to load and the layers to build and check, in order.
 node core/_system/scripts/workorder.mjs --for "<what was asked for>"
 ```
 
-or open [work-orders/README.md](work-orders/README.md). Build one layer at a time, keep
-the layer record, and report the state the record supports
+or open [work-orders/README.md](work-orders/README.md). Build one layer at a time, opening
+each with `--layer` as it is reached, keep the layer record, and report the state the record supports
 ([staged work](core/_system/staged-work.md)). Finding the skill and skimming it is how
 steps get skipped; the work order is the list of steps.
 

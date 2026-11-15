@@ -54,7 +54,8 @@ Writing into a business repo needs Clay's go-ahead for that repo (`AGENTS.md` 2.
    > `node ../ad-hub/core/_system/scripts/context.mjs --for <skill> --root .`. Every
    > output is built in layers: get its work order with
    > `node ../ad-hub/core/_system/scripts/workorder.mjs --for "<the request>"` (or
-   > `../ad-hub/work-orders/README.md`), work one layer at a time, keep the layer record,
+   > `../ad-hub/work-orders/README.md`), work one layer at a time, opening each with
+   > `--layer` as it is reached, keep the layer record,
    > and report only the state the record supports
    > (`../ad-hub/core/_system/staged-work.md`). Nothing
    > about this business is ever written into Ad-Hub. Nothing reaches a live ad account
