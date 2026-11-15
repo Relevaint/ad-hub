@@ -1,7 +1,7 @@
 {
   "version": 1,
   "hub": "ad-hub",
-  "about": "One entry per output the hub makes. Rules: core/_system/staged-work.md. After editing run: node core/_system/scripts/workorder.mjs --write, then npm test. A layer points at its method in the owner skill; the method is never copied here. A state lists the layers it needs; must_pass names the ones that must be pass or carried, where n/a is not accepted.",
+  "about": "One entry per output the hub makes. Rules: core/_system/staged-work.md. After editing run: node core/_system/scripts/workorder.mjs --write, then npm test. A layer points at its method in the owner skill; the method is never copied here. A state lists the layers it needs; must_pass names the ones that must be pass or carried, where n/a is not accepted. A {\"use\": <set>} entry may carry \"returns_to\" naming more layers of that work order for the set's layers to return to.",
   "layer_sets": {
     "concept-passes": [
       {
@@ -90,11 +90,13 @@
           "connection",
           "premises"
         ]
-      },
+      }
+    ],
+    "concept-review": [
       {
         "id": "review",
         "name": "Adversarial review and revision",
-        "build": "A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; its findings are repaired at the layer each one names and reviewed again as the review brief says. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.",
+        "build": "A separate review of each concept as a distracted viewer, reading every word the buyer will read or hear that the work order writes before it (the timed beats and the fields each placement needs: primary text, headlines, description, call to action): attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; each blocking finding is repaired at the layer it names, opened again with --repair, and re-checked as the review brief says. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.",
         "method": [
           "core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision",
           "core/skills/ad-creative/references/copy-and-hooks.md#the-rubric",
@@ -102,7 +104,7 @@
         ],
         "check": "Does every gate pass with a concrete reason, with Hook and Glance at 4 or more and One job and Proof at 3 or more, and no average hiding a failed gate?",
         "evidence": "The seven verdicts with their reasons and what changed in each revision cycle; the reviewer, the findings, the file or version reviewed, what changed after the last review and who re-checked it, the audience the scores hold for (any, or the one named), and the four scores, each score with its reason.",
-        "on_fail": "Return to the pass that failed, change that part, review the connected whole again. Three cycles at most, then withhold the concept and report the shortfall.",
+        "on_fail": "Return to the layer the finding names (a pass, the beats or the copy), open it with --repair, change that part, and re-check what changed. Three cycles at most; after the last, only cuts. Then withhold the concept and report the shortfall.",
         "returns_to": [
           "fundamentals",
           "premises",
@@ -158,7 +160,7 @@
         ],
         "check": "Is each asset the concept that passed, in an authorised shape, with generated text and figures correct letter by letter?",
         "evidence": "Each file opened; its dimensions; its on-image text read against the gated copy.",
-        "on_fail": "Regenerate or recompose that asset. An idea that cannot survive production returns to the visual stop. With no tool, write the production brief and mark this layer not checked.",
+        "on_fail": "Regenerate or recompose that asset. An idea that cannot survive production returns to the visual stop. A word on the image that the reviewed copy does not hold goes back to the review as a re-check. With no tool, write the production brief and mark this layer not checked.",
         "returns_to": [
           "visual-stop"
         ]
@@ -215,7 +217,7 @@
         ],
         "check": "Do the captions match the gated copy letter by letter inside the safe zones, does the ad make sense muted, and is every line audible with the sound on?",
         "evidence": "The captions read against the copy; one muted play and one play with sound.",
-        "on_fail": "Fix the layer that is wrong; a caption fix does not regenerate a good scene."
+        "on_fail": "Fix the layer that is wrong; a caption fix does not regenerate a good scene. A spoken or on-screen line the reviewed beats and copy do not hold goes back to the review as a re-check before any state rests on it."
       },
       {
         "id": "edit",
@@ -1907,6 +1909,9 @@
       "layers": [
         {
           "use": "concept-passes"
+        },
+        {
+          "use": "concept-review"
         }
       ],
       "whole": {
@@ -2040,6 +2045,12 @@
           "use": "copy"
         },
         {
+          "use": "concept-review",
+          "returns_to": [
+            "copy"
+          ]
+        },
+        {
           "use": "destination"
         }
       ],
@@ -2060,6 +2071,7 @@
           "redo": [
             "claims",
             "copy",
+            "review",
             "destination",
             "whole"
           ],
@@ -2073,11 +2085,11 @@
           "redo": [
             "visual-stop",
             "connection",
-            "review",
             "copy",
+            "review",
             "whole"
           ],
-          "note": "The review runs again on the new words; a self-check of them is not a review."
+          "note": "The review re-checks the new words; a self-check of them is not a review."
         },
         {
           "when": "The landing page changes",
@@ -2090,17 +2102,18 @@
         {
           "when": "A placement is added or removed",
           "redo": [
-            "copy"
+            "copy",
+            "review"
           ],
-          "note": "Only that placement's fields."
+          "note": "Only that placement's fields, and a re-check of them."
         },
         {
           "when": "The audience, the awareness level or the test variable changes",
           "redo": [
             "fundamentals",
             "premises",
-            "review",
-            "copy"
+            "copy",
+            "review"
           ],
           "note": "Treat it as a new concept: every later layer follows."
         }
@@ -2115,8 +2128,8 @@
             "visual-stop",
             "connection",
             "claims",
-            "review",
             "copy",
+            "review",
             "whole"
           ],
           "must_pass": [
@@ -2211,6 +2224,12 @@
           "use": "copy"
         },
         {
+          "use": "concept-review",
+          "returns_to": [
+            "copy"
+          ]
+        },
+        {
           "use": "destination"
         },
         {
@@ -2231,6 +2250,7 @@
           "redo": [
             "claims",
             "copy",
+            "review",
             "destination",
             "render-review",
             "whole"
@@ -2244,6 +2264,7 @@
           "when": "The headline or on-image text changes",
           "redo": [
             "copy",
+            "review",
             "production",
             "render-review",
             "whole"
@@ -2295,8 +2316,8 @@
             "visual-stop",
             "connection",
             "claims",
-            "review",
-            "copy"
+            "copy",
+            "review"
           ],
           "must_pass": [
             "claims",
@@ -2313,8 +2334,8 @@
             "visual-stop",
             "connection",
             "claims",
-            "review",
             "copy",
+            "review",
             "production",
             "render-review",
             "whole"
@@ -2404,6 +2425,13 @@
           "use": "copy"
         },
         {
+          "use": "concept-review",
+          "returns_to": [
+            "sequence",
+            "copy"
+          ]
+        },
+        {
           "use": "destination"
         },
         {
@@ -2425,6 +2453,7 @@
             "claims",
             "sequence",
             "copy",
+            "review",
             "destination",
             "captions-sound",
             "watch",
@@ -2439,6 +2468,7 @@
           "when": "The script or a line changes",
           "redo": [
             "sequence",
+            "review",
             "captions-sound",
             "edit",
             "watch",
@@ -2495,9 +2525,9 @@
             "visual-stop",
             "connection",
             "claims",
-            "review",
             "sequence",
-            "copy"
+            "copy",
+            "review"
           ],
           "must_pass": [
             "claims",
@@ -2515,9 +2545,9 @@
             "visual-stop",
             "connection",
             "claims",
-            "review",
             "sequence",
             "copy",
+            "review",
             "first-frame",
             "scenes",
             "captions-sound",
@@ -2616,27 +2646,6 @@
           "on_fail": "Write new variants here. A change that breaks the connection is dropped. With no readable fixed element this layer is not checked."
         },
         {
-          "id": "review",
-          "name": "Review the whole ad",
-          "build": "The adversarial review of each remixed ad, fixed element and change together. Made as the review brief says: a fresh agent when one can be started, otherwise a separate pass answered in the notes file.",
-          "method": [
-            "core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision",
-            "core/_system/staged-work.md#the-review-brief"
-          ],
-          "check": "Does the whole ad pass every gate, and is the experiment still the one the row describes?",
-          "evidence": "The verdicts with reasons; the row's sentence against what was made; the reviewer, the findings, the file or version reviewed, and what changed after the last review and who re-checked it.",
-          "on_fail": "Return to the change layer. A second variable that crept in is removed. With no readable fixed element this layer is not checked.",
-          "returns_to": [
-            "change"
-          ],
-          "evidence_items": [
-            "reviewer",
-            "findings",
-            "reviewed",
-            "after review"
-          ]
-        },
-        {
           "id": "copy",
           "name": "Copy per placement",
           "build": "The fields the remix changes, within the platform layer's lengths, and the claims map for anything new.",
@@ -2649,6 +2658,28 @@
           "on_fail": "Rewrite the failing field here; copy that only works by changing a second thing returns to the change layer.",
           "returns_to": [
             "change"
+          ]
+        },
+        {
+          "id": "review",
+          "name": "Review the whole ad",
+          "build": "The adversarial review of each remixed ad, fixed element, change and the new copy together. Made as the review brief says: a fresh agent when one can be started, otherwise a separate pass answered in the notes file.",
+          "method": [
+            "core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision",
+            "core/_system/staged-work.md#the-review-brief"
+          ],
+          "check": "Does the whole ad pass every gate, and is the experiment still the one the row describes?",
+          "evidence": "The verdicts with reasons; the row's sentence against what was made; the reviewer, the findings, the file or version reviewed, and what changed after the last review and who re-checked it.",
+          "on_fail": "Return to the layer the finding names (the change or the copy), open it with --repair, and re-check what changed. A second variable that crept in is removed. With no readable fixed element this layer is not checked.",
+          "returns_to": [
+            "change",
+            "copy"
+          ],
+          "evidence_items": [
+            "reviewer",
+            "findings",
+            "reviewed",
+            "after review"
           ]
         },
         {
@@ -2694,6 +2725,7 @@
           "redo": [
             "fixed",
             "copy",
+            "review",
             "whole"
           ],
           "also": [
@@ -2716,8 +2748,8 @@
           "needs": [
             "fixed",
             "change",
-            "review",
-            "copy"
+            "copy",
+            "review"
           ],
           "means": "The remix's copy and claims are done; new assets are not made or not inspected.",
           "must_pass": [
@@ -2730,8 +2762,8 @@
           "needs": [
             "fixed",
             "change",
-            "review",
             "copy",
+            "review",
             "production",
             "render-review",
             "whole"
@@ -2746,7 +2778,7 @@
           ]
         }
       ],
-      "record": "In ads/creative/<batch>/<ID>.md under ## Layer record. For a video remix, add the video-ad work order's build layers after copy."
+      "record": "In ads/creative/<batch>/<ID>.md under ## Layer record. For a video remix, add the video-ad work order's build layers after review."
     },
     {
       "id": "claims-check",

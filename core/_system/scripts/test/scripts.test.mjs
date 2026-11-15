@@ -484,6 +484,18 @@ test("work orders: the direct route and the start-here route reach the same crea
   }
   const video = by["video-ad"].layers.map((l) => l.id);
   assert.ok(video.indexOf("sequence") < video.indexOf("copy"), "video-ad: timed beats come before the per-placement copy");
+  // Every word an audience reads or hears is written before the review that covers it; concepts keep review last.
+  for (const o of Object.values(by)) {
+    const ids = o.layers.map((l) => l.id);
+    if (!ids.includes("review")) continue;
+    for (const w of ["sequence", "copy"]) if (ids.includes(w)) assert.ok(ids.indexOf(w) < ids.indexOf("review"), `${o.id}: ${w} comes before review`);
+    for (const st of o.states) if (st.needs.includes("copy")) assert.ok(st.needs.includes("review"), `${o.id} ${st.state}: copy-ready rests on the review`);
+  }
+  assert.equal(by["ad-concepts"].layers.at(-1).id, "review");
+  assert.match(by["ad-copy"].layers.find((l) => l.id === "review").build, /primary text, headlines, description/);
+  assert.ok(by["ad-copy"].layers.find((l) => l.id === "review").returns_to.includes("copy"));
+  assert.ok(!by["ad-concepts"].layers.find((l) => l.id === "review").returns_to.includes("copy"));
+  for (const id of ["ad-copy", "static-ad", "video-ad"]) assert.ok(by[id].recheck.find((r) => r.when.startsWith("A claim")).redo.includes("review"), `${id}: a changed claim is re-checked by the review`);
   assert.ok(by["static-ad"].states.find((s) => s.state === "creative-ready").must_pass.includes("render-review"));
   assert.ok(!by["static-ad"].states.find((s) => s.state === "copy-ready").needs.includes("destination"), "an unseen page does not force a false pass");
   // Wrapper: start-here's end-to-end route runs the batch, and the batch runs those same work orders.
@@ -647,7 +659,9 @@ test("work orders: a record names its notes, its evidence items and every failed
   const para = (id) => `Result of the ${id} layer, written when it was reached: what was built, what was compared and rejected, and what the check found from the evidence opened.`;
   // Each section follows the opened line --layer wrote when the layer was reached.
   const opened = (id, n) => `<!-- opened: ad-copy/${id} 2026-11-15T10:${String(10 + n).padStart(2, "0")}:00Z -->`;
-  const notes = (over = {}) => ["# Notes, spring offer ads", ...["fundamentals", "premises", "cast-treatment", "visual-stop", "connection", "claims", "review", "copy"].flatMap((id, n) => [opened(id, n), `## ${id}`, over[id] !== undefined ? over[id] : para(id), ""]), opened("destination", 8), opened("whole", 9)].join("\n");
+  // The review's blocking findings sent work back to claims and copy: each was reopened with --repair and its repair written below.
+  const repaired = (id) => (["claims", "copy"].includes(id) ? [`<!-- reopened: ad-copy/${id} review 1 2026-11-15T10:3${id === "claims" ? 0 : 1}:00Z -->`, `Repair (review 1): the ${id} finding was fixed here, and the changed lines were read again against the proof table afterwards.`] : []);
+  const notes = (over = {}) => ["# Notes, spring offer ads", ...["fundamentals", "premises", "cast-treatment", "visual-stop", "connection", "claims", "copy", "review"].flatMap((id, n) => [opened(id, n), `## ${id}`, over[id] !== undefined ? over[id] : para(id), ...repaired(id), ""]), opened("destination", 8), opened("whole", 9)].join("\n");
   const readAll = (files) => `Read to the last line: ${files.join(", ")}; the business's channel note, each to its end.\nExamples: the two earlier ads the channel note names, each read to its end. The offer is the spring kit, sold until May 1.`;
   const REVIEW = "reviewer: fresh agent given the review brief word for word; findings: five, two blocking (a repeated opening, an unsupported speed claim) [copy, claims], both repaired; reviewed: concepts-draft-v2.md; after review: nothing changed; audience: any; hook: 4, the frozen seedling stops the scroll; glance: 4, offer reads in one second; one job: 4, one promise per ad; proof: 3, proof row 2 quoted with its condition";
   const fixed = (notesLine) => `Layers (ad-copy): fundamentals pass (every Load first file and the business's channel note read to the last line, named in the notes) · premises pass (eight premises in the notes, four rejected with reasons) · cast-treatment pass (cast and rendering chosen per concept, alternatives in the notes) · visual-stop pass (first frames read with copy hidden) · connection pass (each concept read start to end) · claims fail, then pass (claims map against the proof table; the speed claim cut after review) · review fail, then pass (${REVIEW}) · copy fail, then pass (fields against the claims map; own words: closest are the spring email opening and the offer page intro, both rewritten; corrections: the owner's two channel corrections quoted, both followed) · destination fail (the live page does not show the offer; reported as a page gap) · whole pass (set: no primary text or headline repeats across the four ads, only the offer dates). State: copy-ready; destination fail, page gap reported to the business. ${notesLine}\n`;
@@ -823,7 +837,8 @@ test("work orders: the tool hands out one layer at a time", async () => {
     const write = (name, withStamps, swap = false) => {
       // Swapped: premises and cast-treatment trade times, so the later layer was opened first.
       const order = [...ids, "whole"].map((id, n) => stamp(id, swap && n === 1 ? 2 : swap && n === 2 ? 1 : n));
-      const lines = ["# Notes", ...ids.flatMap((id, n) => [withStamps ? order[n] : "", `## ${id}`, body(id), ""]), withStamps ? order[ids.length] : ""];
+      const fix = (id) => (withStamps && id === "visual-stop" ? ["<!-- reopened: ad-concepts/visual-stop review 1 2026-11-15T09:30:00Z -->", "Repair (review 1): the frame's competing caption was removed, and the frame was read again at feed size with copy hidden."] : []);
+      const lines = ["# Notes", ...ids.flatMap((id, n) => [withStamps ? order[n] : "", `## ${id}`, body(id), ...fix(id), ""]), withStamps ? order[ids.length] : ""];
       fs.writeFileSync(path.join(tmp, name), lines.join("\n"));
       return path.join(tmp, name);
     };
@@ -857,6 +872,89 @@ test("work orders: the tool hands out one layer at a time", async () => {
     assert.equal(viaEvidence.code, 1);
     assert.match(viaEvidence.out, /layer "proof-map" is marked pass but its evidence names a repair after a failed check/);
     assert.equal(check("g3.md", fixCell.replace("| returned from review: the speed line added |", "|  |")).code, 0);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("work orders: a repair is reopened at the layer a finding names, and the review loop can end clean", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const { loadMap } = await import("../workorder.mjs");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-repair-"));
+  const c = loadMap(hubRoot).work_orders.find((o) => o.id === "ad-concepts");
+  const ids = c.layers.map((l) => l.id);
+  const check = (name, text) => { const f = path.join(tmp, name); fs.writeFileSync(f, text); return wo("--record", f); };
+  const pipe = (input) => { const r = spawnSync(process.execPath, [path.join(scripts, "workorder.mjs"), "--record", "-"], { encoding: "utf8", input, cwd: tmp }); return { code: r.status, out: r.stdout + r.stderr }; };
+  const reopened = (f) => (fs.readFileSync(f, "utf8").match(/<!-- reopened: /g) || []).length;
+  try {
+    // 2. --repair: refused on a layer never opened; on an opened layer it prints the block and stamps notes and ledger every call.
+    const notes = path.join(tmp, "notes.md");
+    assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--notes", notes).code, 0);
+    const never = wo("--id", "ad-concepts", "--layer", "premises", "--repair", "1", "--notes", notes);
+    assert.equal(never.code, 1);
+    assert.match(never.out, /was never opened.*open it first with .*--layer premises --notes/);
+    fs.appendFileSync(notes, "\n## fundamentals\nRead every file under Load first to its last line, and the business's brief and channel rules, before any premise.\n");
+    assert.equal(wo("--id", "ad-concepts", "--layer", "premises", "--notes", notes).code, 0);
+    fs.appendFileSync(notes, "\n## premises\nFive premises compared side by side, three rejected with a reason each, two kept for the frost offer.\n");
+    const one = wo("--id", "ad-concepts", "--layer", "fundamentals", "--repair", "1", "--notes", notes);
+    assert.equal(one.code, 0, one.out);
+    assert.ok(one.out.includes(c.layers[0].check), "the repair prints the layer's block");
+    assert.match(one.out, /begins "Repair \(review 1\):"/);
+    assert.match(fs.readFileSync(notes, "utf8"), /^<!-- reopened: ad-concepts\/fundamentals review 1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z -->$/m);
+    assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--repair", "1", "--notes", notes).code, 0);
+    assert.equal(reopened(notes), 2);
+    assert.equal(reopened(`${notes}.opened`), 2);
+    // An upstream repair is written down before a downstream layer is reopened for the same review.
+    const blocked = wo("--id", "ad-concepts", "--layer", "premises", "--repair", "1", "--notes", notes);
+    assert.equal(blocked.code, 1);
+    assert.match(blocked.out, /layer "fundamentals", earlier in the work order, was reopened for review 1 and has no "Repair \(review 1\):"/);
+    fs.appendFileSync(notes, "\n## fundamentals, after review 1\nRepair (review 1): the offer end date was added from the brief, and the brief was read again to its last line.\n");
+    assert.equal(wo("--id", "ad-concepts", "--layer", "premises", "--repair", "1", "--notes", notes).code, 0);
+    assert.equal(wo("--id", "ad-concepts", "--layer", "premises", "--repair", "0", "--notes", notes).code, 2);
+    // 3. The record: a layer the findings name is reopened after the review opened and has its repair paragraph.
+    const stamp = (id, n) => `<!-- opened: ad-concepts/${id} 2026-11-15T09:${String(10 + n).padStart(2, "0")}:00Z -->`;
+    const body = (id) => (id === "fundamentals" ? `Read to the last line: ${c.load.join(", ")}; the channel note, each to its end.\nExamples: the two earlier ads the channel note names, each read to its end.` : `Result of the ${id} layer, written when it was reached: what was built, compared and rejected, and what the check found.`);
+    const write = (name, { restamp = [], repairs = [] } = {}) => {
+      const lines = ["# Notes", ...ids.flatMap((id, n) => [stamp(id, n), `## ${id}`, body(id), ...(restamp.includes(id) ? [`<!-- reopened: ad-concepts/${id} review 1 2026-11-15T09:40:00Z -->`] : []), ...(repairs.includes(id) ? ["Repair (review 1): the second premise now carries the offer's end date, and the set was read again side by side."] : []), ""]), stamp("whole", ids.length)];
+      fs.writeFileSync(path.join(tmp, name), lines.join("\n"));
+      return path.join(tmp, name);
+    };
+    const SCORES = "audience: any; hook: 4, the frost image stops the scroll; glance: 4, offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
+    const rec = (notesFile, { premises = "fail, then pass", cast = "pass", rev } = {}) => `Layers (ad-concepts): fundamentals pass (every Load first file read to its end) · premises ${premises} (five compared, three rejected; the end date added after review) · cast-treatment ${cast} (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (claims map against proof rows) · ${rev || `review fail, then pass (reviewer: fresh agent given the brief word for word; findings: 2 blocking [premises], all repaired; reviewed: concepts-v1.md; after review: nothing changed; ${SCORES})`} · whole pass (set read as the operator sees it). State: concept-ready. Notes: ${notesFile}\n`;
+    const noStamp = check("r1.md", rec(write("n1.md", { repairs: ["premises"] })));
+    assert.equal(noStamp.code, 1);
+    assert.match(noStamp.out, /findings send work back to "premises", but the notes have no "reopened: ad-concepts\/premises review <N>" line .* --layer premises --repair <review number>/);
+    const noRepair = check("r2.md", rec(write("n2.md", { restamp: ["premises"] })));
+    assert.equal(noRepair.code, 1);
+    assert.match(noRepair.out, /"premises", but its notes section has no repair paragraph; .*"Repair \(review <N>\):/);
+    const both = check("r3.md", rec(write("n3.md", { restamp: ["premises"], repairs: ["premises"] })));
+    assert.equal(both.code, 0, both.out);
+    const plain = check("r4.md", rec(write("n4.md", { restamp: ["premises", "cast-treatment"], repairs: ["premises", "cast-treatment"] })));
+    assert.equal(plain.code, 1);
+    assert.match(plain.out, /layer "cast-treatment" was reopened for a repair .* recorded as a plain pass/);
+    // 4. After the last allowed review the only repair is a cut; new words re-checked by the maker still fail.
+    const n5 = write("n5.md", { restamp: ["premises"], repairs: ["premises"] });
+    const cutRev = (after) => `review fail, then pass (reviewer: fresh agent given the brief word for word; findings: 2 blocking [premises], all repaired; reviewed: concepts-v3.md; after review: ${after}; ${SCORES})`;
+    assert.equal(check("r5.md", rec(n5, { rev: cutRev('cut: "Frost does not wait." (finding 2)') })).code, 0);
+    const rewritten = check("r6.md", rec(n5, { rev: cutRev("headline rewritten, re-checked by the maker") }));
+    assert.equal(rewritten.code, 1);
+    assert.match(rewritten.out, /passes on a fresh review, but text changed after it/);
+    // 5. Once a review has run, its row tells the review's story on any verdict; only pending is exempt.
+    const nc = (ev) => rec("none (cannot write files here)", { premises: "pass", rev: `review not checked (${ev})` }).replace("State: concept-ready", "State: not ready (review not checked)");
+    const bare = check("r7.md", nc("three fresh reviews done; one sentence added after the last"));
+    assert.equal(bare.code, 1);
+    assert.match(bare.out, /layer "review" is not checked after a review, without these evidence items: "reviewer:", "reviewed:", "findings:", "after review:"/);
+    assert.equal(check("r8.md", nc("three fresh reviews done; reviewer: fresh agent each time; reviewed: concepts-v3.md; findings: 9, then 7, then 2 blocking [premises], all repaired; after review: one sentence added after the last, re-checked by the maker only")).code, 0);
+    assert.equal(check("r9.md", nc("pending fresh review")).code, 0);
+    // 6. A reply whose record is in a file points at it; the reply's state must be the record's, and "reviewed" needs a passed review.
+    const file = path.join(tmp, "ad.md");
+    fs.writeFileSync(file, nc("pending fresh review"));
+    assert.equal(pipe(`Two concepts below.\n\nState: not ready (review not checked). Record: ${file}\n`).code, 0);
+    assert.match(pipe(`State: concept-ready. Record: ${file}\n`).out, /the reply says "State: concept-ready", but the record in .* supports "not ready"/);
+    assert.match(pipe(`State: not ready, written and reviewed. Record: ${file}\n`).out, /the reply's state calls the work reviewed, but the record's review row is not checked/);
+    assert.match(pipe("State: not ready. Record: no-such-record.md\n").out, /points at the record "no-such-record\.md", which was not found/);
+    assert.match(check("r10.md", nc("pending fresh review").replace("State: not ready (review not checked)", "State: not ready, reviewed (review not checked)")).out, /the state calls the work reviewed, but layer "review" is not checked/);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
@@ -926,6 +1024,12 @@ test("staged work: the contract keeps its rules explicit", async () => {
   for (const rule of [/One layer, one question/, /Do not draft the finished piece and check it afterward/, /Evidence is something that was looked at/, /`n\/a` with the reason/, /`not checked` with the reason/, /does not pass its parent/, /dependents lose their pass/, /not a request for the operator to\s+approve each step/, /Three repair cycles/, /never padded/, /Tested structure is not tested performance/, /Naming a gap is a pass/, /One verdict per row/, /`carried`/, /a pass whose evidence says the check was not made is a `not checked`/, /emergency stop covers only/]) {
     assert.match(text, rule);
   }
+  // Stamps are read, never repaired; the brief's last line says what blocking means.
+  assert.doesNotMatch(text, /real time between/);
+  assert.match(text, /Blocking is only: a fact, price, date, condition or claim/);
+  assert.match(text, /--repair <review number>/);
+  assert.match(text, /only\s+repair is a cut/);
+  assert.match(text, /`State: <state>\. Record: <path>`/);
   const video = readFileSync(path.join(hubRoot, "core/skills/ad-creative/references/video-build.md"), "utf8");
   assert.deepEqual([...video.matchAll(/^## Part (\d)\./gm)].map((m) => Number(m[1])), [1, 2, 3, 4, 5, 6, 7]);
   assert.match(video, /are not a watch/);

@@ -27,15 +27,14 @@ skipped layer visible to the agent itself and to whoever reads the result.
    check and evidence. Build that layer only, answer its check from the evidence it names,
    write its result in the notes file under a heading with the layer's id, then open the
    next. The finished piece is assembled from the layer results, never drafted first and
-   labelled afterward. Order is the tool's: a layer's instructions are not available until
-   the layers before it are written down, and each first open leaves an `opened:` line
-   with the time in the notes file and in the tool's own ledger beside it
-   (`<notes file>.opened`), so a notes file rewritten whole does not lose its stamps:
-   leave the ledger where it is. The record checker reads both. `--all` prints every
-   layer at once, for a person reading or a session that cannot write a notes file at all.
+   labelled afterward. Order is the tool's: a layer opens once the layers before it are
+   written down, and each first open leaves an `opened:` line with the time in the notes
+   file and in the tool's ledger beside it (`<notes file>.opened`, kept where it is), which
+   the record checker reads. `--all` prints every layer at once, for a person reading or a
+   session that cannot write a notes file at all.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
    not to polishing a later layer. After a repair, check again every later layer that
-   rested on it.
+   rested on it. After a review, see [the review brief](#the-review-brief).
 5. **Check the whole.** Parts that each pass can still fail together. The work order's
    whole-output check is its own line in the record.
 6. **Deliver with the state the record supports.** Nothing stronger.
@@ -169,16 +168,15 @@ essay.
 
 Check a record before sending it, every time; a record that fails is fixed, not sent:
 `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe a reply in with
-`--record -`. It fails on a missing layer, a pass with no evidence, a pass whose evidence
-says the check was not made, two verdicts in one row, a state the rows do not support, a
-failed, unchecked or partial layer not named by its id after `State:`, a missing
-evidence item, a review row against [the review brief](#the-review-brief), or a pass whose
-`own words:` marks a line `reworded`, or a pass whose fix or evidence names a repair after a
-failed check (that is `fail, then pass`). A one-line or piped record with no `Notes:` line fails. Given a notes file,
-it opens it: each passed layer needs its heading with at least 15 words under it and its
-`opened:` line, the opens in the work order's order, and the loading layer names every file
-under Load first, none read in part, and has an `Examples:`
-line naming the examples the channel rules point at (or `none` and why).
+`--record -`. It fails on a missing layer, a pass with no evidence or whose evidence says
+the check was not made, two verdicts in one row, a state the rows do not support, a failed,
+unchecked or partial layer not named after `State:`, a missing evidence item, a review row
+against [the review brief](#the-review-brief), a pass whose `own words:` marks a line
+`reworded` or whose fix or evidence names a repair (that is `fail, then pass`), and a
+one-line or piped record with no `Notes:` line. Given a notes file, it opens it: each passed
+layer needs its heading with 15 words under it and its `opened:` line, in order, a reopened
+layer its repair paragraph, and the loading layer names every file under Load first, none
+read in part, with an `Examples:` line (or `none` and why).
 Each state lists the layers it needs. The ones the work order shows in bold must be
 `pass` or `carried`; `n/a` is not accepted there. The whole-output row is never `n/a`,
 and no state stands on `n/a` rows alone. A state takes no exceptions: `rechecked, except the
@@ -195,23 +193,37 @@ the business's channel rules point at, opened or not. When no fresh agent can be
 the maker runs it as a separate pass after the draft is finished and answers every item in
 writing in the notes file. It adds to the review layer's own gates and scores.
 
-The layer record is written, with the review row `not checked (pending fresh review)`,
-before the first review is requested, and the request names it. Findings are repaired at
-the layer each one names, and the review runs again on what changed, by a fresh agent
-whenever the first review was by one, until a review returns nothing blocking or the three
-cycles run out. In the last allowed cycle only blocking findings are repaired; the rest go
-to the reply as open items, so the delivered text stays as close as possible to the
-reviewed text. Text changed after the last fresh review and
-re-checked only by the maker is not reviewed text: the row is `partial`, names the changed
-lines, and the state falls to what the rows support. Only a session that cannot start a
-fresh agent at all records a self re-check as a pass, with `reviewer: self`. The row gives
-`reviewed:` (the file or version the reviewer was given) and `after review:` (`nothing
-changed`, or the lines changed since, each naming the finding it repairs, and who re-checked
-them); a review that found anything blocking is `fail, then pass` once repaired, and
-`findings:` names in square brackets the layers its blocking findings sent work back to
-(`findings: 4 blocking [premises, copy], all repaired`), each of them `fail, then pass` in
-the record, never a plain `pass` or `carried`. Scores that hold for one audience only say so
-in `audience:`, and the state names that audience.
+The record is written, review row `not checked (pending fresh review)`, before the first
+review is requested, and the request names it. The first review reads everything, with the
+whole brief. Each blocking finding is repaired at the layer it names, reopened with
+`--layer <layer id> --repair <review number> --notes <file>`, in a paragraph below that
+layer's section beginning `Repair (review <N>):`: what changed and what was looked at after.
+A layer resting on a repaired one is checked again for what changed and says so under its
+heading; a layer no finding touched keeps its section and row; nothing written is deleted
+or rewritten. The `opened:` lines and their ledger record the first build once: a finding
+about them is an open item for the reply, never repaired by opening layers again, a new
+notes file or waiting between opens.
+
+A later review is a re-check, not a new review, by a fresh agent whenever the first was. Its
+request hands over the earlier replies and the changed lines (old, new); the reviewer says
+whether each earlier blocking finding is closed, quoting the new line, answers checks 2 to 5
+for the changed lines only, and check 7. Unchanged text an earlier review passed is not
+reviewed again, but an unsupported claim or a forbidden line blocks wherever it is found.
+The loop ends when a review returns nothing blocking. After the last allowed review the only
+repair is a cut (a sentence, an optional field or a whole piece; never new words, a
+condition, a required string or an offer term); a piece no cut repairs is withheld. Text
+changed after the last fresh review and re-checked only by the maker is not reviewed: the
+row is `partial`, names the changed lines, and the state falls to match. Only a session
+that cannot start a fresh agent records a self re-check as a pass, with `reviewer: self`.
+
+Once a review has run, its row gives `reviewer:`, `reviewed:` (the file or version given),
+`findings:` and `after review:` (`nothing changed`; `cut:` with each cut and its finding; or
+the lines changed since, their findings and who re-checked them) on any verdict; only
+evidence beginning `pending` is exempt. A review that blocked is `fail, then pass` once
+repaired; `findings:` names in square brackets the layers it sent work back to
+(`findings: 4 blocking [premises, copy], all repaired`), each `fail, then pass` with its
+`reopened:` line and repair paragraph. Scores that hold for one audience say so in
+`audience:`, and the state names that audience.
 
 > You did not make this. Trust nothing in the maker's notes until you have opened the file
 > it points at. You have the request as typed, the output, the work-order page, the maker's
@@ -230,18 +242,23 @@ in `audience:`, and the state names that audience.
 >    from the maker's record.
 > 7. The record: something to open behind every pass, a state no stronger than the rows,
 >    every failed or unchecked layer named beside the state. In the notes file, the
->    `opened:` lines run in the work order's order with real time between them, and no
->    file holding the finished output is older than the `opened:` line of the layer that
->    builds it. A burst of opens after the draft is a finding.
+>    `opened:` lines run in the work order's order, and no file holding the finished output
+>    is older than the `opened:` line of the layer that builds it. A burst of opens after
+>    the draft is a finding.
 >
-> Return numbered findings (line, rule or source, fix), each marked blocking or not. Do not
-> rewrite the work.
+> Return numbered findings (line, rule or source, fix), each marked blocking or not; do not
+> rewrite the work. Blocking is only: a fact, price, date, condition or claim, stated or
+> implied, that no source supports or that drops its source's condition; a line the owner's
+> rules for this channel forbid; a `reworded` line; a sentence or argument repeated across a
+> set; a work-order layer check the output fails. Anything else (a preference, a stronger
+> alternative, anything about the stamps) is an open item for the reply, not blocking.
 
 ## What the operator sees
 
-The work first. Then one line: the state, and any layer that failed or could not be
-checked with what it needs. The full record stays in the file; show it in chat only when
-asked. A state is a claim: `creative-ready` says a render was inspected, `live` says the
+The work first. When the record is in a file, the reply ends `State: <state>. Record: <path>`
+(`--record -` on the reply checks that file), plus one plain line for each layer that failed
+or could not be checked. A `Layers (...)` line in a reply is only ever the full one-line
+record and must pass `--record -`. A state is a claim: `creative-ready` says a render was inspected, `live` says the
 platform confirmed it. Tested structure is not tested performance, and no state here
 predicts that an ad will win.
 

@@ -169,7 +169,7 @@ Doctrine item 10 applies. In addition for this project:
 - Voice belongs to the business. Skills read each business's voice and context from that business's repo, by meaning. The hub carries no brand voice; test businesses are synthetic and brand-neutral. The owner-authorized composition gallery is a narrow exception for generated, branded teaching images, not a source of current offer facts or performance evidence.
 - Skill text follows `core/_system/CONVENTIONS.md` section 1: plain, confident, operator to operator, no hype, no filler, each rule stated once.
 
-Every output of every skill is built the same way: in layers, each checked before the next relies on it, with a layer record (2.17). The creative passes above are the first layers of every creative work order.
+Every output of every skill is built the same way: in layers, each checked before the next relies on it, with a layer record (2.17). The creative passes above are the first layers of every creative work order; where the work order writes copy, the copy comes before the rejection pass, so the review reads the words the buyer will see.
 
 ### 2.10 Identity facts, source of truth
 

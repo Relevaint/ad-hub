@@ -4,6 +4,7 @@
 //   node <hub>/core/_system/scripts/workorder.mjs --for "<what was asked for>"
 //   node <hub>/core/_system/scripts/workorder.mjs --id <work order>
 //   node <hub>/core/_system/scripts/workorder.mjs --id <work order> --layer <layer id | whole> --notes <file>
+//   node <hub>/core/_system/scripts/workorder.mjs --id <work order> --layer <layer id> --repair <review number> --notes <file>
 //   node <hub>/core/_system/scripts/workorder.mjs --id <work order> --all
 //   node <hub>/core/_system/scripts/workorder.mjs --list
 //   node <hub>/core/_system/scripts/workorder.mjs --record <file | -> [--id <work order>]
@@ -26,7 +27,10 @@
 //   every layer before it has its section in the notes file (a heading with its id and 15
 //   words, or a section beginning n/a, not checked or partial with the reason); the first
 //   time, it appends "<!-- opened: <work order>/<layer> <UTC time> -->" to the notes file.
-//   --layer whole opens the whole-output check.
+//   --layer whole opens the whole-output check. With --repair <N> it reopens a layer that was
+//   opened before, for the repair review N's finding sent to it: it prints the block, appends
+//   "<!-- reopened: <work order>/<layer> review <N> <UTC time> -->" every time, and refuses while
+//   an earlier layer reopened for review N has no "Repair (review N):" paragraph yet.
 // --all prints the full page, every layer at once: for a person reading, and for a session
 //   that cannot write a notes file at all.
 // --record checks a "## Layer record" table (or the one-line form used in a reply) in a
@@ -62,7 +66,8 @@ const NOT_DONE_MORE = " Do not delete a true limit to make the row pass: change 
 const IN_HAND = /\b(?:partly read|partial read|read only in part|only partly|skimmed|not (?:opened|read) in full|did(?: not|n't) (?:read|open|finish|get to)|ran out of (?:time|room|context)|no time|self-review only|only a self-review|no (?:fresh|second) reviewer)\b/i;
 
 // The map as stored, with each {"use": "<layer set>"} replaced by that set's layers, so a
-// run of layers shared by several outputs (the creative passes) is written once.
+// run of layers shared by several outputs (the creative passes) is written once. A "returns_to"
+// on the use entry adds layers of this work order to each of the set's layers' returns_to.
 export function loadMap(hub) {
   const file = path.join(hub, MAP);
   if (!existsSync(file)) throw new UsageError(`no work order map at ${MAP}`);
@@ -72,7 +77,7 @@ export function loadMap(hub) {
     o.layers = (Array.isArray(o.layers) ? o.layers : []).flatMap((l) => {
       if (!l || !l.use) return [l];
       if (!sets[l.use]) throw new UsageError(`work order ${o.id}: unknown layer set "${l.use}"`);
-      return sets[l.use].map((x) => ({ ...x }));
+      return sets[l.use].map((x) => (l.returns_to ? { ...x, returns_to: [...list(x.returns_to), ...list(l.returns_to)] } : { ...x }));
     });
   }
   return map;
@@ -496,12 +501,14 @@ function reviewErrors(at, lid, r, values, verdictOf = () => null) {
     }
   }
   const reviewer = values.reviewer, after = values["after review"];
-  if (reviewer && after && !/\bself\b/i.test(reviewer) && !/^[`"*]*(?:nothing|none|no change)/i.test(after)) errors.push(`${at}: layer "${lid}" passes on a fresh review, but text changed after it ("after review: ${after.slice(0, 60)}"); run the review again on what changed, or record the row as partial and name the changed lines`);
+  if (reviewer && after && !/\bself\b/i.test(reviewer) && !/^[`"*]*(?:nothing|none|no change|cut\b)/i.test(after)) errors.push(`${at}: layer "${lid}" passes on a fresh review, but text changed after it ("after review: ${after.slice(0, 60)}"); run the review again on what changed, or record the row as partial and name the changed lines (after the last allowed review the only repair is a cut: "after review: cut: <what> (finding <n>)")`);
   if (values.findings && reportsBlocking(values.findings) && !/^fail\b/.test(r.said || "")) errors.push(`${at}: layer "${lid}" records blocking findings ("${values.findings.slice(0, 60)}") under a plain pass; a review that found blocking problems and was repaired is "fail, then pass"`);
   return errors;
 }
 // A repair named in a pass row: the check failed first, so the row is "fail, then pass".
 const REPAIRED = /\b(?:returned (?:from|to) [a-z-]+|sent back to [a-z-]+|failed (?:first|at first|the check|its check|initially)|repaired after|fixed after (?:the |a )?(?:review|check|fail))/i;
+// "Reviewed" said of the work, not "not reviewed", "unreviewed" or "pending review".
+const REVIEWED = /(?<!\b(?:not|never|no|un)[\s-]*)\breviewed\b/i;
 // Own words: a line the maker marked "reworded" is rewritten before the row can pass.
 const REWORDED = /(?<!\b(?:not|no|none)\s+)\breworded\b/i;
 
@@ -549,14 +556,44 @@ export function written(secs, lid) {
   });
 }
 
+// "<!-- reopened: <work order>/<layer> review <N> <UTC time> -->", written by --repair every time it is called.
+const RESTAMP = /<!--\s*reopened:\s*([a-z0-9-]+)\/([a-z0-9-]+)\s+review\s+(\d+)\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\s*-->/g;
+export function reopenings(text, id) {
+  return [...String(text).matchAll(RESTAMP)].filter((m) => m[1] === id).map((m) => ({ layer: m[2], review: Number(m[3]), time: m[4] }));
+}
+// A layer's repair paragraph, "Repair (review <N>): ...", after optional list or bold marks.
+export function hasRepair(secs, lid, n = null) {
+  const re = new RegExp(`^[\\s>*_-]*(?:\\d+[.)]\\s*)?[*_]*Repair \\(review${n === null ? "\\b" : `\\s*${n}\\)`}`, "im");
+  return secs.filter((s) => namesWord(s.heading, lid)).some((s) => re.test(s.heading) || re.test(s.body.join("\n")));
+}
+
+// Reopen a layer a review finding named: --layer <id> --repair <review number>.
+function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
+  const layers = list(o.layers);
+  if (!(lid in stamps(`${text}\n${ledgerText(file)}`, o.id))) return { code: 1, out: `Layer "${lid}" was never opened, so there is nothing to repair: open it first with ${tool(hub)} --id ${o.id} --layer ${lid} --notes ${notes}` };
+  const re = reopenings(`${text}\n${ledgerText(file)}`, o.id);
+  const order = [...layers.map((l) => l.id), "whole"];
+  const open = order.slice(0, at).find((x) => re.some((r) => r.layer === x && r.review === n) && !hasRepair(secs, x, n));
+  if (open) return { code: 1, out: `Layer "${lid}" cannot be reopened for review ${n} yet: layer "${open}", earlier in the work order, was reopened for review ${n} and has no "Repair (review ${n}):" paragraph under its heading in ${notes}. Write that repair first, then reopen "${lid}".` };
+  const line = `<!-- reopened: ${o.id}/${lid} review ${n} ${now.toISOString().replace(/\.\d{3}Z$/, "Z")} -->\n`;
+  writeFileSync(file, text && !text.endsWith("\n") ? `${text}\n${line}` : text + line);
+  appendFileSync(ledgerOf(file), line);
+  const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
+  return { code: 0, out: [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}, reopened for review ${n}. Paths are relative to the hub: ${hub}`, "", block, `Write what was repaired under this layer's heading in ${notes}, below what is there, as a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are.`].join("\n") };
+}
+
 // Open one layer: the gate, the stamp, then the block.
-export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = new Date()) {
+export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = new Date(), repair = null) {
   const layers = list(o.layers);
   const at = lid === "whole" ? layers.length : layers.findIndex((l) => l.id === lid);
   if (at < 0) throw new UsageError(`work order ${o.id} has no layer "${lid}"; its layers: ${layers.map((l) => l.id).join(", ")}, whole`);
   const file = path.resolve(cwd, notes);
   const text = existsSync(file) ? readFileSync(file, "utf8") : "";
   const secs = sections(text);
+  if (repair !== null) {
+    if (!/^[1-9]\d*$/.test(String(repair))) throw new UsageError("--repair takes the review number: 1 for the first review, 2 for the second");
+    return repairLayer(hub, o, map, at, lid, notes, file, text, secs, Number(repair), now);
+  }
   const missing = layers.slice(0, at).filter((l) => !written(secs, l.id));
   if (missing.length) {
     return { code: 1, out: `Layer "${lid}" is not open yet: layer "${missing[0].id}" has no section in ${notes}. Write its result under a heading with "${missing[0].id}" (15 words or more), or a section that begins "n/a", "not checked" or "partial" with the reason, then open "${lid}" again.` };
@@ -577,7 +614,7 @@ export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = ne
 
 // The notes file behind a record: a heading per passed layer with real sentences under it,
 // and the loading layer naming every file under Load first, none of them read in part.
-function checkNotes(o, rec, final, at, cwd) {
+function checkNotes(o, rec, final, at, cwd, review = {}) {
   const errors = [];
   const given = rec.notes;
   if (/^none\b/i.test(given)) {
@@ -596,6 +633,19 @@ function checkNotes(o, rec, final, at, cwd) {
     if (!opened[l.id]) continue;
     if (prev && opened[l.id] < prev.time) errors.push(`${at}: layer "${l.id}" was opened at ${opened[l.id]}, before layer "${prev.id}" (${prev.time}), which comes earlier in the work order; open each layer with --layer as it is reached`);
     prev = { id: l.id, time: opened[l.id] };
+  }
+  // Repairs after a review: each layer its blocking findings name was reopened with --repair after the
+  // review was opened and has its "Repair (review" paragraph; a reopened layer is never a plain pass.
+  const re = reopenings(`${raw}\n${ledgerText(file)}`, o.id);
+  const cmd = `workorder.mjs --id ${o.id} --layer <layer> --repair <review number> --notes ${given}`;
+  for (const x of list(review.named)) {
+    const since = review.lid && opened[review.lid];
+    if (!re.some((r) => r.layer === x && (!since || r.time > since))) errors.push(`${at}: the review's findings send work back to "${x}", but the notes have no "reopened: ${o.id}/${x} review <N>" line after the review was opened; reopen it with ${cmd.replace("<layer>", x)}`);
+    if (!hasRepair(secs, x)) errors.push(`${at}: the review's findings send work back to "${x}", but its notes section has no repair paragraph; under its heading, below what is there, write "Repair (review <N>): what changed and what was looked at afterwards"`);
+  }
+  for (const x of [...new Set(re.map((r) => r.layer))]) {
+    const said = (review.said || {})[x];
+    if (said !== undefined && /^(?:pass|carried)$/.test(said)) errors.push(`${at}: layer "${x}" was reopened for a repair (a "reopened:" line in the notes), but is recorded as a plain ${said}; a repaired layer is "fail, then pass" (or fail, not checked, partial)`);
   }
   for (const l of list(o.layers)) {
     if (final[l.id] !== "pass") continue;
@@ -693,6 +743,18 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
   const by = Object.fromEntries(list(map.work_orders).map((o) => [o.id, o]));
   const records = parseRecords(text);
   const errors = [];
+  // A reply whose record is in a file ends "State: <state>. Record: <path>": check that file.
+  const pointer = !records.length && opts.stdin && [...text.matchAll(/(?:^|\s)Record:\s*`?([^\s`]+?)`?\.?\s*$/gm)].pop();
+  if (pointer) {
+    const file = path.resolve(cwd, pointer[1]);
+    if (!existsSync(file)) return { errors: [`the reply points at the record "${pointer[1]}", which was not found (paths are relative to the current directory, or absolute)`], records };
+    const inner = checkRecord(hub, readFileSync(file, "utf8"), forcedId, { cwd });
+    const said = (text.match(/State:\s*([^\n]*?)\.?\s*Record:/i) || [])[1];
+    const rec = inner.records[0];
+    if (said && rec && rec.claimed && !said.toLowerCase().replace(/[`*]/g, "").trim().startsWith(rec.claimed)) inner.errors.push(`the reply says "State: ${said.trim()}", but the record in ${pointer[1]} supports "${rec.claimed}"`);
+    if (said && rec && rec.unreviewed && REVIEWED.test(said)) inner.errors.push(`the reply's state calls the work reviewed, but the record's review row is ${rec.unreviewed}`);
+    return inner;
+  }
   if (!records.length) errors.push('no "## Layer record" section and no "Layers (<work order>): ..." line found');
   for (const rec of records) {
     const id = forcedId || rec.id;
@@ -704,12 +766,15 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     for (const r of rec.rows) rows[r.layer] = r;
     const find = (l) => rows[norm(l.id)] || rows[norm(l.name)];
     const final = {};
+    const said = {};
+    const review = { named: [], said };
     const audiences = [];
     for (const l of [...list(o.layers), { id: "whole", name: "whole output" }]) {
       const r = find(l) || (l.id === "whole" ? rows["whole-output"] : null);
       if (!r) { errors.push(`${at}: layer "${l.id}" has no row; a layer that does not apply is n/a with the reason, never left out`); continue; }
       if (!VERDICTS.includes(r.verdict)) { errors.push(String(r.given || "").trim() ? `${at}: layer "${l.id}" has the verdict "${String(r.given).trim().slice(0, 60)}", which is not one of ${VERDICTS.join(", ")}; a layer checked only in part is partial, with what was done and what remains` : `${at}: layer "${l.id}" has no verdict (${VERDICTS.join(", ")})`); continue; }
       final[l.id] = r.verdict;
+      said[l.id] = r.said || r.verdict;
       if (r.mixed) errors.push(`${at}: layer "${l.id}" carries two verdicts; one verdict per row (a layer checked only in part is partial, with what was done and what remains)`);
       if (r.extra) errors.push(`${at}: layer "${l.id}" has the verdict "${r.said}"; write one verdict only (a repair that worked is "fail, then pass") and put everything else in the evidence${rec.compact ? ", in brackets" : " or fix column"}`);
       const plainPass = r.verdict === "pass" && !r.extra && !r.mixed && !/^fail\b/.test(r.said || "");
@@ -722,6 +787,14 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
         else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked.${NOT_DONE_MORE}`);
       }
       const items = l.id === "whole" ? list(o.whole && o.whole.evidence_items) : list(l.evidence_items);
+      // Once a review has run, its row tells the review's story on any verdict; only "pending" or "not started" is exempt.
+      if (items.includes("reviewer") && r.verdict !== "n/a") {
+        review.lid = l.id;
+        const told = itemValues(items, ev);
+        if (told.findings && reportsBlocking(told.findings)) review.named = [...told.findings.matchAll(/\[([^\]]+)\]/g)].flatMap((m) => m[1].split(/\s*(?:,|\band\b)\s*/)).map((x) => norm(x.replace(/[`*]/g, ""))).filter((x) => x in said || list(o.layers).some((y) => y.id === x));
+        const miss = ["reviewer", "reviewed", "findings", "after review"].filter((x) => items.includes(x) && !(x in told));
+        if (r.verdict !== "pass" && !/^[\s`"*(]*(?:pending|not started)\b/i.test(ev) && miss.length) errors.push(`${at}: layer "${l.id}" is ${r.verdict} after a review, without these evidence items: ${miss.map((x) => `"${x}:"`).join(", ")}; once a review has run, its row gives who reviewed, what they read, what they found and what changed since, whatever its verdict (only "pending" before the first review is exempt)`);
+      }
       if (r.verdict === "pass" && items.length) {
         const miss = missingItems(items, ev);
         if (miss.length) errors.push(`${at}: layer "${l.id}" passes without these evidence items: ${miss.map((x) => `"${x}:"`).join(", ")}; give each as "name: what was found", at least three words`);
@@ -738,7 +811,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     }
     if (rec.notes === undefined || rec.notes === null) {
       if (rec.compact || opts.stdin) errors.push(`${at}: no "Notes:" line; name the notes file that holds each layer's result, or "Notes: none (why)"`);
-    } else errors.push(...checkNotes(o, rec, final, at, cwd));
+    } else errors.push(...checkNotes(o, rec, final, at, cwd, review));
     if (!rec.state) { errors.push(`${at}: no "State:" line`); continue; }
     // Every layer that failed, was not checked or is partial is named beside the state.
     const unnamed = Object.entries(final).filter(([lid, v]) => ["fail", "not checked", "partial"].includes(v) && !namesWord(rec.state, lid)).map(([lid, v]) => `"${lid}" (${v})`);
@@ -746,6 +819,10 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     const st = rec.state.toLowerCase().replace(/[`*]/g, "");
     const states = [...list(o.states)].sort((a, b) => b.state.length - a.state.length);
     const claimed = states.find((s) => st.startsWith(s.state.toLowerCase()));
+    rec.claimed = claimed ? claimed.state.toLowerCase() : st.startsWith(UNIVERSAL_STATE) ? UNIVERSAL_STATE : null;
+    // "Reviewed" is a claim: the state says it only over a review row that passed.
+    if (review.lid && !["pass", "carried"].includes(final[review.lid])) rec.unreviewed = final[review.lid] || "missing";
+    if (rec.unreviewed && REVIEWED.test(rec.state)) errors.push(`${at}: the state calls the work reviewed, but layer "${review.lid}" is ${rec.unreviewed}`);
     if (!claimed) {
       if (!st.startsWith(UNIVERSAL_STATE)) errors.push(`${at}: state "${rec.state}" is not one of: ${list(o.states).map((s) => s.state).concat(UNIVERSAL_STATE).join(", ")}`);
       continue;
@@ -815,10 +892,11 @@ export function main(argv) {
     console.log(`${errors.length ? "Record failed" : "Record passed"}: ${records.length} layer record(s), ${errors.length} problem(s).`);
     return errors.length ? 1 : 0;
   }
+  if (args.repair !== undefined && !args.layer) throw new UsageError("--repair goes with --layer <layer id> and --notes <file>");
   // --layer opens one layer of the work order named by --id (or matched by --for).
   const openOne = (o, map) => {
     if (!args.notes) throw new UsageError("--layer needs --notes <path to the notes file>; a session that cannot write a notes file at all reads the page with --all");
-    const r = openLayer(hub, o, map, String(args.layer), args.notes);
+    const r = openLayer(hub, o, map, String(args.layer), args.notes, process.cwd(), new Date(), args.repair === undefined ? null : args.repair);
     console.log(r.out);
     return r.code;
   };
@@ -851,7 +929,7 @@ export function main(argv) {
     console.log(render(top, map, "", hub, Boolean(args.all)));
     return 0;
   }
-  throw new UsageError('usage: workorder.mjs (--for "<request>" | --id <work order>) [--layer <layer id> --notes <file> | --all] | --list | --record <file> | --check | --write | --headings <file>');
+  throw new UsageError('usage: workorder.mjs (--for "<request>" | --id <work order>) [--layer <layer id> [--repair <review number>] --notes <file> | --all] | --list | --record <file> | --check | --write | --headings <file>');
 }
 
 if (isMain(import.meta.url)) run(main);

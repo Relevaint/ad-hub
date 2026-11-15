@@ -138,6 +138,8 @@ or 4. If viewers could remember only the gag and not the benefit, revise the con
 
 ## Pass 6. Adversarial concept review, then revision
 
+When copy is asked for, the fields each placement needs (and a video's script) are written
+after Pass 5 and before this pass, so the review reads the words the buyer will see.
 Review as a distracted viewer, not as the author defending the work. When available,
 use a fresh reviewer given the brief, constraints and candidates, without the author's
 sales pitch or self-scores. Otherwise perform a separate critique pass and say it was
