@@ -574,6 +574,10 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
     assert.match(odd.out, /layer "recheck" has the verdict "mostly fine", which is not one of/);
     const dotted = check("dotted.md", "Layers (ad-concepts): fundamentals pass (offer file and proof table read) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (footer strings checked: Instant download · 30-day refund; review withheld) · review pass (self-review, Hook 4 Glance 4) · whole pass (set read as the operator sees it). State: concept-ready\n");
     assert.equal(dotted.code, 0, dotted.out);
+    // Older work with no layer record carries from its dated status; it is not left unchecked for want of a record.
+    const noRecord = check("norecord.md", doc(swap("2 premises", row("2 premises", "not checked", "earlier work predates layer records; the change does not touch the premise")), "not ready"));
+    assert.equal(noRecord.code, 1);
+    assert.match(noRecord.out, /layer "premises" is not checked for want of an earlier record/);
     // Not checked is for what cannot be done here, not for work the writer left undone.
     const lazy = check("lazy.md", doc(swap("7 review", row("7 review", "not checked", "self-review only, no fresh reviewer")), "not ready"));
     assert.equal(lazy.code, 1);

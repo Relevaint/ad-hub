@@ -60,7 +60,7 @@ Also, when it applies:
 
 - **Build:** Ledger statuses and approvals brought in line: a changed ad drops to the state its new record supports, and an approval that covered the old version is named as no longer covering it.
 - **Method:** [ad-creative/SKILL.md, "7 move the row"](../core/skills/ad-creative/SKILL.md#7-move-the-row)
-- **Check:** Is every changed ad at the state its new record supports, and is every approval that covered an old version named as needing a fresh one?
+- **Check:** Is every changed ad at the highest state its new record supports and no lower (claims and copy passing with untouched layers carried is copy-ready, not planned), and is every approval that covered an old version named as needing a fresh one?
 - **Evidence:** The ledger beside the updated records; the approvals log.
 - **If it fails:** Each status is moved by the skill that owns that transition. A live ad that carries a claim the business says is no longer true goes at the top of the reply with a prepared pause list. Pausing it needs the go-ahead of someone who can approve: the emergency stop covers only the conditions on its own list, and a restricted category always needs a fresh approval.
 
