@@ -92,7 +92,10 @@ changes after work has passed. The work order is `change-recheck`:
 2. List what rested on the old version: search the business's `ads/` folder for the old
    value and its wording. Each hit has an owner and a work order, and that work order's
    "When something changes" table names the layers to check again.
-3. Correct each dependent under its own work order. An ad that has not been approved or
+3. Correct each dependent under its own work order: run again the layers its change
+   table names, write the updated layer record into the dependent's own file, run the
+   checker on it, and set its status to the state that record supports, no higher and
+   no lower. An ad that has not been approved or
    run is corrected in place and its layer record updated. An ad that has been approved
    or has run is never edited: the change is a revision from `ad-strategy`
    ([ledger-row.md](schemas/ledger-row.md)), so the approval and the results stay with

@@ -49,11 +49,11 @@ Also, when it applies:
 
 ### 3. Check each dependent again (`recheck`)
 
-- **Build:** Each dependent corrected by its owner under its own work order. An ad that has not been approved or run is corrected in place and its layer record updated. An ad that has been approved or has run is never edited: the change is a revision from ad-strategy. Layers the change did not touch are carried; for work made before layer records, from the ad's dated status on file.
+- **Build:** For each dependent, in this order: open its own work order's "When something changes" table and run again exactly the layers that row names; correct an ad that has not been approved or run in place; write the updated layer record into the dependent's own file, with the layers the change did not touch carried (for work made before layer records, from the ad's dated status on file); run the checker on that file; set the ledger status to the highest state that record supports. An ad that has been approved or has run is never edited: the change is a revision from ad-strategy. A dependent with no updated record in its own file has not been rechecked.
 - **Run:** [`ad-copy`](ad-copy.md), [`static-ad`](static-ad.md), [`video-ad`](video-ad.md), [`ad-remix`](ad-remix.md), [`test-plan`](test-plan.md), [`tracking-setup`](tracking-setup.md), [`launch`](launch.md) (only the ones on the list, and only the layers their change tables name)
 - **Method:** [_system/staged-work.md, "when something changes"](../core/_system/staged-work.md#when-something-changes); [_system/schemas/ledger-row.md, "ad id"](../core/_system/schemas/ledger-row.md#ad-id)
-- **Check:** Has every dependent on the list been checked again through the layers its change table names, with untouched layers carried and nothing else redone?
-- **Evidence:** The list of dependents with a verdict beside each; each dependent's layer record, dated after the change.
+- **Check:** Does every corrected dependent's own file carry an updated layer record that passes the checker, with the layers its change table names run again and the rest carried, and does the ledger show the state that record supports, no higher and no lower?
+- **Evidence:** For each dependent: its file, the layers run again, the checker's verdict on the file, and the state its record supports.
 - **If it fails:** If any dependent could not be checked here, this layer is partial when some were and not checked when none were: name each one and who can check it. The state is then partly rechecked.
 
 ### 4. Set the states the new records support (`states`)
@@ -83,7 +83,7 @@ A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is no
 
 ## Layer record
 
-Where it goes: In the reply, as one line, followed by the list of dependents, one line per hit: `<file or ad ID> · <owner work order> · <layers checked again> · <verdict>`. Each dependent keeps its own updated record.
+Where it goes: In the reply, as one line, followed by the list of dependents, one line per hit: `<file or ad ID> · <owner work order> · run again: <layers> · record: <the checker's verdict on its file> · state: <state>`. Each dependent keeps its own updated record in its own file.
 
 ```markdown
 ## Layer record
