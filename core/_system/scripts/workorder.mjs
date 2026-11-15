@@ -242,7 +242,7 @@ export function render(o, map, prefix = "") {
     L.push(`| ${s.state} | ${list(s.needs).map((x) => (strict.includes(x) ? `**\`${x}\`**` : `\`${x}\``)).join(", ") || "nothing yet"} | ${s.means} |`);
   }
   L.push(`| ${UNIVERSAL_STATE} | nothing yet | A layer failed or could not be checked; say which and what it needs. |`, "");
-  L.push("A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.", "");
+  L.push("A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.", "");
 
   L.push("## Layer record", "", `Where it goes: ${o.record}`, "", "```markdown", "## Layer record", `Work order: ${o.id}`);
   L.push("| Layer | Verdict | Evidence: what was looked at | Fix made or return |", "| --- | --- | --- | --- |");
@@ -412,6 +412,10 @@ export function checkRecord(hub, text, forcedId) {
       if (!st.startsWith(UNIVERSAL_STATE)) errors.push(`${at}: state "${rec.state}" is not one of: ${list(o.states).map((s) => s.state).concat(UNIVERSAL_STATE).join(", ")}`);
       continue;
     }
+    // A state takes no exceptions: "rechecked, except the live ads" is the weaker state, not this one.
+    const tail = st.slice(claimed.state.length).split(/[.!?](?:\s|$)/)[0];
+    const ex = tail.match(/\b(?:except|excluding|apart from|other than|but|however|although|only)\b/);
+    if (ex) errors.push(`${at}: state "${claimed.state}" is claimed with an exception ("${ex[0]}"); a state takes no exceptions: claim the weaker state and name what remains`);
     for (const need of list(claimed.needs)) {
       const v = final[need];
       const strict = list(claimed.must_pass).includes(need);

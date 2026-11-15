@@ -534,6 +534,12 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
     const shortLine = check("short.md", "Layers (ad-concepts): fundamentals pass (offer file read) · premises pass (five compared) · review pass (self-review, scores 4) · whole pass (set read whole). State: concept-ready\n");
     assert.equal(shortLine.code, 1);
     assert.match(shortLine.out, /layer "visual-stop" has no row/);
+    // A state claimed with an exception is not that state.
+    const excepted = check("excepted.md", "Layers (change-recheck): record pass (offer file read back, old value kept) · dependents pass (ads searched for the old wording, hits listed) · recheck pass (both October ads corrected and their records updated) · states pass (ledger beside the updated records) · whole pass (second search of ads finds no old wording). State: rechecked, except the four live ads\n");
+    assert.equal(excepted.code, 1);
+    assert.match(excepted.out, /state "rechecked" is claimed with an exception/);
+    const qualified = check("qualified.md", "Layers (change-recheck): record pass (offer file read back, old value kept) · dependents pass (ads searched for the old wording, hits listed) · recheck pass (both October ads corrected and their records updated) · states pass (ledger beside the updated records) · whole pass (second search of ads finds no old wording). State: rechecked. The only thing left is your review.\n");
+    assert.equal(qualified.code, 0, qualified.out);
     const lineMixed = check("linemixed.md", "Layers (change-recheck): record pass (offer file read back) · dependents pass (ads searched for the old wording) · recheck pass for the two October ads, not checked for the four live ads (no creative files) · states pass (ledger beside the records) · whole not checked (page unseen). State: partly rechecked\n");
     assert.equal(lineMixed.code, 1);
     assert.match(lineMixed.out, /layer "recheck" carries two verdicts/);

@@ -132,7 +132,7 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 | copy-ready | `fundamentals`, `premises`, `cast-treatment`, `visual-stop`, `connection`, **`claims`**, `review`, **`copy`**, `whole` | Copy and claims map are done. No asset has been made or inspected. Untested. A destination that was not checked is named beside the state. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
 
-A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
 
 ## Layer record
 
