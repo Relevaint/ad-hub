@@ -812,10 +812,10 @@
             "launch"
           ],
           "optional": "only the ones on the list, and only the layers their change tables name",
-          "build": "Each dependent corrected by its owner under its own work order. An ad that has not been approved or run is corrected in place and its layer record updated. An ad that has been approved or has run is never edited: the change is a revision from ad-strategy. Layers the change did not touch are carried.",
+          "build": "Each dependent corrected by its owner under its own work order. An ad that has not been approved or run is corrected in place and its layer record updated. An ad that has been approved or has run is never edited: the change is a revision from ad-strategy. Layers the change did not touch are carried; for work made before layer records, from the ad's dated status on file.",
           "check": "Has every dependent on the list been checked again through the layers its change table names, with untouched layers carried and nothing else redone?",
           "evidence": "The list of dependents with a verdict beside each; each dependent's layer record, dated after the change.",
-          "on_fail": "If any dependent could not be checked here, this layer is not checked: name each one and who can check it. The state is then partly rechecked.",
+          "on_fail": "If any dependent could not be checked here, this layer is partial when some were and not checked when none were: name each one and who can check it. The state is then partly rechecked.",
           "method": [
             "core/_system/staged-work.md#when-something-changes",
             "core/_system/schemas/ledger-row.md#ad-id"

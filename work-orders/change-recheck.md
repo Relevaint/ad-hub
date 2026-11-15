@@ -49,12 +49,12 @@ Also, when it applies:
 
 ### 3. Check each dependent again (`recheck`)
 
-- **Build:** Each dependent corrected by its owner under its own work order. An ad that has not been approved or run is corrected in place and its layer record updated. An ad that has been approved or has run is never edited: the change is a revision from ad-strategy. Layers the change did not touch are carried.
+- **Build:** Each dependent corrected by its owner under its own work order. An ad that has not been approved or run is corrected in place and its layer record updated. An ad that has been approved or has run is never edited: the change is a revision from ad-strategy. Layers the change did not touch are carried; for work made before layer records, from the ad's dated status on file.
 - **Run:** [`ad-copy`](ad-copy.md), [`static-ad`](static-ad.md), [`video-ad`](video-ad.md), [`ad-remix`](ad-remix.md), [`test-plan`](test-plan.md), [`tracking-setup`](tracking-setup.md), [`launch`](launch.md) (only the ones on the list, and only the layers their change tables name)
 - **Method:** [_system/staged-work.md, "when something changes"](../core/_system/staged-work.md#when-something-changes); [_system/schemas/ledger-row.md, "ad id"](../core/_system/schemas/ledger-row.md#ad-id)
 - **Check:** Has every dependent on the list been checked again through the layers its change table names, with untouched layers carried and nothing else redone?
 - **Evidence:** The list of dependents with a verdict beside each; each dependent's layer record, dated after the change.
-- **If it fails:** If any dependent could not be checked here, this layer is not checked: name each one and who can check it. The state is then partly rechecked.
+- **If it fails:** If any dependent could not be checked here, this layer is partial when some were and not checked when none were: name each one and who can check it. The state is then partly rechecked.
 
 ### 4. Set the states the new records support (`states`)
 
@@ -99,7 +99,7 @@ Date: <YYYY-MM-DD>
 State:
 ```
 
-One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
 
 In a reply with no file, put the record on its own line, starting with `Layers (change-recheck):`, every layer in order with a few words of evidence in brackets:
 

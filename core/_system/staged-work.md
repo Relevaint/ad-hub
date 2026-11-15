@@ -99,9 +99,10 @@ changes after work has passed. The work order is `change-recheck`:
    the version that earned them.
 4. In the updated record, a layer the change did not touch is `carried`, with the date
    of the record it passed in. Only the layers the change table names are run again.
-   Work made before layer records existed carries from its dated checks section only
-   where that section shows the layer's check, and the row says so. A layer the old
-   checks never covered is run again, not carried.
+   For work made before layer records existed, a layer the change did not touch is
+   `carried` from the ad's own dated status on file (its ledger status, its checks
+   section, an approval), named in the row. A layer the change table names is always
+   run again.
 5. Set each state to what its new record supports. An approval that covered the old
    version does not cover the new one. A live ad that still carries the old claim goes
    at the top of the reply with a prepared pause list. Pausing it needs the go-ahead of
@@ -133,13 +134,13 @@ Date: <YYYY-MM-DD>
 State: <one of the work order's states>
 ```
 
-One verdict per row: `pass`, `fail`, `n/a`, `not checked`, or `carried` (it passed in an
-earlier record and nothing it rests on has changed; name that record's date). A `pass`
+One verdict per row: `pass`, `fail`, `n/a`, `not checked`, `partial`, or `carried` (it
+passed in an earlier record and nothing it rests on has changed; name that record's date). A `pass`
 names its evidence. A `fail` names what was changed or where it went back; "fail, then
 pass" records a repair that worked. The verdict cell holds the verdict and nothing else:
 "pass after a fix" is written "fail, then pass". The date line is what a later `carried`
-row points back to. A result that is part passed and part unchecked is
-`not checked`, with what remains. Keep each cell to a line; this is a proof trail, not an
+row points back to. A layer checked only in part is `partial`: say what
+was done and what remains. It counts as not checked for every state. Keep each cell to a line; this is a proof trail, not an
 essay.
 
 Check a record before sending it, every time; a record that fails is fixed, not sent:

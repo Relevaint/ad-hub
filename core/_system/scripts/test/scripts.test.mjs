@@ -410,6 +410,8 @@ test("work orders: requests reach the right output", () => {
     "How are the ads doing? Which ones should go?": "results-review",
     "Which ad is winning?": "results-review",
     "the price changed to $29, update the ads": "change-recheck",
+    // A long request: the ask comes first and pasted material must not outweigh it.
+    "Write copy for three of the planned ads. Here is everything about the business so you have it: we sell a printable garden planner with a spreadsheet that works out planting dates, customers email us about frost, we posted a video tutorial last week, the launch was in March, our tracking was set up by a freelancer, a competitor runs carousel ads, and the weekly report says results dropped.": "ad-copy",
     // Plain requests, as an operator would say them with no knowledge of the map.
     "make me three ads for the spring sale": "ad-batch",
     "make me an ad": "static-ad",
@@ -559,13 +561,17 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
     const lineWordy = check("linewordy.md", "Layers (ad-concepts): fundamentals pass (offer file and proof table read) · premises pass after a fix (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (claims map against proof rows; review withheld) · review pass (self-review, Hook 4 Glance 4) · whole pass (set read as the operator sees it). State: concept-ready\n");
     assert.equal(lineWordy.code, 1);
     assert.match(lineWordy.out, /layer "premises" has the verdict "pass after a fix"/);
-    // A verdict the contract does not have, a carried row with no earlier check, and a separator inside evidence.
+    // A layer checked in part is partial; a verdict the contract does not have is named; a separator inside evidence stays evidence.
     const partly = check("partly.md", "Layers (change-recheck): record pass (offer file read back, old value kept) · dependents pass (ads searched for the old wording, hits listed) · recheck partly done (two October ads corrected, claims and copy pass; page not checked) · states pass (ledger beside the updated records) · whole pass (second search of ads finds no old wording). State: partly rechecked\n");
-    assert.equal(partly.code, 1);
-    assert.match(partly.out, /layer "recheck" has the verdict "partly done", which is not one of/);
-    const uncovered = check("uncovered.md", doc(swap("1 fundamentals", row("1 fundamentals", "carried", "file of 2026-10-07; the old checks do not show this layer")), "copy-ready"));
-    assert.equal(uncovered.code, 1);
-    assert.match(uncovered.out, /layer "fundamentals" is carried, but its evidence says no earlier check covered it/);
+    assert.equal(partly.code, 0, partly.out);
+    const bold = check("bold.md", "**Layers (change-recheck):** record pass (offer file read back, old value kept) · dependents pass (ads searched for the old wording, hits listed) · recheck partial (two October ads corrected; page and renders not checked) · states pass (ledger beside the updated records) · whole not checked (page and live ad text not seen). State: **partly rechecked**\n");
+    assert.equal(bold.code, 0, bold.out);
+    const partialNeeded = check("partialneeded.md", "Layers (change-recheck): record pass (offer file read back, old value kept) · dependents pass (ads searched for the old wording, hits listed) · recheck partial (two October ads corrected; page and renders not checked) · states pass (ledger beside the updated records) · whole pass (second search of ads finds no old wording). State: rechecked\n");
+    assert.equal(partialNeeded.code, 1);
+    assert.match(partialNeeded.out, /state "rechecked" needs layer "recheck" to pass; it is partial/);
+    const odd = check("odd.md", "Layers (change-recheck): record pass (offer file read back, old value kept) · dependents pass (ads searched for the old wording, hits listed) · recheck mostly fine (two October ads corrected) · states pass (ledger beside the updated records) · whole pass (second search of ads finds no old wording). State: partly rechecked\n");
+    assert.equal(odd.code, 1);
+    assert.match(odd.out, /layer "recheck" has the verdict "mostly fine", which is not one of/);
     const dotted = check("dotted.md", "Layers (ad-concepts): fundamentals pass (offer file and proof table read) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (footer strings checked: Instant download · 30-day refund; review withheld) · review pass (self-review, Hook 4 Glance 4) · whole pass (set read as the operator sees it). State: concept-ready\n");
     assert.equal(dotted.code, 0, dotted.out);
     // Not checked is for what cannot be done here, not for work the writer left undone.

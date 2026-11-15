@@ -33,7 +33,7 @@ import { words } from "./route.mjs";
 
 export const MAP = "core/_system/work-orders.json";
 export const OUT = "work-orders";
-const VERDICTS = ["pass", "fail", "n/a", "not checked", "carried"];
+const VERDICTS = ["pass", "fail", "n/a", "not checked", "carried", "partial"];
 // Evidence that says the check was not made cannot sit behind a pass.
 const NOT_DONE = /\b(?:not (?:read|opened|open|viewed|watched|played|inspected|checked|checkable|seen|verified|rendered|produced)|(?:could not|couldn't|cannot|can't|unable to)(?: be)? (?:open|opened|read|view|viewed|watch|watched|play|played|inspect|inspected|check|checked|reach|reached|see|seen|verify|verified))\b/i;
 const UNIVERSAL_STATE = "not ready";
@@ -250,7 +250,7 @@ export function render(o, map, prefix = "") {
   L.push("| Layer | Verdict | Evidence: what was looked at | Fix made or return |", "| --- | --- | --- | --- |");
   list(o.layers).forEach((l, i) => L.push(`| ${i + 1} ${l.id} |  |  |  |`));
   L.push("| whole |  |  |  |", "State:", "```", "");
-  L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.", "");
+  L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.", "");
   L.push(`In a reply with no file, put the record on its own line, starting with \`Layers (${o.id}):\`, every layer in order with a few words of evidence in brackets:`, "");
   L.push("```", `Layers (${o.id}): ${list(o.layers)[0].id} pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>`, "```", "");
   L.push(`Check it before you send it: \`node ${prefix ? "<hub>/" : ""}core/_system/scripts/workorder.mjs --record <file>\`, or pipe the reply in with \`--record -\`.`, "");
@@ -302,7 +302,7 @@ export function stale(hub) {
 const MATCH_MIN = 1.6;
 const MATCH_GAP = 0.4;
 
-export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP) {
+export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP, lead = false) {
   const map = loadMap(hub);
   const g = words(request);
   const orders = list(map.work_orders);
@@ -324,20 +324,31 @@ export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP) {
   }).sort((a, b) => b.score - a.score);
   const [top, second] = scored;
   const clear = top && top.score >= min && (!second || top.score - second.score >= gap);
-  return { map, top: clear ? top.o : null, candidates: scored.filter((x) => x.score > 0).slice(0, 5).map((x) => x.o), scored };
+  const whole = { map, top: clear ? top.o : null, candidates: scored.filter((x) => x.score > 0).slice(0, 5).map((x) => x.o), scored };
+  // A long request usually carries pasted material after the ask, and that material can outweigh it: read the ask first.
+  const raw = String(request).trim();
+  if (!lead && raw.split(/\s+/).length > 30) {
+    const sentences = raw.split(/(?<=[.!?:])\s+/);
+    for (const n of [1, 2]) {
+      const first = match(hub, sentences.slice(0, n).join(" "), min, gap, true);
+      if (first.top) return first;
+    }
+  }
+  return whole;
 }
 
 // ---------------------------------------------------------------- records
 
 // One verdict per row. "fail, then pass" is the one allowed pair: a repair that worked.
 function readVerdict(cell) {
-  const found = [...String(cell).toLowerCase().matchAll(/not checked|carried|n\/a|pass|fail/g)].map((m) => m[0]);
+  const text = String(cell).toLowerCase().replace(/\b(?:partially|partly|part) (?:done|checked|rechecked|complete|completed)\b/g, "partial");
+  const found = [...text.matchAll(/not checked|carried|partial|n\/a|pass|fail/g)].map((m) => m[0]);
   if (!found.length) return { verdict: null, mixed: false };
   const last = found[found.length - 1];
   const mixed = found.slice(0, -1).some((v) => v !== last && !(v === "fail" && (last === "pass" || last === "carried")));
   // One verdict exactly: "pass after a fix" hides a repair that belongs in the record as "fail, then pass".
-  const plain = String(cell).toLowerCase().replace(/[`*_]/g, "").replace(/\s+,/g, ",").replace(/\s+/g, " ").replace(/[.;:,\s]+$/, "").trim();
-  const extra = !mixed && !/^(?:pass|fail|n\/a|not checked|carried|fail, then (?:pass|carried))$/.test(plain);
+  const plain = text.replace(/[`*_]/g, "").replace(/\s+,/g, ",").replace(/\s+/g, " ").replace(/[.;:,\s]+$/, "").trim();
+  const extra = !mixed && !/^(?:pass|fail|n\/a|not checked|carried|partial|fail, then (?:pass|carried))$/.test(plain);
   return { verdict: last, mixed, extra, said: plain };
 }
 
@@ -392,7 +403,7 @@ export function parseRecords(text) {
         const head = open < 0 ? item : item.slice(0, open);
         const evidence = open < 0 ? "" : item.slice(open + 1, close > open ? close : undefined);
         const tail = close > open ? item.slice(close + 1) : "";
-        const m = head.trim().match(/^[`*_]*([a-z0-9][a-z0-9-]*)[`*_]*[\s:]+(.*)$/i);
+        const m = head.trim().match(/^[`*_\s]*([a-z0-9][a-z0-9-]*)[`*_]*[\s:]+(.*)$/i);
         if (!m) continue;
         const given = `${m[2]} ${tail}`.trim();
         rec.rows.push({ layer: norm(m[1]), ...readVerdict(given), given, evidence: evidence.trim(), fix: "" });
@@ -422,19 +433,18 @@ export function checkRecord(hub, text, forcedId) {
     for (const l of [...list(o.layers), { id: "whole", name: "whole output" }]) {
       const r = find(l) || (l.id === "whole" ? rows["whole-output"] : null);
       if (!r) { errors.push(`${at}: layer "${l.id}" has no row; a layer that does not apply is n/a with the reason, never left out`); continue; }
-      if (!VERDICTS.includes(r.verdict)) { errors.push(String(r.given || "").trim() ? `${at}: layer "${l.id}" has the verdict "${String(r.given).trim().slice(0, 60)}", which is not one of ${VERDICTS.join(", ")}; a layer checked only in part is not checked, with what remains` : `${at}: layer "${l.id}" has no verdict (${VERDICTS.join(", ")})`); continue; }
+      if (!VERDICTS.includes(r.verdict)) { errors.push(String(r.given || "").trim() ? `${at}: layer "${l.id}" has the verdict "${String(r.given).trim().slice(0, 60)}", which is not one of ${VERDICTS.join(", ")}; a layer checked only in part is partial, with what was done and what remains` : `${at}: layer "${l.id}" has no verdict (${VERDICTS.join(", ")})`); continue; }
       final[l.id] = r.verdict;
-      if (r.mixed) errors.push(`${at}: layer "${l.id}" carries two verdicts; one verdict per row (a result that is part passed and part unchecked is not checked, with what remains)`);
+      if (r.mixed) errors.push(`${at}: layer "${l.id}" carries two verdicts; one verdict per row (a layer checked only in part is partial, with what was done and what remains)`);
       if (r.extra) errors.push(`${at}: layer "${l.id}" has the verdict "${r.said}"; write one verdict only (a repair that worked is "fail, then pass") and put everything else in the evidence${rec.compact ? ", in brackets" : " or fix column"}`);
       if (r.verdict === "pass" && !r.extra && !r.mixed && /^fail(?:ed|s)?\b/i.test(r.fix.trim())) errors.push(`${at}: layer "${l.id}" is marked pass but its fix column records a failure; a repair that worked is "fail, then pass"`);
       const ev = r.evidence.trim();
-      if (r.verdict === "carried" && /\b(?:do(?:es)? not show|did not (?:cover|show|check)|never (?:covered|checked)|not covered|no earlier (?:record|check|pass))\b/i.test(ev)) errors.push(`${at}: layer "${l.id}" is carried, but its evidence says no earlier check covered it; a layer the old checks never covered is run again, not carried`);
       if (r.verdict === "carried" && !/\b\d{4}-\d{2}-\d{2}\b/.test(ev)) errors.push(`${at}: layer "${l.id}" is carried without the date of the record it passed in (YYYY-MM-DD)`);
       if (r.verdict === "pass" || r.verdict === "carried") {
         if (ev.length < 6 || WEAK.test(ev)) errors.push(`${at}: layer "${l.id}" passes with no evidence ("${ev}"); name what was looked at`);
         else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked`);
       }
-      if ((r.verdict === "n/a" || r.verdict === "not checked") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);
+      if ((r.verdict === "n/a" || r.verdict === "not checked" || r.verdict === "partial") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);
       if (r.verdict === "not checked" && IN_HAND.test(ev)) errors.push(`${at}: layer "${l.id}" is not checked for a reason that is in your hands ("${ev.match(IN_HAND)[0]}"); not checked is for a check that cannot be made in this session: make the check, then record the verdict (a self-review in a separate pass is a pass, labelled self-review)`);
       if (l.id === "whole" && r.verdict === "n/a") errors.push(`${at}: the whole-output row is never n/a; check the assembled output, or mark it not checked with the reason`);
       if (r.verdict === "fail" && !ev && !r.fix.trim()) errors.push(`${at}: layer "${l.id}" fails with nothing said about what failed`);
