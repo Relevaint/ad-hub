@@ -40,6 +40,8 @@ const UNIVERSAL_STATE = "not ready";
 const WEAK = /^(ok(ay)?|done|yes|y|good|great|fine|looks (good|fine|ok(ay)?|great)|all good|checked|verified|reviewed|passe?d?|n\/?a|none|tbd|-+|—|✓|✔)[.!]?$/i;
 // A reason that says nothing: an n/a or a not checked needs the why.
 const THIN = /^(skipped|skip|not needed|not applicable|does not apply|doesn't apply|not relevant|no need)[.!]?$/i;
+// A not checked whose reason is in the writer's own hands: the check can be made, so it is made.
+const IN_HAND = /\b(?:partly read|partial read|read only in part|only partly|skimmed|not (?:opened|read) in full|did(?: not|n't) (?:read|open|finish|get to)|ran out of (?:time|room|context)|no time|self-review only|only a self-review|no (?:fresh|second) reviewer)\b/i;
 
 // The map as stored, with each {"use": "<layer set>"} replaced by that set's layers, so a
 // run of layers shared by several outputs (the creative passes) is written once.
@@ -248,7 +250,7 @@ export function render(o, map, prefix = "") {
   L.push("| Layer | Verdict | Evidence: what was looked at | Fix made or return |", "| --- | --- | --- | --- |");
   list(o.layers).forEach((l, i) => L.push(`| ${i + 1} ${l.id} |  |  |  |`));
   L.push("| whole |  |  |  |", "State:", "```", "");
-  L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.", "");
+  L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery.", "");
   L.push(`In a reply with no file, put the record on its own line, starting with \`Layers (${o.id}):\`, every layer in order with a few words of evidence in brackets:`, "");
   L.push("```", `Layers (${o.id}): ${list(o.layers)[0].id} pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>`, "```", "");
   L.push(`Check it before you send it: \`node ${prefix ? "<hub>/" : ""}core/_system/scripts/workorder.mjs --record <file>\`, or pipe the reply in with \`--record -\`.`, "");
@@ -401,6 +403,7 @@ export function checkRecord(hub, text, forcedId) {
         else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked`);
       }
       if ((r.verdict === "n/a" || r.verdict === "not checked") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);
+      if (r.verdict === "not checked" && IN_HAND.test(ev)) errors.push(`${at}: layer "${l.id}" is not checked for a reason that is in your hands ("${ev.match(IN_HAND)[0]}"); not checked is for a check that cannot be made in this session: make the check, then record the verdict (a self-review in a separate pass is a pass, labelled self-review)`);
       if (l.id === "whole" && r.verdict === "n/a") errors.push(`${at}: the whole-output row is never n/a; check the assembled output, or mark it not checked with the reason`);
       if (r.verdict === "fail" && !ev && !r.fix.trim()) errors.push(`${at}: layer "${l.id}" fails with nothing said about what failed`);
     }

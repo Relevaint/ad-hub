@@ -49,6 +49,10 @@ skipped layer visible to the agent itself and to whoever reads the result.
   to match (doctrine 15): a platform read with no tool connected, a page that could not
   be opened, a file that could not be played. An unchecked layer never reads as a pass,
   and a pass whose evidence says the check was not made is a `not checked`.
+- **`not checked` is not an exit.** It is for a check that cannot be made in this
+  session: no tool, no access, an approval only a person can give. A check that is in
+  your hands is made before delivery: a file read in part is opened to its end, and a
+  review with no second reviewer is done in a separate pass and passes as a self-review.
 - **Naming a gap is a pass.** A layer whose job is to find out whether something is
   there (a result source, a second set of numbers, permission to quote a review) passes
   when it records the gap plainly with who clears it. Writing as if the thing were

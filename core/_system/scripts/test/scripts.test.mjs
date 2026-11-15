@@ -515,6 +515,13 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
     assert.match(dodged.out, /state "copy-ready" needs layer "claims" to pass; it is n\/a/);
     const carried = check("carried.md", doc(swap("5 connection", row("5 connection", "carried", "passed in the record of 2026-10-07; the payoff did not change")), "copy-ready"));
     assert.equal(carried.code, 0, carried.out);
+    // Not checked is for what cannot be done here, not for work the writer left undone.
+    const lazy = check("lazy.md", doc(swap("7 review", row("7 review", "not checked", "self-review only, no fresh reviewer")), "not ready"));
+    assert.equal(lazy.code, 1);
+    assert.match(lazy.out, /layer "review" is not checked for a reason that is in your hands/);
+    const partRead = check("partread.md", doc(swap("1 fundamentals", row("1 fundamentals", "not checked", "the offer file was only partly read")), "not ready"));
+    assert.equal(partRead.code, 1);
+    assert.match(partRead.out, /layer "fundamentals" is not checked for a reason that is in your hands/);
     // An n/a needs a real reason, and the whole-output row is never n/a.
     const thin = check("thin.md", doc(swap("9 destination", row("9 destination", "n/a", "skipped")), "copy-ready"));
     assert.equal(thin.code, 1);
