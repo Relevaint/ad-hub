@@ -41,7 +41,7 @@
 //   gate fails when they are out of date, so edit the JSON, never the generated files.
 // --headings prints the anchors a layer's "method" may point at in one hub file.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
 import { DEFAULT_HUB, parseArgs, UsageError, loadSkills, run, isMain } from "./lib.mjs";
 import { words } from "./route.mjs";
@@ -526,11 +526,17 @@ function sections(text) {
 
 // "<!-- opened: <work order>/<layer> <UTC time> -->", written by --layer the first time a layer is opened.
 const STAMP = /<!--\s*opened:\s*([a-z0-9-]+)\/([a-z0-9-]+)\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\s*-->/g;
+// The earliest time for a layer is the one that counts.
 export function stamps(text, id) {
   const out = {};
-  for (const m of String(text).matchAll(STAMP)) if (m[1] === id && !(m[2] in out)) out[m[2]] = m[3];
+  for (const m of String(text).matchAll(STAMP)) if (m[1] === id && (!(m[2] in out) || m[3] < out[m[2]])) out[m[2]] = m[3];
   return out;
 }
+
+// The tool's own copy of the stamps, beside the notes file. A notes file rewritten whole
+// loses the stamps written into it; the ledger keeps them.
+export const ledgerOf = (file) => `${file}.opened`;
+export const ledgerText = (file) => (existsSync(ledgerOf(file)) ? readFileSync(ledgerOf(file), "utf8") : "");
 
 // A layer is written down when the notes file has a heading naming it with 15 words under it,
 // or a section that begins n/a, not checked or partial with a reason of three words or more.
@@ -555,10 +561,11 @@ export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = ne
   if (missing.length) {
     return { code: 1, out: `Layer "${lid}" is not open yet: layer "${missing[0].id}" has no section in ${notes}. Write its result under a heading with "${missing[0].id}" (15 words or more), or a section that begins "n/a", "not checked" or "partial" with the reason, then open "${lid}" again.` };
   }
-  if (!(lid in stamps(text, o.id))) {
+  if (!(lid in stamps(`${text}\n${ledgerText(file)}`, o.id))) {
     mkdirSync(path.dirname(file), { recursive: true });
     const line = `<!-- opened: ${o.id}/${lid} ${now.toISOString().replace(/\.\d{3}Z$/, "Z")} -->\n`;
     writeFileSync(file, text && !text.endsWith("\n") ? `${text}\n${line}` : text + line);
+    appendFileSync(ledgerOf(file), line);
   }
   const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
   const next = at < layers.length - 1 ? layers[at + 1].id : at === layers.length - 1 ? "whole" : null;
@@ -582,7 +589,7 @@ function checkNotes(o, rec, final, at, cwd) {
   const raw = readFileSync(file, "utf8");
   const secs = sections(raw);
   // Each passed layer was opened with --layer, and the opens run in the work order's order.
-  const opened = stamps(raw, o.id);
+  const opened = stamps(`${raw}\n${ledgerText(file)}`, o.id);
   let prev = null;
   for (const l of [...list(o.layers), { id: "whole" }]) {
     if (final[l.id] === "pass" && !opened[l.id]) errors.push(`${at}: layer "${l.id}" passes, but the notes file has no "opened: ${o.id}/${l.id}" line; open each layer with --layer as it is reached, so its method and check come after the layers before it`);
