@@ -31,7 +31,7 @@ Build this one layer at a time, in order, under [staged work](../core/_system/st
 - **Method:** [ad-creative/SKILL.md, "1 take the brief from the row"](../core/skills/ad-creative/SKILL.md#1-take-the-brief-from-the-row)
 - **Check:** Is each ad's one job the sentence in its ledger row, with the scope of the request (concepts, copy, or finished assets and which shapes) written down?
 - **Evidence:** The ledger rows and the request, read literally. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.
-- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.
+- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.
 - **If it fails:** A row with no reason, or two rows with one reason, goes back to ad-strategy. Never invent a row or rename an ID.
 
 ### 2. Make each ad through its own work order (`ads`)

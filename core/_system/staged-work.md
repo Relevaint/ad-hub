@@ -166,10 +166,12 @@ Check a record before sending it, every time; a record that fails is fixed, not 
 `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe a reply in with
 `--record -`. It fails on a missing layer, a pass with no evidence, a pass whose evidence
 says the check was not made, two verdicts in one row, a state the rows do not support, a
-failed, unchecked or partial layer not named by its id after `State:`, or a missing
-evidence item. A one-line or piped record with no `Notes:` line fails. Given a notes file,
+failed, unchecked or partial layer not named by its id after `State:`, a missing
+evidence item, a review row against [the review brief](#the-review-brief), or a pass whose
+`own words:` marks a line `reworded`. A one-line or piped record with no `Notes:` line fails. Given a notes file,
 it opens it: each passed layer needs its heading with at least 15 words under it, and the
-loading layer names every file under Load first, none read in part.
+loading layer names every file under Load first, none read in part, and has an `Examples:`
+line naming the examples the channel rules point at (or `none` and why).
 Each state lists the layers it needs. The ones the work order shows in bold must be
 `pass` or `carried`; `n/a` is not accepted there. The whole-output row is never `n/a`,
 and no state stands on `n/a` rows alone. A state takes no exceptions: `rechecked, except the
@@ -180,9 +182,22 @@ from a record is written into the hub.
 
 ## The review brief
 
-Handed word for word to the reviewer, with the paths filled in. When no fresh agent can be
-started, the maker runs it as a separate pass after the draft is finished and answers every
-item in writing in the notes file. It adds to the review layer's own gates and scores.
+Handed word for word to the reviewer, with the paths filled in. The paths are the maker's
+full list of files read, unchanged (whole files, never chosen sections), plus every example
+the business's channel rules point at, opened or not. When no fresh agent can be started,
+the maker runs it as a separate pass after the draft is finished and answers every item in
+writing in the notes file. It adds to the review layer's own gates and scores.
+
+Findings are repaired at the layer each one names, and the review runs again on what
+changed, by a fresh agent whenever the first review was by one, until a review returns
+nothing blocking or the three cycles run out. Text changed after the last fresh review and
+re-checked only by the maker is not reviewed text: the row is `partial`, names the changed
+lines, and the state falls to what the rows support. Only a session that cannot start a
+fresh agent at all records a self re-check as a pass, with `reviewer: self`. The row gives
+`reviewed:` (the file or version the reviewer was given) and `after review:` (`nothing
+changed`, or the lines changed since and who re-checked them); a review that found anything
+blocking is `fail, then pass` once repaired. Scores that hold for one audience only say so
+in `audience:`, and the state names that audience.
 
 > You did not make this. Trust nothing in the maker's notes until you have opened the file
 > it points at. You have the request as typed, the output, the work-order page, the maker's
@@ -193,7 +208,7 @@ item in writing in the notes file. It adds to the review layer's own gates and s
 > 2. Every fact, price, date, name and claim traces to a source and keeps the conditions
 >    its source attaches; nothing is implied that no source supports.
 > 3. Own words: facts carry over, sentences do not. Quote the two closest existing passages
->    beside the lines that resemble them.
+>    beside the lines that resemble them, each `new`, `offer term` or `reworded`.
 > 4. The owner's register: quote each of the owner's corrections for this channel that the
 >    piece follows or breaks, and say what the owner would cut first.
 > 5. One job per piece, and nothing repeated across a set.

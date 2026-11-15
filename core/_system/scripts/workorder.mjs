@@ -251,7 +251,7 @@ export function render(o, map, prefix = "", hub = null) {
     L.push(`- **Check:** ${l.check}`);
     L.push(`- **Evidence:** ${l.evidence}`);
     if (list(l.evidence_items).length) L.push(itemLine(l.evidence_items));
-    if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.");
+    if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.");
     L.push(`- **If it fails:** ${l.on_fail}`, "");
   });
   L.push("### Whole output (`whole`)", "");
@@ -336,11 +336,15 @@ export function stale(hub) {
 const MATCH_MIN = 1.6;
 const MATCH_GAP = 0.4;
 
+// "Use the Ad Hub for this." names the hub, not an output: its words never pick a work order.
+const PREAMBLE = words("use hub");
+const matchWords = (t) => { const w = words(t); for (const x of PREAMBLE) w.delete(x); return w; };
+
 export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP, lead = false) {
   const map = loadMap(hub);
-  const g = words(request);
+  const g = matchWords(request);
   const orders = list(map.work_orders);
-  const vocab = orders.map((o) => words([o.name, o.id.replace(/-/g, " "), ...list(o.say)].join(" ")));
+  const vocab = orders.map((o) => matchWords([o.name, o.id.replace(/-/g, " "), ...list(o.say)].join(" ")));
   const df = new Map();
   for (const v of vocab) for (const x of v) df.set(x, (df.get(x) || 0) + 1);
   const weight = (x) => Math.log(1 + orders.length / (df.get(x) || orders.length));
@@ -348,7 +352,7 @@ export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP, lead = fal
   const scored = orders.map((o, i) => {
     let best = 0;
     for (const p of list(o.say)) {
-      const w = [...words(p)];
+      const w = [...matchWords(p)];
       if (!w.length) continue;
       const hit = sum(w.filter((x) => g.has(x)));
       best = Math.max(best, (hit / sum(w)) * hit);
@@ -406,8 +410,10 @@ const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const wordCount = (s) => (String(s).match(/[A-Za-z0-9][\w'’-]*/g) || []).length;
 const namesWord = (text, id) => new RegExp(`(?<![a-z0-9-])${esc(id)}(?![a-z0-9-])`, "i").test(text);
 
-// Evidence items: each "name: <at least three words>", in any order. Returns the names missing or empty.
-export function missingItems(items, evidence) {
+// Evidence items: each "name: <at least three words>", in any order. A few items are short by nature
+// ("reviewer: fresh agent", "reviewed: draft-01.md", "after review: nothing changed", "audience: any").
+const ITEM_MIN = { reviewer: 2, reviewed: 1, "after review": 2, audience: 1 };
+export function itemValues(items, evidence) {
   const ev = String(evidence);
   const found = [];
   for (const name of list(items)) {
@@ -416,8 +422,38 @@ export function missingItems(items, evidence) {
     while ((m = re.exec(ev))) found.push({ name, start: m.index, after: m.index + m[0].length });
   }
   found.sort((a, b) => a.start - b.start);
-  return list(items).filter((name) => !found.some((f, i) => f.name === name && wordCount(ev.slice(f.after, i + 1 < found.length ? found[i + 1].start : undefined)) >= 3));
+  const values = {};
+  found.forEach((f, i) => {
+    const v = ev.slice(f.after, i + 1 < found.length ? found[i + 1].start : undefined).trim().replace(/[;,.\s]+$/, "");
+    if (wordCount(v) >= (ITEM_MIN[f.name.trim().toLowerCase()] || 3) && !(f.name in values)) values[f.name] = v;
+  });
+  return values;
 }
+export function missingItems(items, evidence) {
+  const values = itemValues(items, evidence);
+  return list(items).filter((name) => !(name in values));
+}
+
+// "13, 5 blocking" or "a blocking gap" reports a blocking finding; "none blocking", "0 blocking" and "non-blocking" do not.
+const NUMBER_WORDS = /^(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|several|many|some|a|an)$/;
+export function reportsBlocking(findings) {
+  for (const m of String(findings).toLowerCase().matchAll(/\bblocking\b/g)) {
+    const before = (String(findings).toLowerCase().slice(0, m.index).match(/([a-z0-9]+)[\s-]*$/) || [])[1] || "";
+    if (/^(?:0|zero|no|none|nothing|non|not)$/.test(before)) continue;
+    if (/^\d+$/.test(before) ? Number(before) > 0 : true) return true;
+  }
+  return false;
+}
+// Review rows: what was reviewed, what changed after, and whether a blocking finding is recorded as a repair.
+function reviewErrors(at, lid, r, values) {
+  const errors = [];
+  const reviewer = values.reviewer, after = values["after review"];
+  if (reviewer && after && !/\bself\b/i.test(reviewer) && !/^[`"*]*(?:nothing|none|no change)/i.test(after)) errors.push(`${at}: layer "${lid}" passes on a fresh review, but text changed after it ("after review: ${after.slice(0, 60)}"); run the review again on what changed, or record the row as partial and name the changed lines`);
+  if (values.findings && reportsBlocking(values.findings) && !/^fail\b/.test(r.said || "")) errors.push(`${at}: layer "${lid}" records blocking findings ("${values.findings.slice(0, 60)}") under a plain pass; a review that found blocking problems and was repaired is "fail, then pass"`);
+  return errors;
+}
+// Own words: a line the maker marked "reworded" is rewritten before the row can pass.
+const REWORDED = /(?<!\b(?:not|no|none)\s+)\breworded\b/i;
 
 // A line saying a source was read only in part: the patterns above, or a range that stops before the file's end.
 function partRead(line) {
@@ -462,6 +498,7 @@ function checkNotes(o, rec, final, at, cwd) {
       if (bases.filter((b) => b === base).length === 1) forms.push(base);
       if (!forms.some((x) => new RegExp(`(?<![A-Za-z0-9_-])${esc(x)}`).test(body))) errors.push(`${at}: the notes under layer "${l.id}" do not name ${f}; name every file under Load first, each read to its last line`);
     }
+    if (!/^[\s>*-]*`?Examples:`?\s*\S/im.test(body)) errors.push(`${at}: the notes under layer "${l.id}" have no "Examples:" line; name every example the business's channel rules point at, each read to its end, or write "Examples: none" with why`);
     for (const line of body.split("\n")) if (partRead(line)) errors.push(`${at}: the notes under layer "${l.id}" say a file was read in part ("${line.trim().slice(0, 80)}"); read it to its last line, then record it`);
   }
   return errors;
@@ -554,6 +591,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     for (const r of rec.rows) rows[r.layer] = r;
     const find = (l) => rows[norm(l.id)] || rows[norm(l.name)];
     const final = {};
+    const audiences = [];
     for (const l of [...list(o.layers), { id: "whole", name: "whole output" }]) {
       const r = find(l) || (l.id === "whole" ? rows["whole-output"] : null);
       if (!r) { errors.push(`${at}: layer "${l.id}" has no row; a layer that does not apply is n/a with the reason, never left out`); continue; }
@@ -572,6 +610,10 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
       if (r.verdict === "pass" && items.length) {
         const miss = missingItems(items, ev);
         if (miss.length) errors.push(`${at}: layer "${l.id}" passes without these evidence items: ${miss.map((x) => `"${x}:"`).join(", ")}; give each as "name: what was found", at least three words`);
+        const values = itemValues(items, ev);
+        if (items.includes("reviewer")) errors.push(...reviewErrors(at, l.id, r, values));
+        if (values.audience && !/^[`"*]*any\b/i.test(values.audience)) audiences.push(values.audience);
+        if (values["own words"] && REWORDED.test(values["own words"])) errors.push(`${at}: layer "${l.id}" passes with a line its own words item marks reworded; rewrite the line, or record the row as failed`);
       }
       if ((r.verdict === "n/a" || r.verdict === "not checked" || r.verdict === "partial") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);
       if (r.verdict === "not checked" && /\b(?:no earlier (?:layer )?record|predates? layer records|no record of this layer|no layer record)\b/i.test(ev)) errors.push(`${at}: layer "${l.id}" is not checked for want of an earlier record; a layer the change did not touch is carried from the ad's dated status on file (its ledger status, checks section or approval), and a layer the change touched is run again`);
@@ -602,6 +644,13 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
       const strict = list(claimed.must_pass).includes(need);
       if (v && v !== "pass" && v !== "carried" && (strict || v !== "n/a")) {
         errors.push(`${at}: state "${claimed.state}" needs layer "${need}" to pass; it is ${v}`);
+      }
+    }
+    // A review whose scores hold for one audience: a state resting on it names that audience.
+    if (list(claimed.needs).includes("review")) {
+      for (const a of audiences) {
+        const keys = (a.toLowerCase().match(/[a-z]{4,}/g) || []).filter((w) => !["only", "audience", "audiences", "served", "when", "with", "that", "this", "scores", "hold"].includes(w));
+        if (keys.length && !keys.some((k) => st.includes(k))) errors.push(`${at}: the review's scores hold for one audience ("audience: ${a.slice(0, 60)}"); name it after the state, for example "State: ${claimed.state} for ${a.slice(0, 40)}"`);
       }
     }
     const needed = list(claimed.needs);
