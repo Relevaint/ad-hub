@@ -20,7 +20,10 @@
 //   request: no clear winner prints the candidates and points at start-here.
 // --record checks a "## Layer record" table (or the one-line form used in a reply) in a
 //   file, or on standard input with "-": every layer present, one verdict per row, every
-//   pass with evidence that the check was made, the state supported by the rows.
+//   pass with evidence that the check was made, the state supported by the rows, every
+//   failed or unchecked layer named beside the state, the evidence items a layer asks for,
+//   and, when the record names a notes file, a heading per passed layer in it with the
+//   loading layer naming every file under "Load first".
 // --check validates the map against the hub (the build gate runs it). Exit 1 on failure.
 // --write regenerates work-orders/README.md and work-orders/<id>.md from the map. The
 //   gate fails when they are out of date, so edit the JSON, never the generated files.
@@ -41,6 +44,9 @@ const WEAK = /^(ok(ay)?|done|yes|y|good|great|fine|looks (good|fine|ok(ay)?|grea
 // A reason that says nothing: an n/a or a not checked needs the why.
 const THIN = /^(skipped|skip|not needed|not applicable|does not apply|doesn't apply|not relevant|no need)[.!]?$/i;
 // A not checked whose reason is in the writer's own hands: the check can be made, so it is made.
+// A source read in part: a search, a head, a range that stops before the end, a skim.
+const PART_READ = /\b(?:read in part|in part|partly read|partially read|partial read|only partly|skimmed|skim(?:med)? only|first \d+ lines|grep(?:ped)? only|by grep|head only|not (?:opened|read) in full)\b/i;
+const NOT_DONE_MORE = " Do not delete a true limit to make the row pass: change the verdict, or say what was looked at in its place (a named substitute, such as the repository copy of a live page, is evidence when the row says it is a substitute).";
 const IN_HAND = /\b(?:partly read|partial read|read only in part|only partly|skimmed|not (?:opened|read) in full|did(?: not|n't) (?:read|open|finish|get to)|ran out of (?:time|room|context)|no time|self-review only|only a self-review|no (?:fresh|second) reviewer)\b/i;
 
 // The map as stored, with each {"use": "<layer set>"} replaced by that set's layers, so a
@@ -80,6 +86,13 @@ const norm = (s) => String(s).toLowerCase().replace(/^[\s\d.)#-]+/, "").replace(
 const list = (v) => (Array.isArray(v) ? v : v === undefined || v === null ? [] : [v]);
 
 // ---------------------------------------------------------------- validation
+
+function itemErrors(items, where) {
+  if (items === undefined) return [];
+  if (!Array.isArray(items) || !items.length || items.some((x) => typeof x !== "string" || !x.trim())) return [`${where}: "evidence_items" is a list of non-empty names`];
+  const k = items.map((x) => x.trim().toLowerCase());
+  return k.filter((x, i) => k.indexOf(x) !== i).map((x) => `${where}: evidence item "${x}" appears twice`);
+}
 
 export function validate(hub) {
   const errors = [];
@@ -145,10 +158,14 @@ export function validate(hub) {
         if (problem) errors.push(`${lw}: method ${m}: ${problem}`);
       }
       for (const r of list(l.returns_to)) if (!layerIds.includes(r)) errors.push(`${lw}: returns_to names unknown layer "${r}"`);
+      if (l.reads !== undefined && typeof l.reads !== "boolean") errors.push(`${lw}: "reads" is true or false`);
+      itemErrors(l.evidence_items, lw).forEach((e) => errors.push(e));
     }
+    if (layers.filter((l) => l.reads).length > 1) errors.push(`${where}: more than one layer is marked "reads"`);
     if (!o.whole) errors.push(`${where}: no whole-output check`);
     else {
       for (const k of ["check", "evidence", "on_fail"]) text(o.whole, `${where}, whole`, k);
+      itemErrors(o.whole.evidence_items, `${where}, whole`).forEach((e) => errors.push(e));
       for (const m of list(o.whole.method)) {
         const [file, anchor] = String(m).split("#");
         const problem = hasAnchor(file, anchor);
@@ -186,7 +203,20 @@ function methodLinks(prefix, methods) {
   }).join("; ");
 }
 
-export function render(o, map, prefix = "") {
+// Live output (--for, --id) shows each file's length; the generated pages do not, so they
+// do not change when a file grows.
+function fileLabel(hub, f) {
+  if (!hub) return "";
+  const file = path.join(hub, f);
+  if (!existsSync(file)) return "";
+  const t = readFileSync(file, "utf8");
+  const n = t.split("\n").length - (t.endsWith("\n") ? 1 : 0);
+  return n > 1500 ? ` (${n} lines, read it in several reads)` : ` (${n} lines)`;
+}
+
+const itemLine = (items) => `- The row's evidence gives each of these as \`name: what was found\`: ${list(items).map((x) => `\`${x}\``).join(", ")}`;
+
+export function render(o, map, prefix = "", hub = null) {
   const by = Object.fromEntries(list(map.work_orders).map((x) => [x.id, x]));
   const wo = (id) => (prefix ? `[\`${id}\`](${id}.md)` : `\`${id}\``);
   const L = [];
@@ -198,13 +228,13 @@ export function render(o, map, prefix = "") {
   if (list(o.contains).length) L.push(`**Contains:** ${list(o.contains).map(wo).join(", ")}`);
   if (list(o.parts).length) L.push(`**Its parts:** ${list(o.parts).join("; ")}`);
   L.push(`**Live account:** ${o.live || "not reached"}`, "");
-  L.push(`Build this one layer at a time, in order, under ${link(prefix, "core/_system/staged-work.md", "staged work")}. For each layer: build that layer only, answer its check from the evidence named, write its line in the layer record, then move on. Do not draft the finished output first and check it afterward.`, "");
+  L.push(`Build this one layer at a time, in order, under ${link(prefix, "core/_system/staged-work.md", "staged work")}. For each layer: build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. \`head\`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.`, "");
 
   L.push("## Load first", "");
-  list(o.load).forEach((f, i) => L.push(`${i + 1}. ${link(prefix, f)}`));
+  list(o.load).forEach((f, i) => L.push(`${i + 1}. ${link(prefix, f)}${fileLabel(hub, f)}`));
   if (list(o.load_when).length) {
     L.push("", "Also, when it applies:", "");
-    for (const w of list(o.load_when)) L.push(`- ${w.when}: ${link(prefix, w.file)}`);
+    for (const w of list(o.load_when)) L.push(`- ${w.when}: ${link(prefix, w.file)}${fileLabel(hub, w.file)}`);
   }
   if (o.needs) {
     L.push("", "## Needs", "");
@@ -220,12 +250,15 @@ export function render(o, map, prefix = "") {
     if (list(l.method).length) L.push(`- **Method:** ${methodLinks(prefix, l.method)}`);
     L.push(`- **Check:** ${l.check}`);
     L.push(`- **Evidence:** ${l.evidence}`);
+    if (list(l.evidence_items).length) L.push(itemLine(l.evidence_items));
+    if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.");
     L.push(`- **If it fails:** ${l.on_fail}`, "");
   });
   L.push("### Whole output (`whole`)", "");
   if (list(o.whole.method).length) L.push(`- **Method:** ${methodLinks(prefix, o.whole.method)}`);
   L.push(`- **Check:** ${o.whole.check}`);
   L.push(`- **Evidence:** ${o.whole.evidence}`);
+  if (list(o.whole.evidence_items).length) L.push(itemLine(o.whole.evidence_items));
   L.push(`- **If it fails:** ${o.whole.on_fail}`, "");
 
   if (list(o.recheck).length) {
@@ -244,15 +277,16 @@ export function render(o, map, prefix = "") {
     L.push(`| ${s.state} | ${list(s.needs).map((x) => (strict.includes(x) ? `**\`${x}\`**` : `\`${x}\``)).join(", ") || "nothing yet"} | ${s.means} |`);
   }
   L.push(`| ${UNIVERSAL_STATE} | nothing yet | A layer failed or could not be checked; say which and what it needs. |`, "");
-  L.push("A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.", "");
+  L.push("A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. Any layer that failed, was not checked or is partial, the whole row included, is named by its id after \`State:\`; the checker fails a record that leaves one out. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.", "");
 
-  L.push("## Layer record", "", `Where it goes: ${o.record}`, "", "```markdown", "## Layer record", `Work order: ${o.id}`, "Date: <YYYY-MM-DD>");
+  L.push("## Layer record", "", `Where it goes: ${o.record}`, "", "```markdown", "## Layer record", `Work order: ${o.id}`, "Notes: <path to the notes file>", "Date: <YYYY-MM-DD>");
   L.push("| Layer | Verdict | Evidence: what was looked at | Fix made or return |", "| --- | --- | --- | --- |");
   list(o.layers).forEach((l, i) => L.push(`| ${i + 1} ${l.id} |  |  |  |`));
   L.push("| whole |  |  |  |", "State:", "```", "");
   L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.", "");
+  L.push("Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it, and the loading layer names every file under Load first.", "");
   L.push(`In a reply with no file, put the record on its own line, starting with \`Layers (${o.id}):\`, every layer in order with a few words of evidence in brackets:`, "");
-  L.push("```", `Layers (${o.id}): ${list(o.layers)[0].id} pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>`, "```", "");
+  L.push("```", `Layers (${o.id}): ${list(o.layers)[0].id} pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>. Notes: <path>`, "```", "");
   L.push(`Check it before you send it: \`node ${prefix ? "<hub>/" : ""}core/_system/scripts/workorder.mjs --record <file>\`, or pipe the reply in with \`--record -\`.`, "");
   void by;
   return L.join("\n");
@@ -352,6 +386,87 @@ function readVerdict(cell) {
   return { verdict: last, mixed, extra, said: plain };
 }
 
+const cleanNotes = (s) => String(s).trim().replace(/^[`*]+|[`*]+$/g, "").replace(/[.,;]+$/, "").replace(/^[`*]+|[`*]+$/g, "").trim();
+
+// "... State: copy-ready. Notes: /tmp/x/notes.md": the notes path comes off the end, outside brackets.
+function takeNotes(str) {
+  const s = String(str);
+  const re = /(?:^|[\s.;·*])Notes:\s*/gi;
+  let m, at = -1, len = 0;
+  while ((m = re.exec(s))) {
+    let depth = 0;
+    for (const ch of s.slice(0, m.index)) { if (ch === "(") depth++; if (ch === ")") depth = Math.max(0, depth - 1); }
+    if (depth === 0) { at = m.index; len = m[0].length; }
+  }
+  if (at < 0) return { rest: s, notes: null };
+  return { rest: s.slice(0, at).replace(/[\s.;·*]+$/, ""), notes: cleanNotes(s.slice(at + len)) };
+}
+
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const wordCount = (s) => (String(s).match(/[A-Za-z0-9][\w'’-]*/g) || []).length;
+const namesWord = (text, id) => new RegExp(`(?<![a-z0-9-])${esc(id)}(?![a-z0-9-])`, "i").test(text);
+
+// Evidence items: each "name: <at least three words>", in any order. Returns the names missing or empty.
+export function missingItems(items, evidence) {
+  const ev = String(evidence);
+  const found = [];
+  for (const name of list(items)) {
+    const re = new RegExp(`(?<![a-z0-9-])${esc(name.trim())}\\s*:`, "gi");
+    let m;
+    while ((m = re.exec(ev))) found.push({ name, start: m.index, after: m.index + m[0].length });
+  }
+  found.sort((a, b) => a.start - b.start);
+  return list(items).filter((name) => !found.some((f, i) => f.name === name && wordCount(ev.slice(f.after, i + 1 < found.length ? found[i + 1].start : undefined)) >= 3));
+}
+
+// A line saying a source was read only in part: the patterns above, or a range that stops before the file's end.
+function partRead(line) {
+  if (PART_READ.test(line)) return true;
+  return [...line.matchAll(/\blines?\s+(\d+)\s*(?:-|–|to)\s*(\d+)\s+of\s+(\d+)/gi)].some((m) => Number(m[1]) > 1 || Number(m[2]) < Number(m[3]));
+}
+
+function sections(text) {
+  const out = [];
+  let cur = null, fence = false;
+  for (const line of text.split("\n")) {
+    if (/^\s*```/.test(line)) fence = !fence;
+    const h = !fence && line.match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
+    if (h) { cur = { heading: h[1], body: [] }; out.push(cur); } else if (cur) cur.body.push(line);
+  }
+  return out;
+}
+
+// The notes file behind a record: a heading per passed layer with real sentences under it,
+// and the loading layer naming every file under Load first, none of them read in part.
+function checkNotes(o, rec, final, at, cwd) {
+  const errors = [];
+  const given = rec.notes;
+  if (/^none\b/i.test(given)) {
+    if (!/^none\s*\(\s*\S.{2,}\)/i.test(given)) errors.push(`${at}: "Notes: none" needs the reason in brackets, for example "Notes: none (cannot write files here)"`);
+    return errors;
+  }
+  const file = path.resolve(cwd, given);
+  if (!given || !existsSync(file)) return [`${at}: the notes file "${given}" was not found (paths are relative to the current directory, or absolute)`];
+  const secs = sections(readFileSync(file, "utf8"));
+  for (const l of list(o.layers)) {
+    if (final[l.id] !== "pass") continue;
+    const mine = secs.filter((s) => namesWord(s.heading, l.id));
+    if (!mine.length) { errors.push(`${at}: the notes file has no heading naming layer "${l.id}"; write each layer's result under a heading with its id as the work proceeds`); continue; }
+    if (!mine.some((s) => wordCount(s.body.join("\n")) >= 15)) errors.push(`${at}: the notes file's heading for layer "${l.id}" has fewer than 15 words under it; the layer's result goes there, not a label`);
+    if (!l.reads) continue;
+    const body = mine.map((s) => s.body.join("\n")).join("\n");
+    const bases = list(o.load).map((f) => path.basename(f));
+    for (const f of list(o.load)) {
+      const base = path.basename(f);
+      const forms = [f, `${path.basename(path.dirname(f))}/${base}`];
+      if (bases.filter((b) => b === base).length === 1) forms.push(base);
+      if (!forms.some((x) => new RegExp(`(?<![A-Za-z0-9_-])${esc(x)}`).test(body))) errors.push(`${at}: the notes under layer "${l.id}" do not name ${f}; name every file under Load first, each read to its last line`);
+    }
+    for (const line of body.split("\n")) if (partRead(line)) errors.push(`${at}: the notes under layer "${l.id}" say a file was read in part ("${line.trim().slice(0, 80)}"); read it to its last line, then record it`);
+  }
+  return errors;
+}
+
 export function parseRecords(text) {
   const records = [];
   const lines = text.split("\n");
@@ -363,8 +478,10 @@ export function parseRecords(text) {
         if (/^#{1,6}\s/.test(t) || /^```/.test(t)) break;
         const wo = t.match(/^Work order:\s*`?([a-z0-9-]+)`?/i);
         if (wo) { rec.id = wo[1]; continue; }
+        const nt = t.match(/^Notes:\s*(.*)$/i);
+        if (nt) { rec.notes = cleanNotes(nt[1]); continue; }
         const st = t.match(/^State:\s*(.*)$/i);
-        if (st) { rec.state = st[1].trim(); continue; }
+        if (st) { const x = takeNotes(st[1]); rec.state = x.rest.trim(); if (x.notes) rec.notes = x.notes; continue; }
         if (t.startsWith("|")) {
           const cells = t.split("|").slice(1, -1).map((c) => c.trim());
           if (cells.length < 2 || /^-+$/.test(cells[0].replace(/[: ]/g, "")) || /^layer$/i.test(cells[0])) continue;
@@ -377,14 +494,20 @@ export function parseRecords(text) {
     const one = lines[i].match(/Layers\s*\(`?([a-z0-9-]+)`?\)\s*:\s*(.+)$/i);
     if (one) {
       const rec = { line: i + 1, id: one[1], rows: [], state: null, compact: true };
-      let body = one[2];
+      const taken = takeNotes(one[2]);
+      let body = taken.rest;
+      if (taken.notes) rec.notes = taken.notes;
       const st = body.match(/\bState:\s*(.*)$/i);
       if (st) { rec.state = st[1].trim(); body = body.slice(0, st.index); }
       else {
         const before = lines[i].slice(0, one.index).match(/State:\s*([^.]*)/i);
         const after = [lines[i + 1], lines[i + 2]].map((l) => String(l || "").match(/^\s*State:\s*(.*)$/i)).find(Boolean);
         if (before) rec.state = before[1].trim();
-        else if (after) rec.state = after[1].trim();
+        else if (after) rec.state = takeNotes(after[1]).rest.trim();
+      }
+      if (!rec.notes) {
+        const near = [lines[i + 1], lines[i + 2]].map((l) => String(l || "").match(/^\s*(?:State:.*?)?\bNotes:\s*(.*)$/i)).find(Boolean);
+        if (near) rec.notes = cleanNotes(near[1]);
       }
       // Split on the separator only outside brackets, so "·" or ";" inside evidence stays evidence.
       const sep = body.includes("·") ? "·" : ";";
@@ -414,7 +537,8 @@ export function parseRecords(text) {
   return records;
 }
 
-export function checkRecord(hub, text, forcedId) {
+export function checkRecord(hub, text, forcedId, opts = {}) {
+  const cwd = opts.cwd || process.cwd();
   const map = loadMap(hub);
   const by = Object.fromEntries(list(map.work_orders).map((o) => [o.id, o]));
   const records = parseRecords(text);
@@ -442,7 +566,12 @@ export function checkRecord(hub, text, forcedId) {
       if (r.verdict === "carried" && !/\b\d{4}-\d{2}-\d{2}\b/.test(ev)) errors.push(`${at}: layer "${l.id}" is carried without the date of the record it passed in (YYYY-MM-DD)`);
       if (r.verdict === "pass" || r.verdict === "carried") {
         if (ev.length < 6 || WEAK.test(ev)) errors.push(`${at}: layer "${l.id}" passes with no evidence ("${ev}"); name what was looked at`);
-        else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked`);
+        else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked.${NOT_DONE_MORE}`);
+      }
+      const items = l.id === "whole" ? list(o.whole && o.whole.evidence_items) : list(l.evidence_items);
+      if (r.verdict === "pass" && items.length) {
+        const miss = missingItems(items, ev);
+        if (miss.length) errors.push(`${at}: layer "${l.id}" passes without these evidence items: ${miss.map((x) => `"${x}:"`).join(", ")}; give each as "name: what was found", at least three words`);
       }
       if ((r.verdict === "n/a" || r.verdict === "not checked" || r.verdict === "partial") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);
       if (r.verdict === "not checked" && /\b(?:no earlier (?:layer )?record|predates? layer records|no record of this layer|no layer record)\b/i.test(ev)) errors.push(`${at}: layer "${l.id}" is not checked for want of an earlier record; a layer the change did not touch is carried from the ad's dated status on file (its ledger status, checks section or approval), and a layer the change touched is run again`);
@@ -450,7 +579,13 @@ export function checkRecord(hub, text, forcedId) {
       if (l.id === "whole" && r.verdict === "n/a") errors.push(`${at}: the whole-output row is never n/a; check the assembled output, or mark it not checked with the reason`);
       if (r.verdict === "fail" && !ev && !r.fix.trim()) errors.push(`${at}: layer "${l.id}" fails with nothing said about what failed`);
     }
+    if (rec.notes === undefined || rec.notes === null) {
+      if (rec.compact || opts.stdin) errors.push(`${at}: no "Notes:" line; name the notes file that holds each layer's result, or "Notes: none (why)"`);
+    } else errors.push(...checkNotes(o, rec, final, at, cwd));
     if (!rec.state) { errors.push(`${at}: no "State:" line`); continue; }
+    // Every layer that failed, was not checked or is partial is named beside the state.
+    const unnamed = Object.entries(final).filter(([lid, v]) => ["fail", "not checked", "partial"].includes(v) && !namesWord(rec.state, lid)).map(([lid, v]) => `"${lid}" (${v})`);
+    if (unnamed.length) errors.push(`${at}: the state does not name ${unnamed.join(", ")}; name each failed, unchecked or partial layer by its id after "State:"`);
     const st = rec.state.toLowerCase().replace(/[`*]/g, "");
     const states = [...list(o.states)].sort((a, b) => b.state.length - a.state.length);
     const claimed = states.find((s) => st.startsWith(s.state.toLowerCase()));
@@ -511,7 +646,7 @@ export function main(argv) {
   if (args.record) {
     const file = args.record === "-" ? 0 : path.resolve(args.record);
     if (file !== 0 && !existsSync(file)) throw new UsageError(`file not found: ${args.record}`);
-    const { errors, records } = checkRecord(hub, readFileSync(file, "utf8"), args.id);
+    const { errors, records } = checkRecord(hub, readFileSync(file, "utf8"), args.id, { stdin: file === 0 });
     for (const e of errors) console.log(`FAIL  ${e}`);
     console.log(`${errors.length ? "Record failed" : "Record passed"}: ${records.length} layer record(s), ${errors.length} problem(s).`);
     return errors.length ? 1 : 0;
@@ -521,7 +656,7 @@ export function main(argv) {
     const o = list(map.work_orders).find((x) => x.id === args.id);
     if (!o) throw new UsageError(`no work order "${args.id}"; --list shows them`);
     console.log(`Paths are relative to the hub: ${hub}\n`);
-    console.log(render(o, map));
+    console.log(render(o, map, "", hub));
     return 0;
   }
   if (args.for) {
@@ -540,7 +675,7 @@ export function main(argv) {
     const others = candidates.filter((o) => o.id !== top.id).slice(0, 3);
     console.log(`Matched: ${top.id}${others.length ? `. Also close: ${others.map((o) => o.id).join(", ")}` : ""}.`);
     console.log(`A word match, not a reading of the request: if this is the wrong output, use --list. Paths are relative to the hub: ${hub}\n`);
-    console.log(render(top, map));
+    console.log(render(top, map, "", hub));
     return 0;
   }
   throw new UsageError('usage: workorder.mjs (--for "<request>" | --id <work order> | --list | --record <file> | --check | --write | --headings <file>)');

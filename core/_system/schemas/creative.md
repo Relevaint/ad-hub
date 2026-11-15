@@ -22,6 +22,7 @@ Planned ad ID: <existing ID if any; otherwise not assigned>
 
 ## Layer record
 Work order: ad-concepts
+Notes: <path to the notes file>
 Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
@@ -31,7 +32,7 @@ Date: <YYYY-MM-DD>
 | 4 visual-stop | | actual first frame/image, focal point, question; visual-alone stop reason for cold visual feeds, or the applicable test with its reason; hierarchy, competing details changed or kept | |
 | 5 connection | | opening/development/turn/payoff/action for video, or the complete composition for a static; key copy and CTA | |
 | 6 claims | | every claim mapped to supplied proof or left as a marked blank; where the permission behind any review or story is recorded; policy | |
-| 7 review | | self or independent; the seven verdicts with concrete reasons; batch sameness when applicable; revisions and the passes returned to | |
+| 7 review | | reviewer: fresh agent or self, with the reason; findings: how many, which blocked, what was repaired; hook:, glance:, one job:, proof: each score with its reason; the seven verdicts with concrete reasons; batch sameness when applicable; revisions and the passes returned to | |
 | whole | | the set read as the operator sees it; nothing generated, no row promoted | |
 State: concept-ready | not ready, because ...
 
@@ -68,6 +69,7 @@ Untested. Nothing here predicts performance; the test plan says how it will be j
 
 ## Layer record
 Work order: <ad-copy | static-ad | video-ad | ad-remix>
+Notes: <path to the notes file>
 Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
@@ -161,6 +163,7 @@ corrected, or the matched pair named as deliberate.>
 
 ## Layer record
 Work order: ad-batch
+Notes: <path to the notes file>
 Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |

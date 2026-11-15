@@ -52,6 +52,7 @@ Proposed. No line behind these yet; `ad-strategy` may test them as bold ads.
 
 ## Layer record
 Work order: audience-report
+Notes: <path to the notes file>
 Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
