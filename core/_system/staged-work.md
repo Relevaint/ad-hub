@@ -54,7 +54,9 @@ skipped layer visible to the agent itself and to whoever reads the result.
 - **`not checked` is not an exit.** It is for a check that cannot be made in this
   session: no tool, no access, an approval only a person can give. A check that is in
   your hands is made before delivery: a file read in part is opened to its end, and a
-  review with no second reviewer is done in a separate pass and passes as a self-review.
+  review with no second reviewer is done in a separate pass and passes as a self-review. In
+  an output that runs other work orders, a layer the work has not reached is `not
+  checked`, saying `not started` and what comes first; it never supports a state.
 - **Naming a gap is a pass.** A layer whose job is to find out whether something is
   there (a result source, a second set of numbers, permission to quote a review) passes
   when it records the gap plainly with who clears it. Writing as if the thing were
@@ -90,16 +92,20 @@ changes after work has passed. The work order is `change-recheck`:
 2. List what rested on the old version: search the business's `ads/` folder for the old
    value and its wording. Each hit has an owner and a work order, and that work order's
    "When something changes" table names the layers to check again.
-3. Correct each dependent under its own work order. An ad that has not been approved or
+3. Correct each dependent under its own work order: run again the layers its change
+   table names, write the updated layer record into the dependent's own file, run the
+   checker on it, and set its status to the state that record supports, no higher and
+   no lower. An ad that has not been approved or
    run is corrected in place and its layer record updated. An ad that has been approved
    or has run is never edited: the change is a revision from `ad-strategy`
    ([ledger-row.md](schemas/ledger-row.md)), so the approval and the results stay with
    the version that earned them.
 4. In the updated record, a layer the change did not touch is `carried`, with the date
    of the record it passed in. Only the layers the change table names are run again.
-   Work made before layer records existed carries from its dated checks section only
-   where that section shows the layer's check, and the row says so. A layer the old
-   checks never covered is run again, not carried.
+   For work made before layer records existed, a layer the change did not touch is
+   `carried` from the ad's own dated status on file (its ledger status, its checks
+   section, an approval), named in the row. A layer the change table names is always
+   run again.
 5. Set each state to what its new record supports. An approval that covered the old
    version does not cover the new one. A live ad that still carries the old claim goes
    at the top of the reply with a prepared pause list. Pausing it needs the go-ahead of
@@ -131,16 +137,16 @@ Date: <YYYY-MM-DD>
 State: <one of the work order's states>
 ```
 
-One verdict per row: `pass`, `fail`, `n/a`, `not checked`, or `carried` (it passed in an
-earlier record and nothing it rests on has changed; name that record's date). A `pass`
+One verdict per row: `pass`, `fail`, `n/a`, `not checked`, `partial`, or `carried` (it
+passed in an earlier record and nothing it rests on has changed; name that record's date). A `pass`
 names its evidence. A `fail` names what was changed or where it went back; "fail, then
 pass" records a repair that worked. The verdict cell holds the verdict and nothing else:
 "pass after a fix" is written "fail, then pass". The date line is what a later `carried`
-row points back to. A result that is part passed and part unchecked is
-`not checked`, with what remains. Keep each cell to a line; this is a proof trail, not an
+row points back to. A layer checked only in part is `partial`: say what
+was done and what remains. It counts as not checked for every state. Keep each cell to a line; this is a proof trail, not an
 essay.
 
-Check a record before sending it:
+Check a record before sending it, every time; a record that fails is fixed, not sent:
 `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe a reply in with
 `--record -`. It fails on a missing layer, a pass with no evidence, a pass whose evidence
 says the check was not made, two verdicts in one row, or a state the rows do not support.

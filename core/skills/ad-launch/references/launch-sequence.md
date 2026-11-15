@@ -25,13 +25,16 @@ rest are defaults from the course review and the Meta kit review.
 - Written to the approvals log before acting: date, who, approved what exactly, for
   which offer or IDs, in their words (`core/_system/schemas/authority.md`). Any skill
   that hears an approval appends it; this skill always does before activation.
-- Relayed approvals ("the broker approved them on the phone this morning") are recorded
-  as relayed: who approved, who relayed it, when. Record it, say it is relayed, and
-  follow the business's own rule on whether a relayed approval is enough; where the
-  business has no rule, treat a relayed approval as enough to create paused and to
-  activate only when the approver is named in "Who can approve" and the operator is a
-  named person too, and say in the reply that the approver's own written word would be
-  the cleaner record.
+- Relayed approvals ("the broker approved them on the phone this morning") are always
+  appended to the approvals log as relayed: who approved, who relayed it (when no name
+  is given, "relayed by the session operator, name not given"), when, in the words
+  relayed, and what the words do not name (the ad IDs, a restricted category). Say in
+  the reply that it is relayed. Creating paused needs no approval, only authority on
+  file at a level that allows it. A relayed approval activates nothing unless the
+  business's own rule accepts it or, where the business has no rule, the approver is
+  named in "Who can approve", the person relaying it is named, and in a restricted
+  category the words name the category. Otherwise ask for the approver's own word, and
+  say that their written word would be the cleaner record.
 - Not an approval: a budget figure in passing, a wish to launch, a question, silence,
   an approval from someone not in the table, an approval for a different batch.
 

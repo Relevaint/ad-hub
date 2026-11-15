@@ -83,7 +83,7 @@
           "core/skills/ad-creative/references/claims-and-policy.md#the-gate"
         ],
         "check": "Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, carrying in the ad itself the conditions its proof attaches, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?",
-        "evidence": "The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file.",
+        "evidence": "The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file. Also the ad's promise in one sentence, as a stranger reads the headline and the picture together (\"buy this and ___\"), with the proof row for that blank.",
         "on_fail": "An unsupported claim is cut or becomes a marked blank. A review or story with no recorded permission is withheld and named as a blank for the business, whatever status its proof row carries. A personal attribute is rewritten around the situation. An idea that only works with the unsupported claim returns to the connection layer.",
         "returns_to": [
           "connection",
@@ -812,10 +812,10 @@
             "launch"
           ],
           "optional": "only the ones on the list, and only the layers their change tables name",
-          "build": "Each dependent corrected by its owner under its own work order. An ad that has not been approved or run is corrected in place and its layer record updated. An ad that has been approved or has run is never edited: the change is a revision from ad-strategy. Layers the change did not touch are carried.",
-          "check": "Has every dependent on the list been checked again through the layers its change table names, with untouched layers carried and nothing else redone?",
-          "evidence": "The list of dependents with a verdict beside each; each dependent's layer record, dated after the change.",
-          "on_fail": "If any dependent could not be checked here, this layer is not checked: name each one and who can check it. The state is then partly rechecked.",
+          "build": "For each dependent, in this order: open its own work order's \"When something changes\" table and run again exactly the layers that row names; correct an ad that has not been approved or run in place; write the updated layer record into the dependent's own file, with the layers the change did not touch carried (for work made before layer records, from the ad's dated status on file); run the checker on that file; set the ledger status to the highest state that record supports. An ad that has been approved or has run is never edited: the change is a revision from ad-strategy. A dependent with no updated record in its own file has not been rechecked.",
+          "check": "Does every corrected dependent's own file carry an updated layer record that passes the checker, with the layers its change table names run again and the rest carried, and does the ledger show the state that record supports, no higher and no lower?",
+          "evidence": "For each dependent: its file, the layers run again, the checker's verdict on the file, and the state its record supports.",
+          "on_fail": "If any dependent could not be checked here, this layer is partial when some were and not checked when none were: name each one and who can check it. The state is then partly rechecked.",
           "method": [
             "core/_system/staged-work.md#when-something-changes",
             "core/_system/schemas/ledger-row.md#ad-id"
@@ -828,7 +828,7 @@
           "method": [
             "core/skills/ad-creative/SKILL.md#7-move-the-row"
           ],
-          "check": "Is every changed ad at the state its new record supports, and is every approval that covered an old version named as needing a fresh one?",
+          "check": "Is every changed ad at the highest state its new record supports and no lower (claims and copy passing with untouched layers carried is copy-ready, not planned), and is every approval that covered an old version named as needing a fresh one?",
           "evidence": "The ledger beside the updated records; the approvals log.",
           "on_fail": "Each status is moved by the skill that owns that transition. A live ad that carries a claim the business says is no longer true goes at the top of the reply with a prepared pause list. Pausing it needs the go-ahead of someone who can approve: the emergency stop covers only the conditions on its own list, and a restricted category always needs a fresh approval."
         }
@@ -879,7 +879,7 @@
           "means": "Every dependent was checked again and carries the state its new record supports."
         }
       ],
-      "record": "In the reply, as one line, followed by the list of dependents: one line per hit with the file or ad ID, its owner work order, the layers checked again and the verdict. Each dependent keeps its own updated record."
+      "record": "In the reply, as one line, followed by the list of dependents, one line per hit: `<file or ad ID> · <owner work order> · run again: <layers> · record: <the checker's verdict on its file> · state: <state>`. Each dependent keeps its own updated record in its own file."
     },
     {
       "id": "audience-report",

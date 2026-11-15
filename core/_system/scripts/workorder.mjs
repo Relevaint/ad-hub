@@ -33,7 +33,7 @@ import { words } from "./route.mjs";
 
 export const MAP = "core/_system/work-orders.json";
 export const OUT = "work-orders";
-const VERDICTS = ["pass", "fail", "n/a", "not checked", "carried"];
+const VERDICTS = ["pass", "fail", "n/a", "not checked", "carried", "partial"];
 // Evidence that says the check was not made cannot sit behind a pass.
 const NOT_DONE = /\b(?:not (?:read|opened|open|viewed|watched|played|inspected|checked|checkable|seen|verified|rendered|produced)|(?:could not|couldn't|cannot|can't|unable to)(?: be)? (?:open|opened|read|view|viewed|watch|watched|play|played|inspect|inspected|check|checked|reach|reached|see|seen|verify|verified))\b/i;
 const UNIVERSAL_STATE = "not ready";
@@ -250,7 +250,7 @@ export function render(o, map, prefix = "") {
   L.push("| Layer | Verdict | Evidence: what was looked at | Fix made or return |", "| --- | --- | --- | --- |");
   list(o.layers).forEach((l, i) => L.push(`| ${i + 1} ${l.id} |  |  |  |`));
   L.push("| whole |  |  |  |", "State:", "```", "");
-  L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery.", "");
+  L.push("One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.", "");
   L.push(`In a reply with no file, put the record on its own line, starting with \`Layers (${o.id}):\`, every layer in order with a few words of evidence in brackets:`, "");
   L.push("```", `Layers (${o.id}): ${list(o.layers)[0].id} pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>`, "```", "");
   L.push(`Check it before you send it: \`node ${prefix ? "<hub>/" : ""}core/_system/scripts/workorder.mjs --record <file>\`, or pipe the reply in with \`--record -\`.`, "");
@@ -302,7 +302,7 @@ export function stale(hub) {
 const MATCH_MIN = 1.6;
 const MATCH_GAP = 0.4;
 
-export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP) {
+export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP, lead = false) {
   const map = loadMap(hub);
   const g = words(request);
   const orders = list(map.work_orders);
@@ -324,20 +324,31 @@ export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP) {
   }).sort((a, b) => b.score - a.score);
   const [top, second] = scored;
   const clear = top && top.score >= min && (!second || top.score - second.score >= gap);
-  return { map, top: clear ? top.o : null, candidates: scored.filter((x) => x.score > 0).slice(0, 5).map((x) => x.o), scored };
+  const whole = { map, top: clear ? top.o : null, candidates: scored.filter((x) => x.score > 0).slice(0, 5).map((x) => x.o), scored };
+  // A long request usually carries pasted material after the ask, and that material can outweigh it: read the ask first.
+  const raw = String(request).trim();
+  if (!lead && raw.split(/\s+/).length > 30) {
+    const sentences = raw.split(/(?<=[.!?:])\s+/);
+    for (const n of [1, 2]) {
+      const first = match(hub, sentences.slice(0, n).join(" "), min, gap, true);
+      if (first.top) return first;
+    }
+  }
+  return whole;
 }
 
 // ---------------------------------------------------------------- records
 
 // One verdict per row. "fail, then pass" is the one allowed pair: a repair that worked.
 function readVerdict(cell) {
-  const found = [...String(cell).toLowerCase().matchAll(/not checked|carried|n\/a|pass|fail/g)].map((m) => m[0]);
+  const text = String(cell).toLowerCase().replace(/\b(?:partially|partly|part) (?:done|checked|rechecked|complete|completed)\b/g, "partial");
+  const found = [...text.matchAll(/not checked|carried|partial|n\/a|pass|fail/g)].map((m) => m[0]);
   if (!found.length) return { verdict: null, mixed: false };
   const last = found[found.length - 1];
   const mixed = found.slice(0, -1).some((v) => v !== last && !(v === "fail" && (last === "pass" || last === "carried")));
   // One verdict exactly: "pass after a fix" hides a repair that belongs in the record as "fail, then pass".
-  const plain = String(cell).toLowerCase().replace(/[`*_]/g, "").replace(/\s+,/g, ",").replace(/\s+/g, " ").replace(/[.;:,\s]+$/, "").trim();
-  const extra = !mixed && !/^(?:pass|fail|n\/a|not checked|carried|fail, then (?:pass|carried))$/.test(plain);
+  const plain = text.replace(/[`*_]/g, "").replace(/\s+,/g, ",").replace(/\s+/g, " ").replace(/[.;:,\s]+$/, "").trim();
+  const extra = !mixed && !/^(?:pass|fail|n\/a|not checked|carried|partial|fail, then (?:pass|carried))$/.test(plain);
   return { verdict: last, mixed, extra, said: plain };
 }
 
@@ -357,7 +368,7 @@ export function parseRecords(text) {
         if (t.startsWith("|")) {
           const cells = t.split("|").slice(1, -1).map((c) => c.trim());
           if (cells.length < 2 || /^-+$/.test(cells[0].replace(/[: ]/g, "")) || /^layer$/i.test(cells[0])) continue;
-          rec.rows.push({ layer: norm(cells[0]), ...readVerdict(cells[1]), evidence: cells[2] || "", fix: cells[3] || "" });
+          rec.rows.push({ layer: norm(cells[0]), ...readVerdict(cells[1]), given: cells[1], evidence: cells[2] || "", fix: cells[3] || "" });
         }
       }
       records.push(rec);
@@ -375,12 +386,27 @@ export function parseRecords(text) {
         if (before) rec.state = before[1].trim();
         else if (after) rec.state = after[1].trim();
       }
-      for (const item of body.split(body.includes("·") ? /\s*·\s*/ : /\s*;\s*/)) {
-        const m = item.trim().replace(/\.$/, "").match(/^(.*?)[\s:]+(not checked|carried|n\/a|pass|fail)\b(.*)$/i);
+      // Split on the separator only outside brackets, so "·" or ";" inside evidence stays evidence.
+      const sep = body.includes("·") ? "·" : ";";
+      const items = [];
+      let depth = 0, cur = "";
+      for (const ch of body) {
+        if (ch === "(") depth++;
+        if (ch === ")") depth = Math.max(0, depth - 1);
+        if (ch === sep && depth === 0) { items.push(cur); cur = ""; } else cur += ch;
+      }
+      items.push(cur);
+      for (const raw of items) {
+        const item = raw.trim().replace(/\.$/, "");
+        const open = item.indexOf("(");
+        const close = item.lastIndexOf(")");
+        const head = open < 0 ? item : item.slice(0, open);
+        const evidence = open < 0 ? "" : item.slice(open + 1, close > open ? close : undefined);
+        const tail = close > open ? item.slice(close + 1) : "";
+        const m = head.trim().match(/^[`*_\s]*([a-z0-9][a-z0-9-]*)[`*_]*[\s:]+(.*)$/i);
         if (!m) continue;
-        const outside = m[3].replace(/\([^)]*\)/g, " ");
-        const inside = (m[3].match(/\(([^)]*)\)/) || [])[1];
-        rec.rows.push({ layer: norm(m[1]), ...readVerdict(`${m[2]} ${outside}`), evidence: (inside ?? m[3].replace(/^[\s,:-]+/, "")).trim(), fix: "" });
+        const given = `${m[2]} ${tail}`.trim();
+        rec.rows.push({ layer: norm(m[1]), ...readVerdict(given), given, evidence: evidence.trim(), fix: "" });
       }
       records.push(rec);
     }
@@ -407,9 +433,9 @@ export function checkRecord(hub, text, forcedId) {
     for (const l of [...list(o.layers), { id: "whole", name: "whole output" }]) {
       const r = find(l) || (l.id === "whole" ? rows["whole-output"] : null);
       if (!r) { errors.push(`${at}: layer "${l.id}" has no row; a layer that does not apply is n/a with the reason, never left out`); continue; }
-      if (!VERDICTS.includes(r.verdict)) { errors.push(`${at}: layer "${l.id}" has no verdict (${VERDICTS.join(", ")})`); continue; }
+      if (!VERDICTS.includes(r.verdict)) { errors.push(String(r.given || "").trim() ? `${at}: layer "${l.id}" has the verdict "${String(r.given).trim().slice(0, 60)}", which is not one of ${VERDICTS.join(", ")}; a layer checked only in part is partial, with what was done and what remains` : `${at}: layer "${l.id}" has no verdict (${VERDICTS.join(", ")})`); continue; }
       final[l.id] = r.verdict;
-      if (r.mixed) errors.push(`${at}: layer "${l.id}" carries two verdicts; one verdict per row (a result that is part passed and part unchecked is not checked, with what remains)`);
+      if (r.mixed) errors.push(`${at}: layer "${l.id}" carries two verdicts; one verdict per row (a layer checked only in part is partial, with what was done and what remains)`);
       if (r.extra) errors.push(`${at}: layer "${l.id}" has the verdict "${r.said}"; write one verdict only (a repair that worked is "fail, then pass") and put everything else in the evidence${rec.compact ? ", in brackets" : " or fix column"}`);
       if (r.verdict === "pass" && !r.extra && !r.mixed && /^fail(?:ed|s)?\b/i.test(r.fix.trim())) errors.push(`${at}: layer "${l.id}" is marked pass but its fix column records a failure; a repair that worked is "fail, then pass"`);
       const ev = r.evidence.trim();
@@ -418,7 +444,8 @@ export function checkRecord(hub, text, forcedId) {
         if (ev.length < 6 || WEAK.test(ev)) errors.push(`${at}: layer "${l.id}" passes with no evidence ("${ev}"); name what was looked at`);
         else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked`);
       }
-      if ((r.verdict === "n/a" || r.verdict === "not checked") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);
+      if ((r.verdict === "n/a" || r.verdict === "not checked" || r.verdict === "partial") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);
+      if (r.verdict === "not checked" && /\b(?:no earlier (?:layer )?record|predates? layer records|no record of this layer|no layer record)\b/i.test(ev)) errors.push(`${at}: layer "${l.id}" is not checked for want of an earlier record; a layer the change did not touch is carried from the ad's dated status on file (its ledger status, checks section or approval), and a layer the change touched is run again`);
       if (r.verdict === "not checked" && IN_HAND.test(ev)) errors.push(`${at}: layer "${l.id}" is not checked for a reason that is in your hands ("${ev.match(IN_HAND)[0]}"); not checked is for a check that cannot be made in this session: make the check, then record the verdict (a self-review in a separate pass is a pass, labelled self-review)`);
       if (l.id === "whole" && r.verdict === "n/a") errors.push(`${at}: the whole-output row is never n/a; check the assembled output, or mark it not checked with the reason`);
       if (r.verdict === "fail" && !ev && !r.fix.trim()) errors.push(`${at}: layer "${l.id}" fails with nothing said about what failed`);
@@ -506,6 +533,7 @@ export function main(argv) {
         for (const o of candidates) console.log(`  ${o.id.padEnd(22)} ${o.name}  (owner: ${o.owner})`);
         console.log("Pick by reading the request, then: workorder.mjs --id <work order>");
       }
+      console.log("A request that names an ad ID: the ledger row's format says which work order makes it (static-ad, video-ad, ad-copy).");
       console.log("Unclear or spanning several outputs: start with start-here (core/skills/start-here/SKILL.md).");
       return 0;
     }

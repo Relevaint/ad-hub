@@ -25,9 +25,17 @@ supports that.
 ## The gate
 
 1. List every claim the ad will make or imply.
+   Start with the ad's promise in one sentence, as a stranger reads the headline and the
+   picture together: "buy this and ___". That blank is a claim and needs a proof row
+   like any other. A problem named with the product shown as its answer is that promise.
+   When the headline names a problem, the blank says what happens to that problem;
+   anything beyond what the product does is named in the claims map as a residual reading.
 2. Map each to its source. Facts about the offer itself (what it is, what it costs, how
    it is delivered, the refund or guarantee terms as stated, where the ad sends people)
-   come from the offer file's `Owner-confirmed` lines. Anything that supports a claim
+   come from the offer file's `Owner-confirmed` lines. A fact about the offer stated only in
+   the business's own files (its README, its site copy) is first recorded in the offer
+   file as `Owner-confirmed`, with that file and line as its source; until then it is a
+   marked blank, and an asset showing it is not `creative-ready`. Anything that supports a claim
    about quality, results, trust or scale (a rating, a review, a credential, a number of
    customers, a story, a result) comes from the offer's proof table, `Owner-confirmed`
    or `Observed` with its source. A `Proposed` line is not proof of anything. A review
