@@ -51,6 +51,7 @@ Shaped by: <files read, with dates; what was missing>
 
 ## Layer record
 Work order: ad-audit
+Date: <YYYY-MM-DD>
 <Only when the audit was run on its own (work order `ad-audit`): rows classify, compare,
 missing and whole, then the state. A diagnosis written as part of a plan is covered by
 the test plan's own layer record.>

@@ -82,7 +82,7 @@
           "core/skills/ad-creative/SKILL.md#3-run-the-policy-and-rules-check",
           "core/skills/ad-creative/references/claims-and-policy.md#the-gate"
         ],
-        "check": "Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?",
+        "check": "Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, carrying in the ad itself the conditions its proof attaches, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?",
         "evidence": "The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file.",
         "on_fail": "An unsupported claim is cut or becomes a marked blank. A review or story with no recorded permission is withheld and named as a blank for the business, whatever status its proof row carries. A personal attribute is rewritten around the situation. An idea that only works with the unsupported claim returns to the connection layer.",
         "returns_to": [

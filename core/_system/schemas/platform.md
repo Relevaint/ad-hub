@@ -63,6 +63,7 @@ Shaped by: <offer file, authority, test plan, platform layer files with their la
 
 ## Layer record
 Work order: tracking-setup
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 signal |  |  |  |

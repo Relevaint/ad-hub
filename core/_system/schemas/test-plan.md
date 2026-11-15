@@ -55,6 +55,7 @@ Planned YYYY-MM-DD. Rows are in ads/ledger.md; this table repeats the plan for r
 
 ## Layer record
 Work order: test-plan
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 diagnosis |  |  |  |

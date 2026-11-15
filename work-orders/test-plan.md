@@ -110,6 +110,7 @@ Where it goes: At the end of the dated section in ads/strategy/test-plan.md, und
 ```markdown
 ## Layer record
 Work order: test-plan
+Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 diagnosis |  |  |  |
@@ -122,7 +123,7 @@ Work order: test-plan
 State:
 ```
 
-One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery.
 
 In a reply with no file, put the record on its own line, starting with `Layers (test-plan):`, every layer in order with a few words of evidence in brackets:
 

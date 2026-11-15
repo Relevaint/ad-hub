@@ -515,6 +515,26 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
     assert.match(dodged.out, /state "copy-ready" needs layer "claims" to pass; it is n\/a/);
     const carried = check("carried.md", doc(swap("5 connection", row("5 connection", "carried", "passed in the record of 2026-10-07; the payoff did not change")), "copy-ready"));
     assert.equal(carried.code, 0, carried.out);
+    // One verdict exactly, a repair written as a repair, and a carried row that names its date.
+    const wordy = check("wordy.md", doc(swap("2 premises", row("2 premises", "pass after a fix", "four premises compared; two rejected as category slogans")), "copy-ready"));
+    assert.equal(wordy.code, 1);
+    assert.match(wordy.out, /layer "premises" has the verdict "pass after a fix"/);
+    const hidden = check("hidden.md", doc(swap("2 premises", row("2 premises", "pass", "four premises compared; two rejected as category slogans", "failed first: all four were category slogans; rewrote two")), "copy-ready"));
+    assert.equal(hidden.code, 1);
+    assert.match(hidden.out, /layer "premises" is marked pass but its fix column records a failure/);
+    const undated = check("undated.md", doc(swap("5 connection", row("5 connection", "carried", "passed in the earlier record; the payoff did not change")), "copy-ready"));
+    assert.equal(undated.code, 1);
+    assert.match(undated.out, /layer "connection" is carried without the date/);
+    const lineWordy = check("linewordy.md", "Layers (ad-concepts): fundamentals pass (offer file and proof table read) · premises pass after a fix (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (claims map against proof rows; review withheld) · review pass (self-review, Hook 4 Glance 4) · whole pass (set read as the operator sees it). State: concept-ready\n");
+    assert.equal(lineWordy.code, 1);
+    assert.match(lineWordy.out, /layer "premises" has the verdict "pass after a fix"/);
+    // Not checked is for what cannot be done here, not for work the writer left undone.
+    const lazy = check("lazy.md", doc(swap("7 review", row("7 review", "not checked", "self-review only, no fresh reviewer")), "not ready"));
+    assert.equal(lazy.code, 1);
+    assert.match(lazy.out, /layer "review" is not checked for a reason that is in your hands/);
+    const partRead = check("partread.md", doc(swap("1 fundamentals", row("1 fundamentals", "not checked", "the offer file was only partly read")), "not ready"));
+    assert.equal(partRead.code, 1);
+    assert.match(partRead.out, /layer "fundamentals" is not checked for a reason that is in your hands/);
     // An n/a needs a real reason, and the whole-output row is never n/a.
     const thin = check("thin.md", doc(swap("9 destination", row("9 destination", "n/a", "skipped")), "copy-ready"));
     assert.equal(thin.code, 1);
