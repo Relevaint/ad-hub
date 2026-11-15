@@ -10,7 +10,7 @@ when_to_use:
   - which plays should we try
 metadata:
   adhub:
-    version: 0.1.0
+    version: 0.2.0
     layer: strategy
     reads:
       - offers/
@@ -58,6 +58,23 @@ Thin context is normal. No research yet: plan from the offer and say the custome
 types are the business's own description, to be replaced by `audience-research`. No
 results yet: plan the first batch. Missing numbers are reported as assumptions, stated
 once, never silently filled.
+
+## Work order
+
+Every output of this skill is built in layers under
+[staged work](../../_system/staged-work.md): build one layer, answer its check from the
+evidence it names, write its line in the layer record, then build the next. Get the work
+order before starting:
+
+```
+node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
+```
+
+or open it from [work-orders/](../../../work-orders/README.md). This skill owns
+`test-plan`, `ad-audit`, `plays-refresh`.
+The method below is what each layer points at, and the quality gate is the whole-output
+check. Do not draft the finished output and check it afterward. Report the state the
+record supports, nothing stronger.
 
 ## Modes
 
@@ -136,6 +153,11 @@ winner. Anything else is padding.
 Give the batch one testing focus (angle, hook, style or format) and write it in the
 plan; `references/test-design.md`, "What each batch tests: the ladder", has the default
 order.
+
+The plan's layer record is complete before `ad-creative` starts on the batch: the
+diagnosis, the offer check, the focus and each row's reason are settled before anything
+is produced. When the offer or the audience research changes afterwards, the `test-plan`
+work order's change table names the layers to run again.
 
 ### 6. Design the test from this offer's numbers
 

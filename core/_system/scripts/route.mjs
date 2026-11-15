@@ -7,6 +7,9 @@
 //   node <hub>/core/_system/scripts/route.mjs --check
 //   (all take --hub <dir>; default: this hub)
 //
+// This script finds the skill. workorder.mjs finds the output's work order: the layers to
+// build and check in order. A skill card here names the work orders that skill owns.
+//
 // --goal is a plain word match against the README task table and each built skill's
 // description and when_to_use. It is a fallback for platforms that do not list skills,
 // not a substitute for reading the request: no match, or a tie, routes to start-here,
@@ -23,6 +26,7 @@
 // (changes/) is declared the same way, folder/#<label>, one writer per file inside it.
 
 import path from "node:path";
+import { existsSync, readFileSync } from "node:fs";
 import { DEFAULT_HUB, parseArgs, UsageError, loadSkills, taskTable, run, isMain } from "./lib.mjs";
 
 const LIVE_ACT = ["ad-launch", "ad-manage"];
@@ -45,6 +49,15 @@ function catalogue(hub) {
   return rows.map((r) => ({ ...r, built: skills.find((s) => s.name === r.skill) || null }));
 }
 
+// Work orders a skill owns, read straight from the map so this stays a pointer, not a copy.
+function ownedWorkOrders(hub, skill) {
+  const file = path.join(hub, "core", "_system", "work-orders.json");
+  if (!existsSync(file)) return [];
+  try {
+    return (JSON.parse(readFileSync(file, "utf8")).work_orders || []).filter((o) => o.owner === skill).map((o) => o.id);
+  } catch { return []; }
+}
+
 function card(entry) {
   const s = entry.built;
   const lines = [`Start with: ${entry.skill}${s ? "" : " (not built yet; its brief is in BUILD-PLAN.md)"}`, `Job: ${entry.job}`];
@@ -54,6 +67,10 @@ function card(entry) {
     lines.push(`Writes: ${s.writes.join(", ") || "nothing declared"}`);
     lines.push(`Live account: ${s.live}${s.live === "act" ? ". Check ads/authority.md first (core/_system/spend-authority.md)." : ""}`);
     lines.push(`Context: node core/_system/scripts/context.mjs --for ${s.name} --root <business repo>`);
+    const owned = ownedWorkOrders(path.resolve(s.file, "../../../.."), s.name);
+    if (owned.length) {
+      lines.push(`Work orders: ${owned.join(", ")}. Build in layers: node core/_system/scripts/workorder.mjs --for "<request>" (core/_system/staged-work.md)`);
+    }
   }
   return lines.join("\n");
 }

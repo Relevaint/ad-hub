@@ -10,7 +10,7 @@ when_to_use:
   - pull the results
 metadata:
   adhub:
-    version: 0.1.0
+    version: 0.2.0
     layer: review
     reads:
       - offers/
@@ -64,6 +64,23 @@ metrics and the report shapes; load it every time. The platform skill
 (`meta-system/SKILL.md` for Meta) says how to pull the window and how fresh the numbers
 are; load it before any account read.
 
+## Work order
+
+Every output of this skill is built in layers under
+[staged work](../../_system/staged-work.md): build one layer, answer its check from the
+evidence it names, write its line in the layer record, then build the next. Get the work
+order before starting:
+
+```
+node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
+```
+
+or open it from [work-orders/](../../../work-orders/README.md). This skill owns
+`results-review`, `weekly-creative-report`. An inconclusive review is a finished output when its record says what would settle the question and when.
+The method below is what each layer points at, and the quality gate is the whole-output
+check. Do not draft the finished output and check it afterward. Report the state the
+record supports, nothing stronger.
+
 ## Modes
 
 - **Snapshot.** Assemble the window's numbers by ad ID into `results/<date>-snapshot.md`.
@@ -93,7 +110,9 @@ ROAS or cost per result, against the break-even quoted from the offer file with 
 working, for the account and per ad. Then the honest statement of what the sample can
 say: how many results, what the bar in the test plan needs, how many results the lag
 could have delivered by now, and therefore which of three things is true: a call above
-the bar, a direction only, or too few to say anything. Two results tell nothing. A
+the bar, a direction only, or too few to say anything. Too few to say is a finished
+answer when the review also says what would settle the question and when. Two results
+tell nothing. A
 quarter of leads in a six-month pipeline has not had time to close, so a closings count
 says little about that quarter's ads; the signal and the earlier stages carry the
 reading until the lag passes.
@@ -136,7 +155,8 @@ Where the money went across ads, what rose or fell over seven days, any new hit,
 specific lessons, and the hit rate: the share of launched ads that met the bar, tracked
 by batch over time (Observed, claude-workflows review). Check the numbers twice: a second
 pass that looks for errors in the first, before anything is reported (CONVENTIONS section
-8).
+8). When the second pass finds an error, say whether an input, the arithmetic or an
+inference was wrong, fix that step, and re-read everything that rested on it.
 
 ### 8. Learnings, at the bar only
 

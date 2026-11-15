@@ -54,6 +54,7 @@ updated-by: start-here        # or "business"
 ## Proof the ads may use
 | Proof | Kind (review, result, credential, number, story) | Where it comes from | Status |
 | --- | --- | --- | --- |
+<A review, testimonial or customer story also names who gave it and the recorded permission to use it in advertising, in "Where it comes from". Without that it may be counted (a rating, a number of reviews), never quoted or retold in an ad.>
 
 ## Gaps
 - <missing fact> blocks <drafting nothing | going live | confident scaling>

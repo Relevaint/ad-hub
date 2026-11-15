@@ -51,9 +51,17 @@ Writing into a business repo needs Clay's go-ahead for that repo (`AGENTS.md` 2.
    > at `../ad-hub`) holds the method; this repo holds this business's ad records in
    > `ads/`. Use the `adhub-` skills under `.claude/skills/`. On a platform without
    > skills, read `../ad-hub/README.md`, then the skill for the job, and load context with
-   > `node ../ad-hub/core/_system/scripts/context.mjs --for <skill> --root .`. Nothing
+   > `node ../ad-hub/core/_system/scripts/context.mjs --for <skill> --root .`. Every
+   > output is built in layers: get its work order with
+   > `node ../ad-hub/core/_system/scripts/workorder.mjs --for "<the request>"` (or
+   > `../ad-hub/work-orders/README.md`), work one layer at a time, keep the layer record,
+   > and report only the state the record supports
+   > (`../ad-hub/core/_system/staged-work.md`). Nothing
    > about this business is ever written into Ad-Hub. Nothing reaches a live ad account
    > without `ads/authority.md` (`../ad-hub/core/_system/spend-authority.md`).
+
+   A repo that already has the earlier paragraph gains the staged-work sentence when it
+   is next opened; the regenerated pointers carry the same step either way.
 
 ## Repos that also use Marketing-Hub
 

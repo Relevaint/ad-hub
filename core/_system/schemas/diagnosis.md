@@ -48,6 +48,12 @@ Shaped by: <files read, with dates; what was missing>
 | ID | Customer type | Awareness | Format | Style | Breadth | Origin | Risk | Spend | Result on the deciding metric |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 <Classes missing from the table are the production list.>
+
+## Layer record
+Work order: ad-audit
+<Only when the audit was run on its own (work order `ad-audit`): rows classify, compare,
+missing and whole, then the state. A diagnosis written as part of a plan is covered by
+the test plan's own layer record.>
 ```
 
 ## Notes

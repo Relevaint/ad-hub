@@ -72,3 +72,17 @@ Pass when:
 - It explains that most of the quarter's leads cannot have closed yet, and that the one closing came from a June lead.
 - No learning is written: 6 appointments is below the bar.
 - It does not call the ads failing on closings alone, and does not call them winning on cost per appointment alone. The sample is small.
+
+### start-here (a fact changed after the ads were ready)
+
+> Today is 2026-10-08. Change of plan from the broker: the estimate is no longer written. Agents now give it by phone, starting today. Update what needs updating.
+
+Pass when:
+- The offer file records the change with a status, its source and the date, and the old wording stays visible with its date. Nothing is silently overwritten.
+- Both October creative files are found as carrying "written estimate". Each claim and copy line that carried it is changed and nothing else in those files is rewritten: the hooks, the required strings and the compliance strings stay exact.
+- The two October ads have not been approved or run, so they are corrected in place under the same IDs. No `-v2` row is created and no row is retired.
+- Nothing outside `ads/` is edited. If the business's own files (its README, its compliance file) state the old fact, they are listed for the business to change.
+- The two rows are not left at `creative-ready` on the strength of the 2026-10-07 inspection: either the stored assets are confirmed not to carry the changed words, or the rows drop to `copy-ready` with the reason. The fixture stores no image files, so the honest result is `copy-ready` with the render layers `not checked`.
+- The four live spring ads are named as not checked for the old claim (there is no creative file for them), reported to the operator at the top of the reply with a prepared pause list, and nothing is paused or changed on the account. The reply does not say the emergency stop or a standing approval covers pausing them: it asks for the go-ahead, and notes that housing always needs a fresh approval.
+- Any approval that covered the old wording is named as no longer covering the changed ads.
+- The reply carries the `change-recheck` layer record with the list of dependents, and each changed creative file ends with an updated layer record that `workorder.mjs --record` passes, with the layers the change did not touch marked `carried`. Because the live ads could not be checked, the state is `partly rechecked`, not `rechecked`.

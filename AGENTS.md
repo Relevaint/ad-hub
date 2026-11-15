@@ -4,6 +4,8 @@ This is the canonical instruction file for this repository. Every agent and ever
 
 Claude Code reads `CLAUDE.md`, which contains a single line pointing at this file. Codex reads `AGENTS.md` natively. Perplexity Computer and anything else should be pointed here directly. There is one set of rules, in one place, so a rule learned on one platform is not lost when the work moves to another.
 
+**Asked to produce something for a business?** Research, a plan, concepts, copy, a finished ad, tracking, a launch, a watch or a review: you are using the hub, not building it. Find the work order for that output first: `node core/_system/scripts/workorder.mjs --for "<the request>"`, or open [work-orders/README.md](work-orders/README.md). It names the owning skill, every file to load and the layers to build and check, in order. Work one layer at a time, write the layer record, and report only the state the record supports ([core/_system/staged-work.md](core/_system/staged-work.md), section 2.17). An unclear or multi-step request starts with `start-here`. Business facts and outputs go in the business repo, never here. The rest of this file is for working on the hub itself.
+
 Section 1 is universal doctrine and is shared verbatim across projects. Do not edit it here. Section 2 is specific to this repository.
 
 For hub selection, Claude Code versus chat/Projects setup, and a read-only fresh-session check, see [CONTINUITY.md](CONTINUITY.md). That guide routes to these rules; it does not replace them or grant access.
@@ -101,7 +103,7 @@ Record the resolved operator in the Last Session block of `HANDOFF.md`; if unres
 Checked against the repository on 2026-10-19.
 
 - **Content:** Markdown instructions plus a small owner-authorized generated-image teaching gallery under `core/skills/ad-creative/references/composition-examples/`. Rules, references, source reviews and the plays library are `.md` files. Skills are `SKILL.md` files with YAML frontmatter under `core/skills/<name>/`; all nine were built on 2026-10-19 and 2026-10-20. The Meta layer's skill is `meta-system/SKILL.md` (built 2026-10-20), loaded by the core skills, with its action map and defaults as dated references.
-- **Code:** Node, standard library only, no packages (Clay, 2026-10-10). Helper scripts in `core/_system/scripts/` (context loader, freshness checker, router and skill check), tested with Node's built-in test runner. `package.json` exists only to name the test command; there is no lockfile and nothing to install. Node 20 or later. Keep new scripts dependency-free unless Clay approves a package.
+- **Code:** Node, standard library only, no packages (Clay, 2026-10-10). Helper scripts in `core/_system/scripts/` (context loader, freshness checker, router and skill check, and the work-order tool that prints an output's layers and checks a layer record), tested with Node's built-in test runner. `package.json` exists only to name the test command; there is no lockfile and nothing to install. Node 20 or later. Keep new scripts dependency-free unless Clay approves a package.
 - **CI:** none. No `.github/workflows/` yet.
 - **Installer:** `install/adhub-skills.mjs` (pointer generator) and `install/session-start.sh` (hook for business repos), same style, covered by `npm test`.
 - **Seen on Claude Code (remote), 2026-10-05:** Node 22.22.0 and Python 3.11.15 installed. That describes the platform, not a project requirement.
@@ -134,7 +136,8 @@ Run everything from the repo root.
 | Command | What it does | Verified |
 | --- | --- | --- |
 | none | No install step: the scripts use only Node's standard library. | 2026-10-10 |
-| `npm test` | Runs the helper-script tests against synthetic fixtures, then checks the real hub: every freshness header valid, every built skill passes `route.mjs --check`, every regression case well formed, the installer and its hook work on a scratch business folder. | 2026-10-17, 18 of 18 passing on Node 22.22.0 |
+| `npm test` | Runs the helper-script tests against synthetic fixtures, then checks the real hub: every freshness header valid, every built skill passes `route.mjs --check`, every regression case well formed, the installer and its hook work on a scratch business folder, the work-order map is valid (`workorder.mjs --check`) and its generated pages are current. | 2026-11-15, all passing on Node 22.23.4 |
+| `node core/_system/scripts/workorder.mjs --write` | Regenerates `work-orders/` from `core/_system/work-orders.json`. Run it after any edit to the map; the gate fails when the pages are out of date. | 2026-11-15 |
 
 **Build gate: `npm test` must pass before every commit.** It covers the scripts and the structure of the hub, not the quality of a skill's output. For every change also re-read the diff, confirm every relative link you added points at a real file, confirm no template placeholder is left in `AGENTS.md` or `HANDOFF.md` (the check in clay-config `NEW-PROJECT.md`), and keep the README layout and task table matching what actually exists. There is no CI, so the gate runs only when an agent runs it. The regression cases in `core/_system/regression/` are the acceptance test for each skill (`core/_system/CONVENTIONS.md` section 11); running them needs a fresh agent, not `npm test`.
 
@@ -165,6 +168,8 @@ Doctrine item 10 applies. In addition for this project:
 - The truth rule is a hard rule: claims, testimonials, stories, numbers, urgency and scarcity must be real and traceable to the business's proof, and AI-made people are never presented as customers (README hard rule 4, `core/_system/spend-authority.md`).
 - Voice belongs to the business. Skills read each business's voice and context from that business's repo, by meaning. The hub carries no brand voice; test businesses are synthetic and brand-neutral. The owner-authorized composition gallery is a narrow exception for generated, branded teaching images, not a source of current offer facts or performance evidence.
 - Skill text follows `core/_system/CONVENTIONS.md` section 1: plain, confident, operator to operator, no hype, no filler, each rule stated once.
+
+Every output of every skill is built the same way: in layers, each checked before the next relies on it, with a layer record (2.17). The creative passes above are the first layers of every creative work order.
 
 ### 2.10 Identity facts, source of truth
 
@@ -236,10 +241,11 @@ ad-hub/
 ├── people/clay.md       operator profile
 ├── .claude/             Claude Code settings and the session-start hook
 ├── core/
-│   ├── _system/         CONVENTIONS.md, memory-contract.md, spend-authority.md (drafts), schemas/, scripts/ (helper scripts and their tests), regression/ (five synthetic test businesses)
+│   ├── _system/         CONVENTIONS.md, memory-contract.md, spend-authority.md (drafts), staged-work.md (the layered build-and-check contract), work-orders.json (the output map), schemas/, scripts/ (helper scripts and their tests), regression/ (five synthetic test businesses)
 │   ├── skills/          one folder per skill, all nine built; ad-strategy/references/plays.md is the plays library
 │   └── automations/     README.md only; routines not built
 ├── meta-system/         Meta layer: SKILL.md (the platform skill), README.md, dated references/ (action-map, defaults, platform-tools, result-signals, ad-library, placements, policy-notes, events-and-matching, reporting)
+├── work-orders/         one generated page per output: what to load and the layers to build and check; README.md is the index. Edit core/_system/work-orders.json, not these
 ├── install/             adhub-skills.mjs (pointer generator), session-start.sh (hook for business repos), README.md (the four install steps)
 └── source-notes/        written reviews of outside sources, conflicts.md, index in README.md
 ```
@@ -340,3 +346,15 @@ The Marketing-Hub location was also left blank in that message. Section 2.15 now
 - The current requirements for sending results back to Meta
   ([result-signals.md](meta-system/references/result-signals.md)).
 - Any creator claim before it is written as a default.
+
+### 2.17 Staged work and the output map
+
+Owner requirement (Clay, 2026-11-15). The problem it answers: agents entered the hub, saw the skills, and applied part of them; asked to be creative, follow the structure and judge the audience fit in one pass, they locked onto one and reported the work as done.
+
+- **One contract:** `core/_system/staged-work.md`. Build one layer, check it against its one question, repair it where it failed, then build the next. Check the assembled output as a whole. A part passing does not pass its parent. When something upstream changes, what rested on it is checked again and nothing else is redone.
+- **One map:** `core/_system/work-orders.json` holds one entry per output the hub makes, with its layers in order. Each layer points at its method in the owner skill; the method is never copied into the map. `work-orders/` is generated from it.
+- **One record:** every output ends with a layer record (one row per layer: verdict, what was looked at, fix), in the file the output writes or as one line in the reply. `node core/_system/scripts/workorder.mjs --record <file>` fails on a missing layer, a pass with no evidence, or a state the rows do not support.
+- **States are claims.** `copy-ready`, `creative-ready`, `test seen`, `live` and the rest each name the layers that must have passed. A prepared list is never reported as carried out, and a concept is never reported as an asset.
+- **Layer checks are the agent's own work,** not approval requests. Spend authority, the approvals log and the business's sign-off on proof are unchanged.
+- **When a skill changes, the map changes in the same PR:** a new output or mode gets a work order; a renamed heading is renamed where a layer points at it. `npm test` fails otherwise.
+- Tested structure is not tested performance. A complete layer record shows no layer was skipped. It does not show the ad will win.

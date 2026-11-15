@@ -6,6 +6,25 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-11-15, staged work and the output map.
+- **Who/platform:** Clay (identified in the conversation), through a Claude Code cloud session. The branch `claude/charming-wright-74yh2v` is pinned by the platform, so it does not follow the `clay/...` naming rule.
+- **Request:** Agents entered the hub, saw the skills and applied part of them; asked to be creative, follow the structure and judge the audience fit in one pass, they locked onto one and reported the work as done. Make the hub lead an agent from the output asked for to every step it needs, and make it build in layers with a check after each. The same pattern was built in the Studio Hub and in Marketing-Hub in their own repos and their own words; no hub depends on another.
+- **Changed:**
+  - `core/_system/staged-work.md`: the contract. One layer, one question; evidence is something that was looked at; repair at the source; check the whole; report only the state the record supports.
+  - `core/_system/work-orders.json`: the output map, 23 work orders, each with its layers in order, its whole-output check, its "when something changes" table and its states. `work-orders/` is generated from it.
+  - `core/_system/scripts/workorder.mjs`: finds the work order for a request (`--for`), prints it, validates the map, writes the pages, and checks a layer record (`--record <file>` or `--record -`).
+  - Every skill has a Work order section. `AGENTS.md` (preamble and 2.17), `README.md`, `CONVENTIONS.md` section 12, the router card and the installer's pointers all send an agent to the work order first.
+  - `core/skills/ad-creative/references/video-build.md`: a video is built in seven parts, each checked before the next.
+  - Found by the trials and fixed: a separate `claims` layer (a review needs a named person and recorded permission, and a result the picture implies counts as a claim); the landing page check is its own `destination` layer; launch has an `all-clear` layer, so `live` needs the eight gates read again after the approval is written; states name `must_pass` layers where `n/a` is not accepted; the verdict `carried` for layers a change did not touch; the ledger rule made explicit (an ad not yet approved or run is corrected in place, after that a change is a revision); a change re-check never edits outside `ads/` and never pauses a live ad without a go-ahead.
+  - Regression: three new requests (a video built in parts with no video tool; a remix with nothing proven; a fact changed after the ads were ready).
+- **Verification:** `npm test` passes 32 of 32; `workorder.mjs --check` passes on 23 work orders; the continuity check passes; 591 relative links resolve. Fresh-agent trials on scratch copies of the regression businesses, each agent given only the business repo and the request, graded by a separate agent against the `evaluate.md` criteria. Round 1, eight requests: bookings, review, remix and video passed with notes; launch, copy, concepts and change failed. In all eight the agent found the right work order and reported an honest state; the failures traced to gaps in the hub, listed above. Round 2 after the fixes, the four that failed: copy passed; concepts, change and launch passed with notes. The round-2 notes were then fixed (launch gate wording and the `all-clear` row, the dependents list in a change re-check, implied claims, carried rows for work older than layer records, stricter `n/a`). Those last fixes are covered by the test suite, not by a third round of trials.
+- **Limits:** No image or video was produced and no live account was touched: every trial stops where a tool or an approval is needed. The four round-1 passes were not rerun after the fixes. A complete layer record shows no layer was skipped; it does not show the ad will win. Automations (Stage 4) are still not built.
+- **Choices for Clay to confirm:** (1) the ledger rule as now written: correct in place before approval or a run, a revision after; (2) the landing page check does not block `copy-ready` or `creative-ready`: it is named beside the state and has to be closed before launch; (3) `live` needs the gates read a second time, after the approval is recorded.
+- **Release:** merging this branch changes behaviour in every business repo that reads the hub. Run `node install/adhub-skills.mjs` in each so its pointers carry the "Build in layers" step.
+- **Next:** Run one real request from a business repo and read the layer record beside the output. Name the business repo for that first test (still open).
+
+## Previous session: 2026-11-03 Ecommerce Alley playbook review
+
 - **When:** 2026-11-03, Ecommerce Alley playbook review.
 - **Who/platform:** Clay, through a cloud task in the Claude app (identified in the conversation).
 - **Request:** Compare an e-commerce Meta ads playbook PDF with the hub, then fold its best ideas in as a draft PR marked as rules of thumb, not authority. Clay reviews and merges.
@@ -132,7 +151,10 @@ Ad-Hub is a hub of paid-ads skills that business repos plug into. As of 2026-10-
 
 **What is in progress.** Nothing, once the `clay/meta-skill` PR merges. Stage 4 (automations) waits on Clay. The action map has no `run` row: nothing has been performed on a real account, and that is the next thing the hub needs.
 
+**Since 2026-11-15.** Every output has a work order (`work-orders/`, generated from `core/_system/work-orders.json`) and is built in layers with a layer record, under `core/_system/staged-work.md`. Fresh agents have run it on the synthetic regression businesses only.
+
 **What is broken or unresolved.**
+- Staged work has not been run on a real business brief or with a production tool connected.
 - The results snapshot and review format is `core/_system/schemas/results.md`. The regression cases' hand-pulled snapshots match it; none needed changing.
 - Meta Ad Library from this platform (2026-10-19, during the competitor-ads run): keyword searches and single-ad pages render in headless Chromium and can be screenshotted; the per-advertiser page view returns empty, videos do not play, and about one keyword search in three returns empty and succeeds on retry. Counts from here are lower bounds.
 - No business repo named for testing the first skill.

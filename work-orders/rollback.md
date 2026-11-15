@@ -1,0 +1,93 @@
+<!-- Generated from core/_system/work-orders.json by `workorder.mjs --write`. Edit the JSON, not this file. -->
+
+# Work order: Rollback to the last known good (`rollback`)
+
+**When the ask is:** "roll back the last change", "undo the last change", "revert the ads to how they were", "put it back"
+
+**Owner:** `ad-manage` (Rollback)
+**Live account:** changes under the level; logged as a change that names the one it undoes
+
+Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its line in the layer record, then move on. Do not draft the finished output first and check it afterward.
+
+## Load first
+
+1. [core/skills/ad-manage/SKILL.md](../core/skills/ad-manage/SKILL.md)
+2. [core/skills/ad-manage/references/watch-and-sessions.md](../core/skills/ad-manage/references/watch-and-sessions.md)
+3. [core/_system/spend-authority.md](../core/_system/spend-authority.md)
+4. [core/_system/schemas/change-entry.md](../core/_system/schemas/change-entry.md)
+
+Also, when it applies:
+
+- the business runs on Meta, before any account read or change: [meta-system/SKILL.md](../meta-system/SKILL.md)
+
+## Needs
+
+- Required: ads/changes/ with the entry to undo; ads/authority.md
+
+## Layers
+
+### 1. Find the last known good (`last-good`)
+
+- **Build:** The entry to undo, its undo steps, and the last known good state it leads back to.
+- **Method:** [ad-manage/SKILL.md, "rollback"](../core/skills/ad-manage/SKILL.md#rollback); [ad-manage/references/watch-and-sessions.md, "rollback"](../core/skills/ad-manage/references/watch-and-sessions.md#rollback)
+- **Check:** Is the entry to undo identified, with its recorded undo and the last known good it restores?
+- **Evidence:** The change entry and the closing entry that records the last known good.
+- **If it fails:** No recorded undo: say so, and write the revert as a new change for approval rather than guessing.
+
+### 2. Revert (`revert`)
+
+- **Build:** The revert carried out and confirmed.
+- **Method:** [_system/spend-authority.md, "rollback"](../core/_system/spend-authority.md#rollback)
+- **Check:** Did the platform confirm the revert, under the level or an approval?
+- **Evidence:** The platform's confirmation.
+- **If it fails:** Not confirmed, no tool or no approval: the revert is prepared, not carried out.
+
+### 3. Log the revert (`log`)
+
+- **Build:** A new change entry that names the one it reverses.
+- **Method:** [ad-manage/references/watch-and-sessions.md, "rollback"](../core/skills/ad-manage/references/watch-and-sessions.md#rollback)
+- **Check:** Is the revert logged as its own entry naming the entry it reverses, with ledger rows matching the account?
+- **Evidence:** The new entry's Reverses line; the ledger.
+- **If it fails:** Write the entry; an old entry is never edited.
+
+### Whole output (`whole`)
+
+- **Check:** Is the account back at the last known good, and was no new fix slipped in with the revert?
+- **Evidence:** The account state against the last-known-good record.
+- **If it fails:** Remove the extra change; a new fix waits for a session.
+
+## What it can be called
+
+| State | Only when these passed | Means |
+| --- | --- | --- |
+| reverted | `last-good`, **`revert`**, `log`, `whole` | The platform confirmed the account is back at the last known good. |
+| revert prepared, not carried out | **`last-good`** | The steps are written; an approval or a tool is missing. |
+| not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
+
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state.
+
+## Layer record
+
+Where it goes: In the revert's change entry, under ## Layer record.
+
+```markdown
+## Layer record
+Work order: rollback
+| Layer | Verdict | Evidence: what was looked at | Fix made or return |
+| --- | --- | --- | --- |
+| 1 last-good |  |  |  |
+| 2 revert |  |  |  |
+| 3 log |  |  |  |
+| whole |  |  |  |
+State:
+```
+
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`.
+
+In a reply with no file, put the record on its own line, starting with `Layers (rollback):`, every layer in order with a few words of evidence in brackets:
+
+```
+Layers (rollback): last-good pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
+```
+
+Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

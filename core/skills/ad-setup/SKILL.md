@@ -11,7 +11,7 @@ when_to_use:
   - what can you do in our ad account yourself
 metadata:
   adhub:
-    version: 0.1.0
+    version: 0.2.0
     layer: operations
     reads:
       - offers/
@@ -57,6 +57,23 @@ Which platform: the one the business names. When the business names none and the
 has one platform layer, say the assumption and write that platform's file with the
 assumption marked Proposed.
 
+## Work order
+
+Every output of this skill is built in layers under
+[staged work](../../_system/staged-work.md): build one layer, answer its check from the
+evidence it names, write its line in the layer record, then build the next. Get the work
+order before starting:
+
+```
+node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
+```
+
+or open it from [work-orders/](../../../work-orders/README.md). This skill owns
+`tracking-setup`. Its three states keep a prepared checklist, a checked path and a result actually seen arriving apart.
+The method below is what each layer points at, and the quality gate is the whole-output
+check. Do not draft the finished output and check it afterward. Report the state the
+record supports, nothing stronger.
+
 ## What reaches the account
 
 This skill reads an account and runs dry runs; it creates nothing. Reading needs
@@ -97,7 +114,10 @@ platform layer holds the mechanics and the fields. This skill checks what exists
 browser tag installed and firing, does the server send the event, do the two
 deduplicate, does the event carry the value and the matching fields, is the source
 healthy. Through the business's connected tools where authority allows; otherwise as a
-checklist for a person, item by item.
+checklist for a person, item by item. Each item goes in the platform file's Checked
+table by name, with how it was checked, the date and the result; an item nobody has
+verified is written as not checked. The file ends in one of three states and says which:
+checklist prepared, path checked with the test not seen, or test seen.
 
 Then the gate that matters: **a test of the real result seen arriving on the platform**,
 with its value where there is one, on a stated date, recorded in the platform file. Not

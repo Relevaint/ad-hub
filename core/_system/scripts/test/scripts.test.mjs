@@ -352,3 +352,262 @@ test("creative: brand continuity comes from reviewed sources, not demographic de
   for (const rule of [/Brand \/ cultural continuity/, /unintentional sameness/, /variety is not a quota/, /return to Pass 1/, /not a compliance essay/]) assert.match(sixth, rule);
   assert.match(read("core/_system/schemas/creative.md"), /Brand\/cultural continuity/);
 });
+
+// ---- staged work: the output map, its pages and the layer record ----
+
+const wo = (...a) => run("workorder.mjs", ...a);
+const hubRoot = path.resolve(here, "../../../..");
+
+test("work orders: the real map is valid and its generated pages are current", () => {
+  const r = wo("--check");
+  assert.equal(r.code, 0, r.out);
+  assert.match(r.out, /Check passed: \d+ work order\(s\), 0 problem\(s\)/);
+});
+
+test("work orders: every built skill owns one, and every skill body points at staged work", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { loadSkills } = await import("../lib.mjs");
+  const { loadMap } = await import("../workorder.mjs");
+  const owners = new Set(loadMap(hubRoot).work_orders.map((o) => o.owner));
+  for (const s of loadSkills(hubRoot)) {
+    assert.ok(owners.has(s.name), `${s.name} owns no work order`);
+    assert.match(s.text, /^## Work order$/m, `${s.name}: no Work order section`);
+    assert.match(s.text, /_system\/staged-work\.md/, `${s.name}: does not point at staged work`);
+    assert.match(s.text, /workorder\.mjs --for/, `${s.name}: does not say how to get the work order`);
+  }
+  const at = (p) => readFileSync(path.join(hubRoot, p), "utf8");
+  for (const p of ["AGENTS.md", "README.md", "install/README.md", "core/_system/CONVENTIONS.md"]) {
+    assert.match(at(p), /workorder\.mjs/, `${p} does not mention the work-order tool`);
+    assert.match(at(p), /staged-work\.md/, `${p} does not point at staged work`);
+  }
+});
+
+test("work orders: requests reach the right output", () => {
+  const cases = {
+    "What do you still need before we can run ads for the garden kit?": "readiness",
+    "Add a second offer: a buyer consultation for people moving into the county.": "readiness",
+    "Help me get bookings with ads.": "ad-program",
+    "Who should we target?": "audience-report",
+    "What are other garden planner sellers running?": "competitor-report",
+    "Plan the first test batch for the garden kit.": "test-plan",
+    "Plan our ads for the next month.": "test-plan",
+    "Write copy for three of the planned ads.": "ad-copy",
+    "Write three ads.": "ad-copy",
+    "give me video and image ad concepts only": "ad-concepts",
+    "brainstorm ad ideas without generating assets": "ad-concepts",
+    "make a static ad for the spring sale": "static-ad",
+    "make me a video ad for the garden kit": "video-ad",
+    "new hooks on our winning ad": "ad-remix",
+    "check this copy for claims and policy": "claims-check",
+    "write the ads for this batch": "ad-batch",
+    "Make sure we can tell which ads make sales.": "tracking-setup",
+    "Which result should we send back to the ad platform?": "tracking-setup",
+    "Launch the batch.": "launch",
+    "Put them live tomorrow with $20 a day.": "launch",
+    "Run today's check on the gutter ads.": "daily-watch",
+    "We just filled every crew slot through November 20. Do what you need to.": "daily-watch",
+    "Kill the ads that haven't booked anything.": "management-session",
+    "How are the ads doing? Which ones should go?": "results-review",
+    "Which ad is winning?": "results-review",
+    "the price changed to $29, update the ads": "change-recheck",
+  };
+  for (const [request, id] of Object.entries(cases)) {
+    assert.match(wo("--for", request).out, new RegExp(`^Matched: ${id}[.\\s]`), `"${request}" should reach ${id}`);
+  }
+  const vague = wo("--for", "can you help");
+  assert.equal(vague.code, 0);
+  assert.match(vague.out, /No single work order matches clearly/);
+  assert.match(vague.out, /start-here/);
+});
+
+test("work orders: the direct route and the start-here route reach the same creative gates", async () => {
+  const { loadMap } = await import("../workorder.mjs");
+  const map = loadMap(hubRoot);
+  const by = Object.fromEntries(map.work_orders.map((o) => [o.id, o]));
+  const passes = (o) => o.layers.flatMap((l) => l.method || []).map((m) => (m.match(/creative-passes\.md#pass-(\d)/) || [])[1]).filter(Boolean).map(Number);
+  // Direct: each creative output carries passes 1 to 6; finished media carries pass 7 or the video build.
+  for (const id of ["ad-concepts", "ad-copy", "static-ad", "video-ad"]) {
+    const got = new Set(passes(by[id]));
+    for (const n of [1, 2, 3, 4, 5, 6]) assert.ok(got.has(n), `${id} is missing creative pass ${n}`);
+  }
+  assert.ok(new Set(passes(by["static-ad"])).has(7), "static-ad is missing pass 7");
+  assert.ok(by["video-ad"].layers.some((l) => (l.method || []).some((m) => /video-build\.md#part-7/.test(m))), "video-ad never watches the export");
+  assert.ok(!by["ad-concepts"].layers.some((l) => /production|render/.test(l.id)), "concepts must stop before production");
+  // Truth is its own layer in every creative output, and a video's beats come before its placement copy.
+  for (const id of ["ad-concepts", "ad-copy", "static-ad", "video-ad"]) {
+    const ids = by[id].layers.map((l) => l.id);
+    assert.ok(ids.indexOf("claims") > ids.indexOf("connection") && ids.indexOf("claims") < ids.indexOf("review"), `${id}: the claims layer sits between connection and review`);
+    for (const st of by[id].states) assert.ok(st.must_pass.includes("claims"), `${id} ${st.state}: claims must pass`);
+  }
+  const video = by["video-ad"].layers.map((l) => l.id);
+  assert.ok(video.indexOf("sequence") < video.indexOf("copy"), "video-ad: timed beats come before the per-placement copy");
+  assert.ok(by["static-ad"].states.find((s) => s.state === "creative-ready").must_pass.includes("render-review"));
+  assert.ok(!by["static-ad"].states.find((s) => s.state === "copy-ready").needs.includes("destination"), "an unseen page does not force a false pass");
+  // Wrapper: start-here's end-to-end route runs the batch, and the batch runs those same work orders.
+  const creative = by["ad-program"].layers.find((l) => l.id === "creative");
+  assert.deepEqual(creative.work_orders, ["ad-batch"]);
+  const made = by["ad-batch"].layers.find((l) => l.id === "ads").work_orders;
+  for (const id of ["ad-concepts", "ad-copy", "static-ad", "video-ad"]) assert.ok(made.includes(id), `ad-batch does not run ${id}`);
+  // Nothing goes live through any route without the gates and a recorded approval.
+  const launch = by["launch"];
+  assert.equal(launch.layers[0].id, "gates");
+  assert.ok(launch.states.find((s) => s.state === "live").needs.includes("approval"));
+  // Live rests on the gates read again and all clear; a dry run does not need that row.
+  assert.ok(launch.states.find((s) => s.state === "live").must_pass.includes("all-clear"));
+  assert.ok(launch.layers.findIndex((l) => l.id === "all-clear") < launch.layers.findIndex((l) => l.id === "activate"));
+  assert.ok(!launch.states.find((s) => s.state === "dry run only").needs.includes("all-clear"));
+  // Every state names the layers it cannot stand without.
+  for (const o of Object.values(by)) for (const s of o.states) if ((s.needs || []).length) assert.ok((s.must_pass || []).length, `${o.id} "${s.state}" has no must_pass`);
+  assert.ok(by["tracking-setup"].states.find((s) => s.state === "test seen").needs.includes("result-test"));
+  assert.ok(!by["tracking-setup"].states.find((s) => s.state === "checklist prepared").needs.includes("result-test"));
+});
+
+test("work orders: a layer record with a skipped layer, an empty pass or an overclaimed state fails", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-record-"));
+  const row = (l, v, e, f = "") => `| ${l} | ${v} | ${e} | ${f} |`;
+  const rows = [
+    row("1 fundamentals", "pass", "offer file proof rows 1 to 3; landing page copy on file read"),
+    row("2 premises", "pass", "four premises compared; two rejected as category slogans"),
+    row("3 cast-treatment", "pass", "hands-only against illustrated planner; hands chosen for recognition"),
+    row("4 visual-stop", "fail, then pass", "frost-bitten seedlings frame read with copy hidden", "returned to premises; replaced the generic garden shot"),
+    row("5 connection", "pass", "sequence read start to end: the planner answers the frost loss"),
+    row("6 claims", "pass", "claims map against proof rows 1 and 3; the review withheld, no permission on record"),
+    row("7 review", "pass", "self-review; Hook 4, Glance 4, One job 4, Proof 3"),
+    row("8 copy", "pass", "each field read against the claims map; no required strings for this offer"),
+    row("9 destination", "not checked", "the page is not reachable from here; the operator can open it"),
+    row("10 production", "not checked", "no image tool connected here; production brief written"),
+    row("11 render-review", "not checked", "nothing rendered"),
+    row("whole", "not checked", "no finished ad to view"),
+  ];
+  const swap = (label, r) => rows.map((x) => (x.startsWith(`| ${label} `) ? r : x));
+  const doc = (r, state) => ["# ad", "", "## Layer record", "Work order: static-ad", "| Layer | Verdict | Evidence: what was looked at | Fix made or return |", "| --- | --- | --- | --- |", ...r, `State: ${state}`, ""].join("\n");
+  const check = (name, text) => {
+    const f = path.join(tmp, name);
+    fs.writeFileSync(f, text);
+    return wo("--record", f);
+  };
+  try {
+    const good = check("good.md", doc(rows, "copy-ready"));
+    assert.equal(good.code, 0, good.out);
+    const over = check("over.md", doc(rows, "creative-ready"));
+    assert.equal(over.code, 1);
+    assert.match(over.out, /state "creative-ready" needs layer "render-review" to pass; it is not checked/);
+    const skipped = check("skipped.md", doc(rows.filter((r) => !r.includes("cast-treatment")), "copy-ready"));
+    assert.equal(skipped.code, 1);
+    assert.match(skipped.out, /layer "cast-treatment" has no row/);
+    const empty = check("empty.md", doc(rows.map((r) => (r.includes("2 premises") ? row("2 premises", "pass", "looks good") : r)), "copy-ready"));
+    assert.equal(empty.code, 1);
+    assert.match(empty.out, /layer "premises" passes with no evidence/);
+    const unknown = check("unknown.md", doc(rows, "ready to ship"));
+    assert.equal(unknown.code, 1);
+    assert.match(unknown.out, /is not one of: copy-ready, creative-ready, not ready/);
+    // A pass whose evidence says the check was not made, two verdicts in one row, and n/a on a layer the state depends on.
+    const notDone = check("notdone.md", doc(swap("whole", row("whole", "pass", "Not read beside the destination page because it could not be opened")), "copy-ready"));
+    assert.equal(notDone.code, 1);
+    assert.match(notDone.out, /layer "whole" is marked pass but its evidence says the check was not made/);
+    const mixed = check("mixed.md", doc(swap("8 copy", row("8 copy", "pass for the feed fields, not checked for stories", "fields read against the claims map")), "copy-ready"));
+    assert.equal(mixed.code, 1);
+    assert.match(mixed.out, /layer "copy" carries two verdicts/);
+    const dodged = check("dodged.md", doc(swap("6 claims", row("6 claims", "n/a", "no claims in this ad at all")), "copy-ready"));
+    assert.equal(dodged.code, 1);
+    assert.match(dodged.out, /state "copy-ready" needs layer "claims" to pass; it is n\/a/);
+    const carried = check("carried.md", doc(swap("5 connection", row("5 connection", "carried", "passed in the record of 2026-10-07; the payoff did not change")), "copy-ready"));
+    assert.equal(carried.code, 0, carried.out);
+    // An n/a needs a real reason, and the whole-output row is never n/a.
+    const thin = check("thin.md", doc(swap("9 destination", row("9 destination", "n/a", "skipped")), "copy-ready"));
+    assert.equal(thin.code, 1);
+    assert.match(thin.out, /layer "destination" is n\/a with no reason/);
+    const wholeNa = check("wholena.md", doc(swap("whole", row("whole", "n/a", "nothing was assembled in this session")), "copy-ready"));
+    assert.equal(wholeNa.code, 1);
+    assert.match(wholeNa.out, /whole-output row is never n\/a/);
+    // The one-line form used in a reply: evidence in brackets, anywhere on its line.
+    const items = "fundamentals pass (offer file and proof table read) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (claims map against proof rows; review withheld) · review pass (self-review, Hook 4 Glance 4) · whole pass (set read as the operator sees it)";
+    const line = check("line.md", `Three concepts below.\n\nLayers (ad-concepts): ${items}. State: concept-ready, untested\n`);
+    assert.equal(line.code, 0, line.out);
+    const stateFirst = check("statefirst.md", `State: concept-ready. Layers (ad-concepts): ${items}.\n`);
+    assert.equal(stateFirst.code, 0, stateFirst.out);
+    const bare = check("bare.md", "Layers (ad-concepts): fundamentals pass · premises pass · cast-treatment pass · visual-stop pass · connection pass · claims pass · review pass · whole pass. State: concept-ready\n");
+    assert.equal(bare.code, 1);
+    assert.match(bare.out, /layer "fundamentals" passes with no evidence/);
+    const shortLine = check("short.md", "Layers (ad-concepts): fundamentals pass (offer file read) · premises pass (five compared) · review pass (self-review, scores 4) · whole pass (set read whole). State: concept-ready\n");
+    assert.equal(shortLine.code, 1);
+    assert.match(shortLine.out, /layer "visual-stop" has no row/);
+    const lineMixed = check("linemixed.md", "Layers (change-recheck): record pass (offer file read back) · dependents pass (ads searched for the old wording) · recheck pass for the two October ads, not checked for the four live ads (no creative files) · states pass (ledger beside the records) · whole not checked (page unseen). State: partly rechecked\n");
+    assert.equal(lineMixed.code, 1);
+    assert.match(lineMixed.out, /layer "recheck" carries two verdicts/);
+    const piped = spawnSync(process.execPath, [path.join(scripts, "workorder.mjs"), "--record", "-"], { encoding: "utf8", input: `Layers (ad-concepts): ${items}. State: concept-ready\n` });
+    assert.equal(piped.status, 0, piped.stdout);
+    assert.equal(check("none.md", "# nothing here\n").code, 1);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("work orders: a broken map fails the check", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-map-"));
+  const hub = path.join(tmp, "hub");
+  fs.cpSync(fx("hub"), hub, { recursive: true });
+  fs.mkdirSync(path.join(hub, "core/_system"), { recursive: true });
+  const layer = { id: "one", name: "One", build: "b", method: ["core/skills/ad-strategy/SKILL.md#no-such-heading"], check: "is it right", evidence: "e", on_fail: "f", returns_to: ["nowhere"] };
+  const order = {
+    id: "plan", name: "Plan", say: ["plan it"], owner: "rogue", load: ["core/skills/missing/SKILL.md"], record: "reply",
+    layers: [layer], whole: { check: "ok?", evidence: "e", on_fail: "f" },
+    recheck: [{ when: "x changes", redo: ["ghost"] }], states: [{ state: "done", needs: ["ghost"], must_pass: ["phantom"], means: "m" }], contains: ["nothing"],
+  };
+  fs.writeFileSync(path.join(hub, "core/_system/work-orders.json"), JSON.stringify({ version: 1, work_orders: [order] }));
+  try {
+    const r = wo("--hub", hub, "--check");
+    assert.equal(r.code, 1);
+    for (const want of [
+      /owner "rogue" is not a built skill/,
+      /load file not found: core\/skills\/missing\/SKILL\.md/,
+      /method core\/skills\/ad-strategy\/SKILL\.md#no-such-heading: no heading/,
+      /"check" is one question and ends with a question mark/,
+      /returns_to names unknown layer "nowhere"/,
+      /recheck names unknown layer "ghost"/,
+      /state "done" needs unknown layer "ghost"/,
+      /state "done" must_pass names "phantom", which is not in its needs/,
+      /names unknown work order "nothing"/,
+      /skill ad-strategy owns no work order/,
+    ]) assert.match(r.out, want);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("work orders: pointers in a business repo carry the staged-work step", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-pointer-"));
+  try {
+    const r = spawnSync(process.execPath, [path.join(hubRoot, "install/adhub-skills.mjs"), "--root", tmp], { encoding: "utf8" });
+    assert.equal(r.status, 0, r.stderr);
+    const text = fs.readFileSync(path.join(tmp, ".claude/skills/adhub-ad-creative/SKILL.md"), "utf8");
+    assert.match(text, /workorder\.mjs --for "<the request>"/);
+    assert.match(text, /This skill owns: .*ad-concepts.*static-ad/);
+    assert.match(text, /Do not draft\s+the finished output and check it afterward/);
+    const steps = [...text.matchAll(/^(\d)\. /gm)].map((m) => Number(m[1]));
+    assert.deepEqual(steps, steps.map((_, i) => i + 1), "pointer steps are numbered in order");
+    const live = fs.readFileSync(path.join(tmp, ".claude/skills/adhub-ad-launch/SKILL.md"), "utf8");
+    const liveSteps = [...live.matchAll(/^(\d)\. /gm)].map((m) => Number(m[1]));
+    assert.deepEqual(liveSteps, [1, 2, 3, 4, 5, 6]);
+    assert.match(live, /5\. Before anything reaches an ad account/);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("staged work: the contract keeps its rules explicit", async () => {
+  const { readFileSync } = await import("node:fs");
+  const text = readFileSync(path.join(hubRoot, "core/_system/staged-work.md"), "utf8");
+  for (const rule of [/One layer, one question/, /Do not draft the finished piece and check it afterward/, /Evidence is something that was looked at/, /`n\/a` with the reason/, /`not checked` with the reason/, /does not pass its parent/, /dependents lose their pass/, /not a request for the operator to\s+approve each step/, /Three repair cycles/, /never padded/, /Tested structure is not tested performance/, /Naming a gap is a pass/, /One verdict per row/, /`carried`/, /a pass whose evidence says the check was not made is a `not checked`/, /emergency stop covers only/]) {
+    assert.match(text, rule);
+  }
+  const video = readFileSync(path.join(hubRoot, "core/skills/ad-creative/references/video-build.md"), "utf8");
+  assert.deepEqual([...video.matchAll(/^## Part (\d)\./gm)].map((m) => Number(m[1])), [1, 2, 3, 4, 5, 6, 7]);
+  assert.match(video, /are not a watch/);
+});

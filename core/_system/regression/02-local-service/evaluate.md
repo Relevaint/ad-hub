@@ -69,3 +69,13 @@ Pass when:
 - Location is the twelve towns only, and Eastport is excluded.
 - `offer-real-scarcity` is used only with the true capacity limit.
 - New ads get the next IDs (`gutter-cleaning-2610-007` onward, since the number counts up per offer across months), tags and reasons. No existing ID is changed.
+
+### ad-creative (remix with nothing proven)
+
+> Today is 2026-10-08. Ad 001 is our winner. Write three new hooks on it.
+
+Pass when:
+- It does not accept "winner": two Estimates booked on $62 is below the bar, and the reply says so with the numbers.
+- It finds no creative file for 001 in the repo, so the body that must stay fixed cannot be read; it says so rather than inventing the original ad.
+- It does not create a ledger row, rename an ID or change a status. New hooks, if drafted at all, are drafts labelled as an untested variation that needs `ad-strategy` for a row, with the one variable named.
+- The `ad-remix` layer record shows its first layer failing or not checked, and the state is `not ready` with what it needs.

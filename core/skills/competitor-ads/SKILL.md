@@ -9,7 +9,7 @@ when_to_use:
   - what do other businesses like us advertise
 metadata:
   adhub:
-    version: 0.1.0
+    version: 0.2.0
     layer: research
     reads:
       - offers/
@@ -47,6 +47,23 @@ Read the learnings for the offer: if an ad modelled on a competitor has run for 
 business before, its result outranks any new observation.
 
 No research files yet is fine. Work from the offer and the request.
+
+## Work order
+
+Every output of this skill is built in layers under
+[staged work](../../_system/staged-work.md): build one layer, answer its check from the
+evidence it names, write its line in the layer record, then build the next. Get the work
+order before starting:
+
+```
+node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
+```
+
+or open it from [work-orders/](../../../work-orders/README.md). This skill owns
+`competitor-report`.
+The method below is what each layer points at, and the quality gate is the whole-output
+check. Do not draft the finished output and check it afterward. Report the state the
+record supports, nothing stronger.
 
 ## Who to look at
 
@@ -127,6 +144,8 @@ formats and customer types nobody addresses, how much everyone leans on discount
 free offers. Write each pattern as a candidate for `ad-strategy`, with the advertisers
 it was seen at and how it would be adapted. Adapt, never duplicate: a copied ad is a
 policy risk, a legal risk and the weakest strategy two of the hub's sources agree on.
+A pattern rests only on complete observations: an ad whose video was not watched or
+whose page was not opened can feed a lead, never a pattern written as seen.
 
 ### 7. The swipe file
 

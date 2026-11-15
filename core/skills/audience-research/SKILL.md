@@ -10,7 +10,7 @@ when_to_use:
   - voice of customer
 metadata:
   adhub:
-    version: 0.1.0
+    version: 0.2.0
     layer: research
     reads:
       - offers/
@@ -49,6 +49,23 @@ who converted outranks a guess about who might.
 
 No offer file yet is fine: work from the request and the business's description, name
 the offer by the thing sold, and say that `start-here` records it. One offer at a time.
+
+## Work order
+
+Every output of this skill is built in layers under
+[staged work](../../_system/staged-work.md): build one layer, answer its check from the
+evidence it names, write its line in the layer record, then build the next. Get the work
+order before starting:
+
+```
+node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
+```
+
+or open it from [work-orders/](../../../work-orders/README.md). This skill owns
+`audience-report`.
+The method below is what each layer points at, and the quality gate is the whole-output
+check. Do not draft the finished output and check it afterward. Report the state the
+record supports, nothing stronger.
 
 ## Where buyers speak
 
@@ -134,7 +151,10 @@ there. No authority file: skip the source, list it as not reached, and say why.
 
 ## Quality gate
 
-Before writing the summary, check the files:
+Before writing the summary, check the files, in two steps: the lines first (each traced
+to the page or file it was read on), then the types (each traced to its lines). A type
+the lines do not support is demoted to a lead or sent back for more lines. It is never
+reworded to sound supported.
 
 - Every claim in `research/audience.md` cites IDs from `research/voc.md`. Every line in
   `voc.md` has a source, a date, and a link or a file in the repo.

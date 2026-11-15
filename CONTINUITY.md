@@ -40,7 +40,9 @@ instructions. Nothing about a business belongs in this public hub.
 
 A chat or Project cannot use local pointer files as if they were a checkout. Supply or
 sync the actual files the session can access: this hub's `AGENTS.md`, `README.md`, the
-selected skill and required references; for maintenance, also the current handoff.
+selected skill and required references, the output's work order page
+(`work-orders/<id>.md`) and `core/_system/staged-work.md`; for maintenance, also the
+current handoff.
 Keep their source repository, path and revision/date identifiable, and refresh stale
 copies before continuing. The `CLAUDE.md` line or an `adhub-` wrapper alone is not the
 skill. Do not assume a hook ran, a file was synced or a relative link was followed.
@@ -63,6 +65,7 @@ without writing files, running installers, probing write access or touching ad a
    or a shared name. Identify the client/offer separately; ask if either is unclear.
 3. Name the instruction and handoff files actually read. Select the relevant skill via
    the README task table and read its body and required references, not just its wrapper.
+   Name the work order for the output asked for and the layers it lists.
 4. Report the effective boundary from the task authorization, runtime sandbox/tool
    permissions and repo/client rules: what is readable, where any later output may be
    written, and which approvals are still needed. If any part cannot be inspected,
