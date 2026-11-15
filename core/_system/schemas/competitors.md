@@ -55,6 +55,20 @@ For ad-strategy. Origin tag: modelled on a competitor. Adapt the structure, neve
 
 ## Not seen, and next refresh
 - <what could not be opened or watched, and why>. Next run: ...
+
+## Layer record
+Work order: competitor-report
+| Layer | Verdict | Evidence: what was looked at | Fix made or return |
+| --- | --- | --- | --- |
+| 1 question |  |  |  |
+| 2 advertisers |  |  |  |
+| 3 breakdowns |  |  |  |
+| 4 pages |  |  |  |
+| 5 observed-inferred |  |  |  |
+| 6 patterns |  |  |  |
+| 7 swipe |  |  |  |
+| whole |  |  |  |
+State: report ready | report ready, library not opened
 ```
 
 ## Template: `research/swipe/<yyyymmdd>-<advertiser-slug>-<nn>.md`

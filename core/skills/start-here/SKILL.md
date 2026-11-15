@@ -11,7 +11,7 @@ when_to_use:
   - I want more bookings, leads or sales
 metadata:
   adhub:
-    version: 0.1.0
+    version: 0.2.0
     layer: strategy
     reads:
       - ads.yaml
@@ -63,18 +63,38 @@ No `ads/` folder is normal for a new business. A sentence and a goal are enough 
 start. Context improves the work; it never gates it. Going live has gates, and naming
 them is this skill's job.
 
+## Work order
+
+Every output of this skill is built in layers under
+[staged work](../../_system/staged-work.md): build one layer, answer its check from the
+evidence it names, write its line in the layer record, then build the next. Get the work
+order before starting:
+
+```
+node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
+```
+
+or open it from [work-orders/](../../../work-orders/README.md). This skill owns
+`ad-program`, `readiness`, `change-recheck`. `ad-program` is the route for a request that spans several skills: it names the work orders in order. `change-recheck` is for a fact, a page or a brief that changed after work had passed.
+The method below is what each layer points at, and the quality gate is the whole-output
+check. Do not draft the finished output and check it afterward. Report the state the
+record supports, nothing stronger.
+
 ## Modes
 
 - **Route.** The request is vague ("help me get customers") or spans several skills
   ("set up ads for this"). Decide the first useful move, do it when it is small, and
-  name what follows.
+  name what follows. A request that spans several skills follows the `ad-program` work
+  order: name the work orders in order, each with its owner, so the next session opens
+  the right one instead of improvising.
 - **Record.** A business or an offer is new. Create or extend the `ads/` workspace from
   the facts supplied, nothing more.
 - **Readiness.** "What do you still need", "are we ready". Compare what is recorded
   against the gates and answer with the gaps, not with a form.
 
 One request often uses two: record, then route. A specific single-asset request ("write
-three ads") is not this skill's: say which skill owns it in one line and hand it over.
+three ads") is not this skill's: say which skill and work order own it in one line and
+hand it over.
 
 ## Method
 
@@ -178,8 +198,8 @@ gaps. Shapes:
 - **Existing offer, vague request.** Read the ledger and the latest results if any,
   name the one job that moves things, and start it or hand it to its skill with what it
   needs.
-- **Multi-step request.** Three to five steps, each naming the skill and what it
-  produces, with the first done now when it is small.
+- **Multi-step request.** Three to five steps, each naming the skill, its work order
+  and what it produces, with the first done now when it is small.
 
 Not a workshop: the only questions asked out loud are the live gaps, and only when the
 request is about running ads. Everything else waits in the Gaps section for when it
@@ -236,7 +256,10 @@ Files first, inside the business repo's `ads/`:
 - `offers/<slug>.md` from the offer schema, `updated-by: start-here`. Change an existing
   file by adding to it; the repo's history keeps the earlier version. When a new
   statement contradicts a fact the business wrote, record both with their dates and ask;
-  never silently replace it.
+  never silently replace it. A confirmed change (a new price, a dropped guarantee, a
+  changed page) follows the `change-recheck` work order: everything in `ads/` that
+  rested on the old fact is listed with its owner and checked again, and work the change
+  did not touch is left alone.
 - `calendar.md` when the business supplied dates or seasons.
 - `authority.md` only from an explicit decision, as above.
 - `ads.yaml`, the manifest (`core/_system/schemas/manifest.md`), created with the first

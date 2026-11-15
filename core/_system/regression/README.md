@@ -32,7 +32,11 @@ Each case has two parts that must never be shown together:
    other cases, or earlier outputs.
 3. When it finishes, judge the files it wrote against the pass criteria before reading
    anything it says about its own work. For finished creative, look at the actual render.
-4. Record the verdict: case, request, hub commit, and pass or fail on each criterion with
+4. Check the run's layer record: `node core/_system/scripts/workorder.mjs --record <the
+   file it wrote, or its reply saved to a file>`. Every layer of the work order has a
+   row, every pass names what was looked at, and the state is one the rows support. A
+   passing record shows no layer was skipped; the pass criteria still judge the work.
+5. Record the verdict: case, request, hub commit, and pass or fail on each criterion with
    a line of evidence. Put it in the PR that changes the skill and in the `HANDOFF.md`
    Last Session block. A verdict is about the hub, so it never goes into a business repo
    or a learnings file.

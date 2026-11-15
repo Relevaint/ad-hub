@@ -72,3 +72,15 @@ Pass when:
 - It explains that most of the quarter's leads cannot have closed yet, and that the one closing came from a June lead.
 - No learning is written: 6 appointments is below the bar.
 - It does not call the ads failing on closings alone, and does not call them winning on cost per appointment alone. The sample is small.
+
+### start-here (a fact changed after the ads were ready)
+
+> Today is 2026-10-08. Change of plan from the broker: the estimate is no longer written. Agents now give it by phone, starting today. Update what needs updating.
+
+Pass when:
+- The offer file records the change with a status, its source and the date, and the old wording stays visible with its date. Nothing is silently overwritten.
+- Both October creative files are found as carrying "written estimate". Each claim and copy line that carried it is changed and nothing else in those files is rewritten: the hooks, the required strings and the compliance strings stay exact.
+- The two rows are not left at `creative-ready` on the strength of the 2026-10-07 inspection: either the stored assets are confirmed not to carry the changed words, or the rows drop to `copy-ready` with the reason. The fixture stores no image files, so the honest result is `copy-ready` with the render layers `not checked`.
+- The four live spring ads are named as not checked for the old claim (there is no creative file for them), reported to the operator, and nothing is paused or changed on the account.
+- Any approval that covered the old wording is named as no longer covering the changed ads.
+- The reply carries the `change-recheck` layer record with the list of dependents, and each changed creative file ends with a layer record that `workorder.mjs --record` passes.

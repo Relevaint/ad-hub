@@ -16,14 +16,24 @@
 // as Marketing-Hub's hub-* pointers, are never touched. --hub overrides the hub location
 // (used by the tests); by default it is the hub this file sits in.
 
-import { writeFileSync, mkdirSync, readdirSync, existsSync, rmSync, statSync } from "node:fs";
+import { writeFileSync, mkdirSync, readdirSync, existsSync, rmSync, statSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs, UsageError, loadSkills, run, isMain } from "../core/_system/scripts/lib.mjs";
 
 const PREFIX = "adhub-";
 
-function pointer(skill, hubRef) {
+// The work orders a skill owns, from the hub's map. A hub with no map yields none and
+// the pointer simply leaves the step out.
+function workOrders(hub, skill) {
+  const file = path.join(hub, "core", "_system", "work-orders.json");
+  if (!existsSync(file)) return [];
+  try {
+    return (JSON.parse(readFileSync(file, "utf8")).work_orders || []).filter((o) => o.owner === skill).map((o) => o.id);
+  } catch { return []; }
+}
+
+function pointer(skill, hubRef, owned = []) {
   const p = (rel) => path.posix.join(hubRef, rel);
   const sentence = (t) => (/[.!?]$/.test(t.trim()) ? t.trim() : `${t.trim()}.`);
   const desc = [skill.description && sentence(skill.description), skill.whenToUse && sentence(`Use when: ${skill.whenToUse}`)]
@@ -34,7 +44,18 @@ function pointer(skill, hubRef) {
    operator gives in chat in the approvals log before acting on it.
 `
     : "";
-  const n = live ? 5 : 4;
+  const staged = owned.length
+    ? `3. Build in layers. Get the work order for what was asked:
+   \`node ${p("core/_system/scripts/workorder.mjs")} --for "<the request>"\`
+   (or open \`${p("work-orders/README.md")}\`). This skill owns: ${owned.join(", ")}.
+   Load everything the work order lists, then work one layer at a time: build it, answer
+   its check from the evidence it names, write its line in the layer record. Do not draft
+   the finished output and check it afterward. The rules are in
+   \`${p("core/_system/staged-work.md")}\`.
+`
+    : "";
+  const k = staged ? 1 : 0;
+  const n = (live ? 5 : 4) + k;
   return `---
 name: ${PREFIX}${skill.name}
 description: "${desc} Ad-Hub skill; this repo is the business workspace. If Marketing-Hub is also installed here, say which hub you used and why."
@@ -52,11 +73,12 @@ Do these in order, every time this skill runs:
 2. Load this business's context the way the skill declares it:
    \`node ${p("core/_system/scripts/context.mjs")} --for ${skill.name} --root .\`
    Add \`--offer <slug>\` when the work is for one offer.
-3. Follow the skill. Write only the files it owns, inside this repo's \`ads/\` folder.
+${staged}${3 + k}. Follow the skill. Write only the files it owns, inside this repo's \`ads/\` folder.
    Nothing about this business is ever written into Ad-Hub.
-${live}${n}. This repo's own rules in AGENTS.md (copy rules, identity strings, approvals) still
+${live.replace(/^4\./, `${4 + k}.`)}${n}. This repo's own rules in AGENTS.md (copy rules, identity strings, approvals) still
    apply. If a step cannot be done on this platform, say which one and why. Never skip it
-   silently.
+   silently.${staged ? ` End with the state the layer record supports, and name any layer that failed or
+   could not be checked.` : ""}
 `;
 }
 
@@ -89,7 +111,7 @@ export function main(argv) {
   for (const s of skills) {
     const dir = path.join(out, `${PREFIX}${s.name}`);
     mkdirSync(dir, { recursive: true });
-    writeFileSync(path.join(dir, "SKILL.md"), pointer(s, hubRef));
+    writeFileSync(path.join(dir, "SKILL.md"), pointer(s, hubRef, workOrders(hub, s.name)));
   }
   const note = skills.length ? "" : " (no skills are built in the hub yet)";
   console.log(`wrote ${skills.length} Ad-Hub skill pointer(s) to ${path.relative(root, out) || out} (hub at ${hubRef})${note}`);

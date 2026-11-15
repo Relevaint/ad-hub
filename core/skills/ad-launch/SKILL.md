@@ -10,7 +10,7 @@ when_to_use:
   - launch these two ads
 metadata:
   adhub:
-    version: 0.1.0
+    version: 0.2.0
     layer: operations
     reads:
       - offers/
@@ -54,6 +54,23 @@ hold). `references/launch-sequence.md` carries the gate checklist, the approval 
 and the dry-run format; load it every time. The platform skill (`meta-system/SKILL.md`
 for Meta) maps each create, preview and activation to its call with the call's
 verification status; load it before writing the change list.
+
+## Work order
+
+Every output of this skill is built in layers under
+[staged work](../../_system/staged-work.md): build one layer, answer its check from the
+evidence it names, write its line in the layer record, then build the next. Get the work
+order before starting:
+
+```
+node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
+```
+
+or open it from [work-orders/](../../../work-orders/README.md). This skill owns
+`launch`. Its states keep a dry run, objects created paused and ads the platform confirmed live apart.
+The method below is what each layer points at, and the quality gate is the whole-output
+check. Do not draft the finished output and check it afterward. Report the state the
+record supports, nothing stronger.
 
 ## The gates
 
@@ -171,7 +188,9 @@ Before writing the summary, check:
 ## Output
 
 Files first: the change-log entries in `ads/changes/` (dry run, creations, activations),
-the approval line in `ads/authority.md`, the ledger rows moved. Then the chat summary:
+the approval line in `ads/authority.md`, the ledger rows moved. The last entry the
+session writes carries the layer record and one of three states: dry run only, created
+paused, or live. A prepared list is never reported as carried out. Then the chat summary:
 the gates as a short table, the change list or where it is, what was activated or that
 nothing was and why, the first judging date from the test plan, and the next skill.
 

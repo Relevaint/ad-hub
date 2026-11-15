@@ -49,6 +49,17 @@ Proposed. No line behind these yet; `ad-strategy` may test them as bold ads.
 
 ## Not reached, and next refresh
 - <source>: <why>. Next run: <what would settle the open questions>.
+
+## Layer record
+Work order: audience-report
+| Layer | Verdict | Evidence: what was looked at | Fix made or return |
+| --- | --- | --- | --- |
+| 1 question |  |  |  |
+| 2 source-walk |  |  |  |
+| 3 customer-types |  |  |  |
+| 4 findings |  |  |  |
+| whole |  |  |  |
+State: findings ready | leads only | model knowledge only
 ```
 
 ## Notes

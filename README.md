@@ -6,12 +6,15 @@ business facts. Any business repo can plug into it; the business repo supplies t
 context and keeps the records. The core is platform-neutral. Meta is the first platform
 layer; later platforms follow the same shape.
 
-**Status (2026-10-20): system layer, all nine core skills and the Meta layer's skill
-built.** Stages 2 and 3 of `BUILD-PLAN.md` are built; the Meta skill rests on Meta's
-documentation and has not run against a real account, the automations (Stage 4)
-remain, and no skill has yet run in a real business repo. [BUILD-PLAN.md](BUILD-PLAN.md) is the build
-queue; [AGENTS.md](AGENTS.md) holds the working rules and the build decisions;
-[HANDOFF.md](HANDOFF.md) holds the current state and the last session.
+**Status (2026-11-15).** Built: the system layer, all nine core skills, the Meta
+layer's skill, the staged creative passes (2026-10-29), and staged work for every output
+(2026-11-15): one [work order](work-orders/README.md) per output, built in layers with a
+layer record. Not built: the automations (Stage 4 of `BUILD-PLAN.md`). Not yet verified:
+no row of the Meta action map has run on a real account, and no finished image or video
+has been produced and inspected in a regression run. What the skills have been tested
+on is recorded per session in [HANDOFF.md](HANDOFF.md); what has run for a business is
+recorded in that business's repo, never here. [BUILD-PLAN.md](BUILD-PLAN.md) is the build
+queue; [AGENTS.md](AGENTS.md) holds the working rules and the build decisions.
 [CONTINUITY.md](CONTINUITY.md) covers canonical hub routes, Claude Code versus
 chat/Projects setup, and read-only fresh-session checks.
 
@@ -33,11 +36,12 @@ Ad-Hub/
 ├── BUILD-PLAN.md        build queue with a brief per skill
 ├── PROVENANCE.md        where outside material came from
 ├── people/              operator profile
+├── work-orders/         one page per output: what to load, the layers to build and check (generated)
 ├── install/             plug-in mechanism for business repos: adhub- pointer generator and hook
 ├── source-notes/        written reviews of outside sources, in our own words
 ├── core/                the chassis, platform-neutral
-│   ├── _system/         conventions, memory contract, spend authority, schemas, scripts, regression cases
-│   ├── skills/          one folder per skill (to build)
+│   ├── _system/         conventions, staged work, the output map, memory contract, spend authority, schemas, scripts, regression cases
+│   ├── skills/          one folder per skill, all nine built
 │   └── automations/     scheduled routines (to build)
 └── meta-system/         thin Meta layer: SKILL.md (how each action is done on Meta) and dated platform facts
 ```
@@ -60,12 +64,29 @@ All nine skills are built.
 
 Load only the skill and references the job needs.
 
+**Know the output?** Go one step further than the skill: every output has a work order,
+a page that lists what to load and the layers to build and check, in order.
+
+```
+node core/_system/scripts/workorder.mjs --for "<what was asked for>"
+```
+
+or open [work-orders/README.md](work-orders/README.md). Build one layer at a time, keep
+the layer record, and report the state the record supports
+([staged work](core/_system/staged-work.md)). Finding the skill and skimming it is how
+steps get skipped; the work order is the list of steps.
+
 ## How the work flows
 
 Research feeds strategy. Strategy decides what to make and how it will be tested.
 Creative develops it through [separate passes and rejection gates](core/skills/ad-creative/references/creative-passes.md), producing only the assets requested. Concepts-only work stops before generation. Setup makes sure the account can measure the real result. Launch
 puts approved ads live. Management watches daily and acts on a schedule. Review reads
 the results and writes what was learned, which strategy uses next time.
+
+Every one of those outputs is built in layers under
+[staged work](core/_system/staged-work.md): one layer is built and checked before the
+next relies on it, the assembled output is checked as a whole, and a change upstream
+sends what rested on it back for another check.
 
 This is a dependency, not a waterfall. A single ad can be drafted from one sentence of
 context. Missing files never block drafting. Going live is different: it needs the

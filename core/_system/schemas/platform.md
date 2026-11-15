@@ -60,6 +60,20 @@ Shaped by: <offer file, authority, test plan, platform layer files with their la
 
 ## Open
 - <what could not be checked from this platform, and who can>
+
+## Layer record
+Work order: tracking-setup
+| Layer | Verdict | Evidence: what was looked at | Fix made or return |
+| --- | --- | --- | --- |
+| 1 signal |  |  |  |
+| 2 path |  |  |  |
+| 3 result-test |  |  |  |
+| 4 conversion-location |  |  |  |
+| 5 structure |  |  |  |
+| 6 category |  |  |  |
+| 7 change-list |  |  |  |
+| whole |  |  |  |
+State: checklist prepared | path checked, test not seen | test seen
 ```
 
 ## Notes
@@ -68,5 +82,8 @@ Shaped by: <offer file, authority, test plan, platform layer files with their la
   stale fact is caught at the next run.
 - "Seen arriving" means seen on the platform's own events view with the value, on a
   date. A snapshot matched by tracking tag proves the tag, not the signal.
+- The state says which of three things is true and they are never blurred: a checklist a
+  person still has to follow, a path checked with the real result not yet seen, or the
+  real result seen arriving. Only the last one clears the live gate.
 - The change list is executed by `ad-launch`, which logs each creation in
   `ads/changes/`. This file records that it happened and with what identifiers.

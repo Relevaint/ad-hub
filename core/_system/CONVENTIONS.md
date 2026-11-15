@@ -19,6 +19,9 @@ If more than a handful of a skill's rules are hard, the skill is over-strict. Re
 The owner-required staged creative workflow is a quality-contract exception: its
 separate decisions, scope boundaries and rejection gates are required; its example
 casts, treatments and mechanisms remain options, not mandatory creative formulas.
+[Staged work](staged-work.md) is the same kind of exception for every skill (Clay,
+2026-11-15): the layers, their checks and the layer record are required; the method
+inside a layer remains a default an agent may improve on.
 
 ## 1. What a skill carries
 
@@ -82,6 +85,7 @@ only a page read, a real run or a documented absence may set.
 
 Mission in two or three sentences (the job, what done means, the judgment it carries).
 Context (one block: how to load business context, and what to do when it is missing).
+Work order (the outputs the skill owns and the pointer to staged work; section 12).
 Modes, if more than one. The method. A quality gate. Output (what is written where).
 What's next (two to four next skills with reasons).
 
@@ -125,6 +129,9 @@ A play is a specific, named tactic from a source. Plays live in
 
 Generation never ends at "here you go".
 
+- Every output is built in layers under [staged-work.md](staged-work.md), each checked
+  before the next relies on it, with a layer record. The skill's quality gate is the
+  whole-output check at the end, not the only check.
 - Copy and concepts: score against the skill's rubric with calibrated anchors, revise
   the weak part, rescore. Use up to three revision cycles, then present only passing
   work with its history. A failed gate remains failed at the limit; report the shortfall
@@ -138,7 +145,8 @@ Generation never ends at "here you go".
 
 Concepts-only requests follow the creative skill's chat-first scope; no media generation
 or ledger promotion. Otherwise files first: write the deliverable into the business repo, then summarise in chat. End
-with the files saved and two to four next steps.
+with the files saved, the state the layer record supports (naming any layer that failed
+or could not be checked) and two to four next steps.
 
 Quick mode: a specific single-asset request gets the asset, not a scan or a workshop.
 Quick mode never waives a hard rule.
@@ -155,4 +163,22 @@ pinned to a revision with its licence, and recorded in `PROVENANCE.md`.
 
 Regression cases use synthetic businesses ([regression/](regression/README.md)). Run each
 in a fresh agent given only the hub path, a client folder and the request. Judge the artifacts before reading their
-self-scores. A passing case is not proof of performance.
+self-scores. Check the run's layer record with `workorder.mjs --record`; a record that
+passes shows no layer was skipped, not that the work is good. A passing case is not
+proof of performance.
+
+## 12. The output map
+
+`work-orders.json` holds one entry per output the hub makes; `work-orders/` is generated
+from it (`node core/_system/scripts/workorder.mjs --write`) and `npm test` fails when the
+two disagree. Keep it true in the same PR as the skill:
+
+- A new skill, mode or deliverable gets a work order. Every built skill owns at least one.
+- A layer is one decision with one check that ends in a question mark, the evidence
+  that answers it, and where a failure goes back. If a layer needs two questions it is
+  two layers.
+- A layer points at its method with `file#heading`. Rename the heading and the map
+  together. Never paste the method into the map: each rule is stated once, in the skill.
+- A state names the layers that must have passed before the output may be called that.
+- Layers shared by several outputs live once under `layer_sets` and are pulled in with
+  `{"use": "<set>"}`.

@@ -10,7 +10,7 @@ when_to_use:
   - hold the action session
 metadata:
   adhub:
-    version: 0.1.0
+    version: 0.2.0
     layer: operations
     reads:
       - offers/
@@ -57,6 +57,23 @@ the calendar and the offer's limits (capacity, stock, seasons), and the learning
 the session checklist and the arithmetic; load it every time. The platform skill
 (`meta-system/SKILL.md` for Meta) maps pause, activate, budget changes and the activity
 log to their calls; load it before any account read or change.
+
+## Work order
+
+Every output of this skill is built in layers under
+[staged work](../../_system/staged-work.md): build one layer, answer its check from the
+evidence it names, write its line in the layer record, then build the next. Get the work
+order before starting:
+
+```
+node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
+```
+
+or open it from [work-orders/](../../../work-orders/README.md). This skill owns
+`daily-watch`, `management-session`, `rollback`, `troubleshooting`. The watch, the session, a rollback and troubleshooting are separate work orders and are never mixed in one run.
+The method below is what each layer points at, and the quality gate is the whole-output
+check. Do not draft the finished output and check it afterward. Report the state the
+record supports, nothing stronger.
 
 ## What reaches the account
 

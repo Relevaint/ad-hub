@@ -15,6 +15,11 @@ each has run against its regression requests and none has yet run in a real busi
 | `ad-manage` (built) | Daily watch for emergencies only; scheduled sessions under the rulebook; rollback | Yes, under recorded authority |
 | `ad-review` (built) | Results by ID from both sources; judged on the deciding metric; learnings at the bar only | No (read-only) |
 
+Each skill's outputs are built in layers under [staged work](../_system/staged-work.md).
+The work order for each output, with what to load and the layers in order, is in
+[work-orders/](../../work-orders/README.md); a skill's own "Work order" section names the
+ones it owns.
+
 `ad-strategy/references/plays.md` is the plays library; `ad-strategy` scout mode refreshes it
 from a hub session.
 
