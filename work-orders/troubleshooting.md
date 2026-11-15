@@ -2,7 +2,7 @@
 
 # Work order: Why the ads stopped working (`troubleshooting`)
 
-**When the ask is:** "why did results drop", "the ads stopped working", "why is performance down", "troubleshoot the ads", "what went wrong with the ads"
+**When the ask is:** "why did results drop", "the ads stopped working", "why is performance down", "troubleshoot the ads", "what went wrong with the ads", "why did my cost per lead go up", "cost per result went up", "results dropped, what happened", "what happened to the ads", "my ads stopped getting leads", "the leads dried up", "sales from the ads fell", "the numbers got worse"
 
 **Owner:** `ad-manage` (Troubleshooting)
 **Live account:** reads only; any fix goes through a session or its owning skill

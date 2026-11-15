@@ -2,7 +2,7 @@
 
 # Work order: Finished video ad (`video-ad`)
 
-**When the ask is:** "make a video ad", "create a video ad", "produce the video for this ad", "UGC video ad", "make a reel ad", "story-driven video ad"
+**When the ask is:** "make a video ad", "create a video ad", "produce the video for this ad", "UGC video ad", "make a reel ad", "story-driven video ad", "make a video ad for the product", "a short video ad"
 
 **Owner:** `ad-creative` (Batch or Quick)
 **Part of:** [`ad-batch`](ad-batch.md)

@@ -2,7 +2,7 @@
 
 # Work order: A batch of planned ads, made and checked together (`ad-batch`)
 
-**When the ask is:** "write the ads for this batch", "make the batch", "make the planned ads", "create the ads in the plan", "produce this batch of ads"
+**When the ask is:** "write the ads for this batch", "make the batch", "make the ads from the plan", "create the ads in the plan", "produce this batch of ads", "make three ads", "make ads for the sale", "create new ads for this offer", "a set of ads", "several ads for the campaign", "a couple of new ads", "a few new ads for the promotion"
 
 **Owner:** `ad-creative` (Batch)
 **Part of:** [`ad-program`](ad-program.md)

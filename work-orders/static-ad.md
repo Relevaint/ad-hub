@@ -2,7 +2,7 @@
 
 # Work order: Finished static image ad (`static-ad`)
 
-**When the ask is:** "make a static ad", "make an image ad", "make an ad", "create an ad", "create a finished ad", "make the ad with its image", "design an ad", "make an ad from this story", "carousel ad"
+**When the ask is:** "make a static ad", "make an image ad", "make an ad", "create an ad", "create a finished ad", "make the ad with its image", "design an ad", "make an ad from this story", "carousel ad", "make me an ad", "create a facebook ad", "one ad for the feed"
 
 **Not this:** A row or a request that says video uses the video-ad work order. With no image tool connected this still runs: it ends at copy-ready with a production brief.
 

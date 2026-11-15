@@ -2,7 +2,7 @@
 
 # Work order: Claims and policy check of existing copy (`claims-check`)
 
-**When the ask is:** "check this copy for claims and policy", "will this ad get rejected", "policy check", "claims check", "is this ad compliant", "review this ad before it runs"
+**When the ask is:** "check this copy for claims and policy", "will this ad get rejected", "policy check", "claims check", "is this ad compliant", "review this ad before it runs", "is this claim ok to use in an ad", "can we say this in an ad", "is this claim allowed", "can I use this review in an ad", "check this claim"
 
 **Not this:** A check diagnoses. It rewrites nothing unless asked.
 

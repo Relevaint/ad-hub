@@ -2,7 +2,7 @@
 
 # Work order: Rollback to the last known good (`rollback`)
 
-**When the ask is:** "roll back the last change", "undo the last change", "revert the ads to how they were", "put it back"
+**When the ask is:** "roll back the last change", "undo the last change", "revert the ads to how they were", "put it back", "go back to how the account was", "put the account back the way it was", "revert the account to last week"
 
 **Owner:** `ad-manage` (Rollback)
 **Live account:** changes under the level; logged as a change that names the one it undoes
