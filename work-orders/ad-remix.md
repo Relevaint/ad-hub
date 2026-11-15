@@ -37,7 +37,7 @@ Also, when it applies:
 - **Method:** [ad-creative/references/creative-passes.md, "scope first"](../core/skills/ad-creative/references/creative-passes.md#scope-first)
 - **Check:** Is the fixed element identical to the proven one, and is exactly one thing changing?
 - **Evidence:** The original creative file and the result that calls it proven, beside the remix row. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.
-- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.
+- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.
 - **If it fails:** No creative file for the original: stop; the layers below are not checked until its text is supplied, because nothing can be held fixed that cannot be read. No row: ad-strategy gives it one. No evidence it is proven: say so with the numbers. New hooks may still be drafted as an untested variation under the ad-copy work order, never called a remix of a winner.
 
 ### 2. Develop the change (`change`)
@@ -53,8 +53,8 @@ Also, when it applies:
 - **Build:** The adversarial review of each remixed ad, fixed element and change together. Made as the review brief says: a fresh agent when one can be started, otherwise a separate pass answered in the notes file.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 6 adversarial concept review then revision"](../core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision); [_system/staged-work.md, "the review brief"](../core/_system/staged-work.md#the-review-brief)
 - **Check:** Does the whole ad pass every gate, and is the experiment still the one the row describes?
-- **Evidence:** The verdicts with reasons; the row's sentence against what was made.
-- The row's evidence gives each of these as `name: what was found`: `reviewer`, `findings`
+- **Evidence:** The verdicts with reasons; the row's sentence against what was made; the reviewer, the findings, the file or version reviewed, and what changed after the last review and who re-checked it.
+- The row's evidence gives each of these as `name: what was found`: `reviewer`, `findings`, `reviewed`, `after review`
 - **If it fails:** Return to the change layer. A second variable that crept in is removed. With no readable fixed element this layer is not checked.
 
 ### 4. Copy per placement (`copy`)

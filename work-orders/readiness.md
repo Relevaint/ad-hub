@@ -34,7 +34,7 @@ Also, when it applies:
 - **Method:** [start-here/SKILL.md, "1 find the offer"](../core/skills/start-here/SKILL.md#1-find-the-offer)
 - **Check:** Is this one thing sold, with one destination and one place its result is recorded, and did you say which offer you took and why?
 - **Evidence:** The request and the business files read, by name. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.
-- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.
+- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.
 - **If it fails:** Split into one offer file per thing sold. Ask only when the choice changes the work.
 
 ### 2. Work out the result loop (`result-loop`)

@@ -39,7 +39,7 @@ Also, when it applies:
 - **Method:** [ad-creative/references/creative-passes.md, "pass 1 fundamentals before creative"](../core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative); [ad-creative/SKILL.md, "1 take the brief from the row"](../core/skills/ad-creative/SKILL.md#1-take-the-brief-from-the-row)
 - **Check:** Can this ad do one clear job for this audience inside the brief, with every unknown fact left unknown?
 - **Evidence:** The offer file's proof table and limits; the destination page opened and viewed, or the gap named; the ledger row's sentence when there is one. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.
-- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.
+- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.
 - **If it fails:** Resolve the brief or ask only for the blocking choice. Never invent a customer story or a fact to move on.
 
 ### 2. Premises (`premises`)
@@ -84,11 +84,11 @@ Also, when it applies:
 
 ### 7. Adversarial review and revision (`review`)
 
-- **Build:** A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; its findings are repaired at the layer each one names, and the review runs again on what changed. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.
+- **Build:** A separate review of each concept as a distracted viewer: attention, relevance and one job, promise and clarity, proof and policy, composition, distinctness and execution, brand continuity; rubric scores; revisions. A fresh agent makes it when this session can start one, handed the review brief word for word with the paths filled in; its findings are repaired at the layer each one names and reviewed again as the review brief says. When none can be started, the same brief runs as a separate pass after the draft is finished, every item answered in writing in the notes file, and the row says so.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 6 adversarial concept review then revision"](../core/skills/ad-creative/references/creative-passes.md#pass-6-adversarial-concept-review-then-revision); [ad-creative/references/copy-and-hooks.md, "the rubric"](../core/skills/ad-creative/references/copy-and-hooks.md#the-rubric); [_system/staged-work.md, "the review brief"](../core/_system/staged-work.md#the-review-brief)
 - **Check:** Does every gate pass with a concrete reason, with Hook and Glance at 4 or more and One job and Proof at 3 or more, and no average hiding a failed gate?
-- **Evidence:** The seven verdicts with their reasons and what changed in each revision cycle; the reviewer, the findings and the four scores, each score with its reason.
-- The row's evidence gives each of these as `name: what was found`: `reviewer`, `findings`, `hook`, `glance`, `one job`, `proof`
+- **Evidence:** The seven verdicts with their reasons and what changed in each revision cycle; the reviewer, the findings, the file or version reviewed, what changed after the last review and who re-checked it, the audience the scores hold for (any, or the one named), and the four scores, each score with its reason.
+- The row's evidence gives each of these as `name: what was found`: `reviewer`, `findings`, `reviewed`, `after review`, `audience`, `hook`, `glance`, `one job`, `proof`
 - **If it fails:** Return to the pass that failed, change that part, review the connected whole again. Three cycles at most, then withhold the concept and report the shortfall.
 
 ### Whole output (`whole`)

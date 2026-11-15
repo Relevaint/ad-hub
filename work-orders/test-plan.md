@@ -32,7 +32,7 @@ Build this one layer at a time, in order, under [staged work](../core/_system/st
 - **Method:** [ad-strategy/SKILL.md, "1 diagnose in one or two sentences"](../core/skills/ad-strategy/SKILL.md#1-diagnose-in-one-or-two-sentences)
 - **Check:** Is it one or two sentences a stranger could act on, naming who the ads are for and what is missing now?
 - **Evidence:** The ledger, the latest snapshot and the learnings that were read; the sentence itself. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.
-- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line. The checker looks for each Load first file there.
+- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.
 - **If it fails:** Pick one diagnosis. When the data cannot support one, say results are too few to judge and plan for that.
 
 ### 2. Check the offer first (`offer-check`)
