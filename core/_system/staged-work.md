@@ -54,7 +54,9 @@ skipped layer visible to the agent itself and to whoever reads the result.
 - **`not checked` is not an exit.** It is for a check that cannot be made in this
   session: no tool, no access, an approval only a person can give. A check that is in
   your hands is made before delivery: a file read in part is opened to its end, and a
-  review with no second reviewer is done in a separate pass and passes as a self-review.
+  review with no second reviewer is done in a separate pass and passes as a self-review. In
+  an output that runs other work orders, a layer the work has not reached is `not
+  checked`, saying `not started` and what comes first; it never supports a state.
 - **Naming a gap is a pass.** A layer whose job is to find out whether something is
   there (a result source, a second set of numbers, permission to quote a review) passes
   when it records the gap plainly with who clears it. Writing as if the thing were
@@ -140,7 +142,7 @@ row points back to. A result that is part passed and part unchecked is
 `not checked`, with what remains. Keep each cell to a line; this is a proof trail, not an
 essay.
 
-Check a record before sending it:
+Check a record before sending it, every time; a record that fails is fixed, not sent:
 `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe a reply in with
 `--record -`. It fails on a missing layer, a pass with no evidence, a pass whose evidence
 says the check was not made, two verdicts in one row, or a state the rows do not support.

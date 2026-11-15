@@ -54,7 +54,7 @@ waits.
 | The viewer is | Surface | Open on | Product enters | Mechanisms that fit |
 |---|---|---|---|---|
 | Unaware of the problem | Cold interruption (Meta feed, Reels) | Their situation, identity, or feeling. Not the problem yet, and not the product. | At the turn, as the different thing. | Violation of expectation (pattern-break), open question, spectacle or absurd messenger, recognizable pain as situation mirror. |
-| Problem-aware | Cold or warm interruption | The pain, named the way they say it. | After the "oh no," as the fix. | Recognizable pain, threat to something they value, direct address, specificity. |
+| Problem-aware | Cold or warm interruption | The pain, named the way they say it. | After the "oh no," as what it does about it; as the fix only where the offer file supports that it fixes it (claims-and-policy.md, implied claims). | Recognizable pain, threat to something they value, direct address, specificity. |
 | Solution-aware | Search, warm feed, consideration | The contrast: why the usual fix fails, or the mechanism that is different. | Early, framed as the contrast. | Contrast (us against the alternative), result first, specificity, strong opinion. |
 | Product-aware | Search, site visitors, warm retargeting | Proof, or a specific result. | Early. Brand and product early are right here. | Proof (real reviews and counts only, and only if true), result first, demonstration as spectacle. |
 | Most-aware | Brand search, hot retargeting, email | The offer, plainly. | First. | Offer clarity, price or bundle or deadline, only if true and dated. |

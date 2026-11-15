@@ -25,6 +25,9 @@ supports that.
 ## The gate
 
 1. List every claim the ad will make or imply.
+   Start with the ad's promise in one sentence, as a stranger reads the headline and the
+   picture together: "buy this and ___". That blank is a claim and needs a proof row
+   like any other. A problem named with the product shown as its answer is that promise.
 2. Map each to its source. Facts about the offer itself (what it is, what it costs, how
    it is delivered, the refund or guarantee terms as stated, where the ad sends people)
    come from the offer file's `Owner-confirmed` lines. Anything that supports a claim

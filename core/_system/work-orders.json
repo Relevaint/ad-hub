@@ -83,7 +83,7 @@
           "core/skills/ad-creative/references/claims-and-policy.md#the-gate"
         ],
         "check": "Does every claim the ad states or implies, in words or in the picture, map to a proof row or stand as a marked blank, carrying in the ad itself the conditions its proof attaches, with recorded permission behind every review, testimonial or customer story, and no personal attribute asserted?",
-        "evidence": "The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file.",
+        "evidence": "The claims map read against the offer file's proof table, row by row; for each quote or story, where the reviewer and the permission to use it in advertising are recorded; required strings compared character by character with the business's file. Also the ad's promise in one sentence, as a stranger reads the headline and the picture together (\"buy this and ___\"), with the proof row for that blank.",
         "on_fail": "An unsupported claim is cut or becomes a marked blank. A review or story with no recorded permission is withheld and named as a blank for the business, whatever status its proof row carries. A personal attribute is rewritten around the situation. An idea that only works with the unsupported claim returns to the connection layer.",
         "returns_to": [
           "connection",
@@ -879,7 +879,7 @@
           "means": "Every dependent was checked again and carries the state its new record supports."
         }
       ],
-      "record": "In the reply, as one line, followed by the list of dependents: one line per hit with the file or ad ID, its owner work order, the layers checked again and the verdict. Each dependent keeps its own updated record."
+      "record": "In the reply, as one line, followed by the list of dependents, one line per hit: `<file or ad ID> · <owner work order> · <layers checked again> · <verdict>`. Each dependent keeps its own updated record."
     },
     {
       "id": "audience-report",

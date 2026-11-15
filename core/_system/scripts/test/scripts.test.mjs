@@ -559,6 +559,15 @@ test("work orders: a layer record with a skipped layer, an empty pass or an over
     const lineWordy = check("linewordy.md", "Layers (ad-concepts): fundamentals pass (offer file and proof table read) · premises pass after a fix (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (claims map against proof rows; review withheld) · review pass (self-review, Hook 4 Glance 4) · whole pass (set read as the operator sees it). State: concept-ready\n");
     assert.equal(lineWordy.code, 1);
     assert.match(lineWordy.out, /layer "premises" has the verdict "pass after a fix"/);
+    // A verdict the contract does not have, a carried row with no earlier check, and a separator inside evidence.
+    const partly = check("partly.md", "Layers (change-recheck): record pass (offer file read back, old value kept) · dependents pass (ads searched for the old wording, hits listed) · recheck partly done (two October ads corrected, claims and copy pass; page not checked) · states pass (ledger beside the updated records) · whole pass (second search of ads finds no old wording). State: partly rechecked\n");
+    assert.equal(partly.code, 1);
+    assert.match(partly.out, /layer "recheck" has the verdict "partly done", which is not one of/);
+    const uncovered = check("uncovered.md", doc(swap("1 fundamentals", row("1 fundamentals", "carried", "file of 2026-10-07; the old checks do not show this layer")), "copy-ready"));
+    assert.equal(uncovered.code, 1);
+    assert.match(uncovered.out, /layer "fundamentals" is carried, but its evidence says no earlier check covered it/);
+    const dotted = check("dotted.md", "Layers (ad-concepts): fundamentals pass (offer file and proof table read) · premises pass (five compared, three rejected) · cast-treatment pass (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (footer strings checked: Instant download · 30-day refund; review withheld) · review pass (self-review, Hook 4 Glance 4) · whole pass (set read as the operator sees it). State: concept-ready\n");
+    assert.equal(dotted.code, 0, dotted.out);
     // Not checked is for what cannot be done here, not for work the writer left undone.
     const lazy = check("lazy.md", doc(swap("7 review", row("7 review", "not checked", "self-review only, no fresh reviewer")), "not ready"));
     assert.equal(lazy.code, 1);
