@@ -1071,7 +1071,7 @@ test("staged work: the contract keeps its rules explicit", async () => {
   assert.match(text, /a piece `below register`; a rubric score below its floor/);
   assert.match(text, /`at register`\s+>?\s*or `below register`/);
   assert.match(text, /A change to any word that remains,\s+grammar included, is not a cut/);
-  assert.match(text, /runs checks 2 and 5 on the\s+whole output \(a repair can move a sentence into an unchanged field\), checks 3 and 4 on the\s+changed lines only/);
+  assert.match(text, /runs checks 2 and 5 on the\s+whole output \(a repair can move a sentence into an unchanged field;[^)]*\), checks 3 and 4 on the\s+changed lines only/);
   assert.match(text, /earlier\s+ads for the same offer or service/);
   // A closing re-check after the last allowed review, and which review is the last; client claim; the reviewer names what it was not given.
   assert.match(text, /a closing re-check by a fresh\s+agent reads only those lines against their findings, plus checks 2 and 5 on the whole output/);
@@ -1080,6 +1080,10 @@ test("staged work: the contract keeps its rules explicit", async () => {
   assert.match(text, /`client claim: <source\s+>\s+and line>`/);
   assert.match(text, /name any file\s+>\s+the maker's notes say was read that is not among your paths; that is a finding/);
   assert.match(text, /The paths are every path\s+under the loading layer's heading in the notes/);
+  // A re-check's facts check opens each source again; the brief trusts neither the notes nor an earlier review; closest earlier covers the picture.
+  assert.match(text, /check 2 opens each source\s+again and does not lean on the earlier reviewer/);
+  assert.match(text, /Trust nothing in the maker's notes or an earlier review/);
+  assert.match(JSON.parse(readFileSync(path.join(hubRoot, "core/_system/work-orders.json"), "utf8")).layer_sets["concept-passes"].find((l) => l.id === "premises").evidence, /a picture or subject reused from that ad counts as no difference for the visual stop, and is said so/);
   // The plain statement of the offer is an offer term, in the rule and in the brief.
   assert.match(text, /the plain statement of the offer's terms \(what is bought, by when, what comes with\s+it, its conditions\) is an offer term wherever it appears/);
   assert.match(text, /the plain statement of\s+>\s+the offer's terms is an offer term even when it matches the owner's own/);

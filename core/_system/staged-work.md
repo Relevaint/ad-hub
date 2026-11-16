@@ -213,7 +213,8 @@ notes file or waiting between opens.
 A later review is a re-check, not a new review, by a fresh agent whenever the first was. Its
 request hands over the earlier replies and the changed lines (old, new); the reviewer says
 whether each earlier blocking finding is closed, quoting the new line, runs checks 2 and 5 on the
-whole output (a repair can move a sentence into an unchanged field), checks 3 and 4 on the
+whole output (a repair can move a sentence into an unchanged field; check 2 opens each source
+again and does not lean on the earlier reviewer), checks 3 and 4 on the
 changed lines only, and check 7. A forbidden line blocks
 wherever it is found. The loop ends when a review returns nothing blocking. After the last
 allowed review, each blocking finding gets one last repair by the smallest change (a cut
@@ -240,7 +241,7 @@ repaired; `findings:` names in square brackets the layers it sent work back to
 `reopened:` line and repair paragraph. Scores that hold for one audience say so in
 `audience:`, and the state names that audience.
 
-> You did not make this. Trust nothing in the maker's notes until you have opened the file
+> You did not make this. Trust nothing in the maker's notes or an earlier review until you have opened the file
 > it points at. You have the request as typed, the output, the work-order page, the maker's
 > notes file, the sources, and the owner's rules and examples for this channel (paths
 > below). Answer each check with a quoted line and a verdict:
