@@ -168,6 +168,9 @@ For each concept, record a concrete reason for each verdict:
    An intentionally consistent cast or treatment can be right; variety is not a quota.
    If continuity is unsupported, return to Pass 1 for evidence or Pass 3 for treatment,
    then recheck the whole. Report source gaps honestly rather than inventing alignment.
+   Where the business has the owner's own examples for this channel, end this verdict
+   `at register` or `below register` beside the example quoted; below register is
+   repaired by rewriting at the pass that wrote the lines, not by a cut.
 
 Keep this source-and-choice check compact in the working record. User-facing output
 needs only the useful rationale or material uncertainty, not a compliance essay.

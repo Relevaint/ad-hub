@@ -28,7 +28,7 @@
 //   words, or a section beginning n/a, not checked or partial with the reason); the first
 //   time, it appends "<!-- opened: <work order>/<layer> <UTC time> -->" to the notes file.
 //   --layer whole opens the whole-output check. With --repair <N> it reopens a layer that was
-//   opened before, for the repair review N's finding sent to it: it prints the block, appends
+//   opened before, for the repair review N's finding sent to it: it prints the block, appends a heading "## <layer>: repair <N>" and
 //   "<!-- reopened: <work order>/<layer> review <N> <UTC time> -->" every time, and refuses while
 //   an earlier layer reopened for review N has no "Repair (review N):" paragraph yet.
 // --all prints the full page, every layer at once: for a person reading, and for a session
@@ -247,7 +247,7 @@ export function layerBlock(o, l, i, map, prefix = "", hub = null) {
   L.push(`- **Check:** ${l.check}`);
   L.push(`- **Evidence:** ${l.evidence}`);
   if (list(l.evidence_items).length) L.push(itemLine(l.evidence_items));
-  if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read, each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.");
+  if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read (its earlier ads for the same offer or service among them), each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.");
   L.push(`- **If it fails:** ${l.on_fail}`, "");
   void map;
   return L.join("\n");
@@ -455,7 +455,7 @@ const namesWord = (text, id) => new RegExp(`(?<![a-z0-9-])${esc(id)}(?![a-z0-9-]
 
 // Evidence items: each "name: <at least three words>", in any order. A few items are short by nature
 // ("reviewer: fresh agent", "reviewed: draft-01.md", "after review: nothing changed", "audience: any").
-const ITEM_MIN = { reviewer: 2, reviewed: 1, "after review": 2, audience: 1 };
+const ITEM_MIN = { reviewer: 2, reviewed: 1, "after review": 2, audience: 1, register: 2 };
 export function itemValues(items, evidence) {
   const ev = String(evidence);
   const found = [];
@@ -576,10 +576,12 @@ function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
   const open = order.slice(0, at).find((x) => re.some((r) => r.layer === x && r.review === n) && !hasRepair(secs, x, n));
   if (open) return { code: 1, out: `Layer "${lid}" cannot be reopened for review ${n} yet: layer "${open}", earlier in the work order, was reopened for review ${n} and has no "Repair (review ${n}):" paragraph under its heading in ${notes}. Write that repair first, then reopen "${lid}".` };
   const line = `<!-- reopened: ${o.id}/${lid} review ${n} ${now.toISOString().replace(/\.\d{3}Z$/, "Z")} -->\n`;
-  writeFileSync(file, text && !text.endsWith("\n") ? `${text}\n${line}` : text + line);
+  // The repair gets its own heading carrying the layer id, so what is appended below it is that layer's.
+  const head = `\n## ${lid}: repair ${n}\n`;
+  writeFileSync(file, (text && !text.endsWith("\n") ? `${text}\n` : text) + head + line);
   appendFileSync(ledgerOf(file), line);
   const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
-  return { code: 0, out: [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}, reopened for review ${n}. Paths are relative to the hub: ${hub}`, "", block, `Write what was repaired under this layer's heading in ${notes}, below what is there, as a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are.`].join("\n") };
+  return { code: 0, out: [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}, reopened for review ${n}. Paths are relative to the hub: ${hub}`, "", block, `A heading "## ${lid}: repair ${n}" was added at the end of ${notes}. Write directly under it a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are.`].join("\n") };
 }
 
 // Open one layer: the gate, the stamp, then the block.
@@ -801,6 +803,8 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
         const values = itemValues(items, ev);
         if (items.includes("reviewer")) errors.push(...reviewErrors(at, l.id, r, values, (x) => { const row = list(o.layers).some((y) => y.id === norm(x)) || norm(x) === "whole" ? find({ id: x, name: x }) : null; return row ? row.said || "" : null; }));
         if (values.audience && !/^[`"*]*any\b/i.test(values.audience)) audiences.push(values.audience);
+        if (values.register && !/^[`"*(]*(?:at register|n\/a)\b/i.test(values.register)) errors.push(`${at}: layer "${l.id}" passes with "register: ${values.register.slice(0, 50)}"; a passing review row is "register: at register" beside the owner's example quoted (or "n/a: no owner examples for this channel"). A piece below register is rewritten at the layer that wrote it, never cut, while reviews remain; after the last review the row is not a pass and the state names it`);
+        if (values["after review"] && /^[`"*]*cut\b/i.test(values["after review"]) && !/["“'‘]/.test(values["after review"])) errors.push(`${at}: layer "${l.id}" records a cut without quoting it; "after review: cut:" quotes each removed sentence or field in full`);
         if (values["own words"] && REWORDED.test(values["own words"])) errors.push(`${at}: layer "${l.id}" passes with a line its own words item marks reworded; rewrite the line, or record the row as failed`);
       }
       if ((r.verdict === "n/a" || r.verdict === "not checked" || r.verdict === "partial") && (ev.length < 6 || WEAK.test(ev) || THIN.test(ev))) errors.push(`${at}: layer "${l.id}" is ${r.verdict} with no reason; say why it does not apply, or what could not be done and who can`);

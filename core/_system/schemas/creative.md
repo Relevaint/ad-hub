@@ -27,12 +27,12 @@ Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
 | 1 fundamentals | | audience/situation, awareness/surface, desire, offer, proof limits, one message/action, constraints and deliverables; destination/brand sources actually reviewed, gaps and provisional choices | |
-| 2 premises | | mechanism, product-connected payoff; the materially different route rejected | |
+| 2 premises | | mechanism, product-connected payoff; the materially different route rejected; closest earlier: the business's closest earlier ad for this offer or service, by path, and how this idea differs (or none on file and what was searched) | |
 | 3 cast-treatment | | cast and rendering as separate choices with reasons; the alternative considered | |
 | 4 visual-stop | | actual first frame/image, focal point, question; visual-alone stop reason for cold visual feeds, or the applicable test with its reason; hierarchy, competing details changed or kept | |
 | 5 connection | | opening/development/turn/payoff/action for video, or the complete composition for a static; key copy and CTA | |
 | 6 claims | | every claim mapped to supplied proof or left as a marked blank; where the permission behind any review or story is recorded; policy | |
-| 7 review | | reviewer: fresh agent or self, with the reason; findings: how many, which blocked, the layers they sent work back to in square brackets, what was repaired, each repaired layer reopened with --repair (blocking found and repaired is fail, then pass); reviewed: the file or version given; after review: nothing changed, cut: each cut with its finding, or the lines changed since, each with the finding it repairs, and who re-checked them; audience: any, or the one the scores hold for; hook:, glance:, one job:, proof: each score with its reason; the seven verdicts with concrete reasons; batch sameness when applicable; revisions and the passes returned to | |
+| 7 review | | reviewer: fresh agent or self, with the reason; findings: how many, which blocked, the layers they sent work back to in square brackets, what was repaired, each repaired layer reopened with --repair (blocking found and repaired is fail, then pass); reviewed: the file or version given; after review: nothing changed, cut: each cut with its finding, or the lines changed since, each with the finding it repairs, and who re-checked them; audience: any, or the one the scores hold for; register: at register beside the owner's example quoted, or n/a: no owner examples for this channel; hook:, glance:, one job:, proof: each score with its reason; the seven verdicts with concrete reasons; batch sameness when applicable; revisions and the passes returned to | |
 | whole | | the set read as the operator sees it; nothing generated, no row promoted | |
 State: concept-ready | not ready, because ...
 

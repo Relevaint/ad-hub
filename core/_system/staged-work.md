@@ -19,8 +19,8 @@ skipped layer visible to the agent itself and to whoever reads the result.
    A request that is unclear or spans several outputs goes to `start-here`, which
    names the work orders in order.
 2. **Load everything it lists.** The owner skill, each file under "Load first", the
-   conditional ones that apply and the business's files the request rests on, each to its
-   last line: `head`, a line range, a search or a reader that stops at a line limit is a
+   conditional ones that apply and the business's files the request rests on (its earlier
+   ads for the same offer or service among them), each to its last line: `head`, a line range, a search or a reader that stops at a line limit is a
    read in part, and a file read in part is not read. An earlier session's read does not count.
 3. **Work the layers in order.** Open each layer when it is reached:
    `workorder.mjs --id <work order> --layer <layer id> --notes <file>` prints its method,
@@ -90,7 +90,10 @@ skipped layer visible to the agent itself and to whoever reads the result.
   files and brief supply facts. A line that is one of their sentences trimmed or reworded
   is rewritten for this surface, in the register of the owner's examples and corrections
   for the channel. Offer terms, names, prices and required legal or identity strings stay
-  exact. Across a set, no sentence, opening or argument repeats from ad to ad; offer terms may.
+  exact; the plain statement of the offer's terms (what is bought, by when, what comes with
+  it, its conditions) is an offer term wherever it appears and may match the owner's own
+  statement of it, so own words is judged on the hook, the picture, the reason, the argument
+  and the close. Across a set, no sentence, opening or argument repeats from ad to ad; offer terms may.
 
 ## When something changes
 
@@ -196,8 +199,9 @@ writing in the notes file. It adds to the review layer's own gates and scores.
 The record is written, review row `not checked (pending fresh review)`, before the first
 review is requested, and the request names it. The first review reads everything, with the
 whole brief. Each blocking finding is repaired at the layer it names, reopened with
-`--layer <layer id> --repair <review number> --notes <file>`, in a paragraph below that
-layer's section beginning `Repair (review <N>):`: what changed and what was looked at after.
+`--layer <layer id> --repair <review number> --notes <file>`, which adds a heading for that
+layer's repair; directly under it a paragraph beginning `Repair (review <N>):` says what
+changed and what was looked at after.
 A layer resting on a repaired one is checked again for what changed and says so under its
 heading; a layer no finding touched keeps its section and row; nothing written is deleted
 or rewritten. The `opened:` lines and their ledger record the first build once: a finding
@@ -206,12 +210,16 @@ notes file or waiting between opens.
 
 A later review is a re-check, not a new review, by a fresh agent whenever the first was. Its
 request hands over the earlier replies and the changed lines (old, new); the reviewer says
-whether each earlier blocking finding is closed, quoting the new line, answers checks 2 to 5
-for the changed lines only, and check 7. Unchanged text an earlier review passed is not
-reviewed again, but an unsupported claim or a forbidden line blocks wherever it is found.
-The loop ends when a review returns nothing blocking. After the last allowed review the only
-repair is a cut (a sentence, an optional field or a whole piece; never new words, a
-condition, a required string or an offer term); a piece no cut repairs is withheld. Text
+whether each earlier blocking finding is closed, quoting the new line, runs check 2 on the
+whole output, checks 3 to 5 on the changed lines only, and check 7. A forbidden line blocks
+wherever it is found. The loop ends when a review returns nothing blocking, and that review,
+the last allowed or an earlier one, is the last review. After it the only change is a cut:
+whole sentences or whole fields removed (never a condition, a required string or an offer
+term), each quoted in full in `after review: cut:`. A change to any word that remains,
+grammar included, is not a cut: it is re-checked while reviews remain, or the row is
+`not checked` naming the line. A piece `below register` is rewritten at the layer that wrote
+it, never cut, while reviews remain; after the last review it is named beside the state.
+A piece no cut repairs is withheld. Text
 changed after the last fresh review and re-checked only by the maker is not reviewed: the
 row is `partial`, names the changed lines, and the state falls to match. Only a session
 that cannot start a fresh agent records a self re-check as a pass, with `reviewer: self`.
@@ -234,9 +242,12 @@ repaired; `findings:` names in square brackets the layers it sent work back to
 > 2. Every fact, price, date, name and claim traces to a source and keeps the conditions
 >    its source attaches; nothing is implied that no source supports.
 > 3. Own words: facts carry over, sentences do not. Quote the two closest existing passages
->    beside the lines that resemble them, each `new`, `offer term` or `reworded`.
+>    beside the lines that resemble them, each `new`, `offer term` or `reworded`; the plain
+>    statement of the offer's terms is an offer term even when it matches the owner's own.
 > 4. The owner's register: quote each of the owner's corrections for this channel that the
->    piece follows or breaks, and say what the owner would cut first.
+>    piece follows or breaks, and say what the owner would cut first. End with `at register`
+>    or `below register` beside the owner's own example you set it against, quoted (or
+>    `n/a: no owner examples for this channel`).
 > 5. One job per piece, and nothing repeated across a set.
 > 6. Each layer's check question from the work-order page, answered from the output, not
 >    from the maker's record.
@@ -247,10 +258,11 @@ repaired; `findings:` names in square brackets the layers it sent work back to
 >    the draft is a finding.
 >
 > Return numbered findings (line, rule or source, fix), each marked blocking or not; do not
-> rewrite the work. Blocking is only: a fact, price, date, condition or claim, stated or
-> implied, that no source supports or that drops its source's condition; a line the owner's
-> rules for this channel forbid; a `reworded` line; a sentence or argument repeated across a
-> set; a work-order layer check the output fails. Anything else (a preference, a stronger
+> rewrite the work. Blocking is only: a fact, price, date, condition, claim or word, stated or
+> implied, that no source supports or that drops its source's condition, wherever it is and
+> whoever passed it before; a line the owner's rules for this channel forbid; a `reworded`
+> line; a piece `below register`; a rubric score below its floor; a sentence or argument
+> repeated across a set; a work-order layer check the output fails. Anything else (a preference, a stronger
 > alternative, anything about the stamps) is an open item for the reply, not blocking.
 
 ## What the operator sees
