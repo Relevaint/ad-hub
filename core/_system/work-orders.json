@@ -13,7 +13,7 @@
           "core/skills/ad-creative/SKILL.md#1-take-the-brief-from-the-row"
         ],
         "check": "Can this ad do one clear job for this audience inside the brief, with every unknown fact left unknown?",
-        "evidence": "The offer file's proof table and limits; the destination page opened and viewed, or the gap named; the ledger row's sentence when there is one. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.",
+        "evidence": "The offer file's proof table and limits; the destination page opened and viewed, or the gap named; the ledger row's sentence when there is one. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting, and its earlier ads for the same offer or service), each read to its last line and named.",
         "on_fail": "Resolve the brief or ask only for the blocking choice. Never invent a customer story or a fact to move on.",
         "reads": true
       },
@@ -25,9 +25,12 @@
           "core/skills/ad-creative/references/creative-passes.md#pass-2-premises-not-polished-headlines",
           "core/skills/ad-creative/references/opening-dynamics.md#the-table-awareness-decides-the-opening"
         ],
-        "check": "Do the candidates differ in the underlying idea rather than the wording, and does each have a payoff the product is part of?",
-        "evidence": "The premises side by side, with the ones rejected and why.",
-        "on_fail": "Write new premises here. A category slogan or a novelty with no product payoff is rejected, not polished."
+        "check": "Do the candidates differ in the underlying idea rather than the wording, does each have a payoff the product is part of, and does the chosen idea differ from the closest ad the business already ran for this offer or service?",
+        "evidence": "The premises side by side, with the ones rejected and why. Closest earlier: the closest earlier ad, post or email the business has for the same offer or service, opened and named by path, and how the chosen idea differs (or `none on file` and what was searched).",
+        "on_fail": "Write new premises here. A category slogan or a novelty with no product payoff is rejected, not polished; an idea that does not differ from the closest earlier one fails here, not at the review.",
+        "evidence_items": [
+          "closest earlier"
+        ]
       },
       {
         "id": "cast-treatment",
@@ -103,7 +106,7 @@
           "core/_system/staged-work.md#the-review-brief"
         ],
         "check": "Does every gate pass with a concrete reason, with Hook and Glance at 4 or more and One job and Proof at 3 or more, and no average hiding a failed gate?",
-        "evidence": "The seven verdicts with their reasons and what changed in each revision cycle; the reviewer, the findings, the file or version reviewed, what changed after the last review and who re-checked it, the audience the scores hold for (any, or the one named), and the four scores, each score with its reason.",
+        "evidence": "The seven verdicts with their reasons and what changed in each revision cycle; the reviewer, the findings, the file or version reviewed, what changed after the last review and who re-checked it, the audience the scores hold for (any, or the one named), the four scores, each score with its reason, and the register: `at register` or `below register` beside the owner's example for this channel, quoted (or `n/a: no owner examples for this channel`).",
         "on_fail": "Return to the layer the finding names (a pass, the beats or the copy), open it with --repair, change that part, and re-check what changed. Three cycles at most; after the last, only cuts. Then withhold the concept and report the shortfall.",
         "returns_to": [
           "fundamentals",
@@ -122,7 +125,8 @@
           "hook",
           "glance",
           "one job",
-          "proof"
+          "proof",
+          "register"
         ]
       }
     ],
@@ -137,8 +141,8 @@
           "core/skills/ad-creative/references/claims-and-policy.md#the-gate"
         ],
         "check": "Is every word a person will read true to the claims map, free of personal attributes, in the business's voice and its owner's corrections for this channel, in our own words (facts carry over from the business's material, sentences do not), and does the hook still carry the concept that passed?",
-        "evidence": "Each field read against the claims map; a quote appears only where the claims layer recorded its permission; required strings compared character by character with the business's file; the rubric scores. Own words: the two closest passages in the business's site, emails, earlier ads, brand files or brief, each quoted beside the line it resembles, with one verdict: `new`, `offer term` (a term, name, price or required string that stays exact) or `reworded` (rewritten before the row can pass). Corrections: each of the owner's corrections for this channel quoted, followed or broken, or none on file.",
-        "on_fail": "Rewrite the failing field here; a line that is one of the business's existing sentences trimmed or reworded is rewritten for this surface. A claim with no proof row is cut or marked blank. Copy that only works by changing the idea returns to the connection layer.",
+        "evidence": "Each field read against the claims map; a quote appears only where the claims layer recorded its permission; required strings compared character by character with the business's file; the rubric scores. Own words: the two closest passages in the business's site, emails, earlier ads, brand files or brief, each quoted beside the line it resembles, with one verdict: `new`, `offer term` (a term, name, price or required string that stays exact, or the plain statement of the offer's terms, which may match the owner's own) or `reworded` (rewritten before the row can pass). Corrections: each of the owner's corrections for this channel quoted, followed or broken, or none on file.",
+        "on_fail": "Rewrite the failing field here; a line that is one of the business's existing sentences trimmed or reworded is rewritten for this surface, except the plain statement of the offer's terms. A claim with no proof row is cut or marked blank. Copy that only works by changing the idea returns to the connection layer.",
         "returns_to": [
           "connection",
           "claims"
@@ -1703,7 +1707,7 @@
             "core/skills/ad-creative/SKILL.md#1-take-the-brief-from-the-row"
           ],
           "check": "Is each ad's one job the sentence in its ledger row, with the scope of the request (concepts, copy, or finished assets and which shapes) written down?",
-          "evidence": "The ledger rows and the request, read literally. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.",
+          "evidence": "The ledger rows and the request, read literally. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting, and its earlier ads for the same offer or service), each read to its last line and named.",
           "on_fail": "A row with no reason, or two rows with one reason, goes back to ad-strategy. Never invent a row or rename an ID.",
           "reads": true
         },
@@ -2628,7 +2632,7 @@
             "core/skills/ad-creative/references/creative-passes.md#scope-first"
           ],
           "check": "Is the fixed element identical to the proven one, and is exactly one thing changing?",
-          "evidence": "The original creative file and the result that calls it proven, beside the remix row. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting), each read to its last line and named.",
+          "evidence": "The original creative file and the result that calls it proven, beside the remix row. Under this layer in the notes: every file under Load first and the business's files the request rests on (its rules for this channel and every file those rules say to read before drafting, and its earlier ads for the same offer or service), each read to its last line and named.",
           "on_fail": "No creative file for the original: stop; the layers below are not checked until its text is supplied, because nothing can be held fixed that cannot be read. No row: ad-strategy gives it one. No evidence it is proven: say so with the numbers. New hooks may still be drafted as an untested variation under the ad-copy work order, never called a remix of a winner.",
           "reads": true
         },
@@ -2669,7 +2673,7 @@
             "core/_system/staged-work.md#the-review-brief"
           ],
           "check": "Does the whole ad pass every gate, and is the experiment still the one the row describes?",
-          "evidence": "The verdicts with reasons; the row's sentence against what was made; the reviewer, the findings, the file or version reviewed, and what changed after the last review and who re-checked it.",
+          "evidence": "The verdicts with reasons; the row's sentence against what was made; the reviewer, the findings, the file or version reviewed, and what changed after the last review and who re-checked it. The register: `at register` or `below register` beside the owner's example for this channel, quoted (or `n/a: no owner examples for this channel`).",
           "on_fail": "Return to the layer the finding names (the change or the copy), open it with --repair, and re-check what changed. A second variable that crept in is removed. With no readable fixed element this layer is not checked.",
           "returns_to": [
             "change",
@@ -2679,7 +2683,8 @@
             "reviewer",
             "findings",
             "reviewed",
-            "after review"
+            "after review",
+            "register"
           ]
         },
         {
