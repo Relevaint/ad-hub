@@ -456,7 +456,7 @@ const namesWord = (text, id) => new RegExp(`(?<![a-z0-9-])${esc(id)}(?![a-z0-9-]
 
 // Evidence items: each "name: <at least three words>", in any order. A few items are short by nature
 // ("reviewer: fresh agent", "reviewed: draft-01.md", "after review: nothing changed", "audience: any").
-const ITEM_MIN = { reviewer: 2, reviewed: 1, "after review": 2, audience: 1, register: 2, "feed size": 2, "delivery size": 2, muted: 2, "with sound": 2 };
+const ITEM_MIN = { condition: 1, reviewer: 2, reviewed: 1, "after review": 2, audience: 1, register: 2, "feed size": 2, "delivery size": 2, muted: 2, "with sound": 2 };
 export function itemValues(items, evidence) {
   const ev = String(evidence);
   const found = [];
@@ -488,6 +488,25 @@ export function reportsBlocking(findings) {
   }
   return false;
 }
+// Conditions on a claims row: "condition: <its words>; shown in: <surfaces>", "scope limit: ..." the same way,
+// or "condition: none". Returns each condition's words and whether a "shown in:" follows it.
+export function conditionsIn(evidence) {
+  const ev = String(evidence);
+  const marks = [...ev.matchAll(/(?<![a-z0-9-])(condition|scope limit|shown in)\s*:/gi)].map((m) => ({ name: m[1].toLowerCase(), start: m.index, after: m.index + m[0].length }));
+  const out = [];
+  marks.forEach((m, i) => {
+    if (m.name === "shown in") return;
+    const value = ev.slice(m.after, i + 1 < marks.length ? marks[i + 1].start : undefined).trim().replace(/[;,.\s]+$/, "");
+    if (/^[`"*]*(?:none|no condition)\b/i.test(value)) return;
+    const next = marks[i + 1];
+    const shown = next && next.name === "shown in" ? ev.slice(next.after, i + 2 < marks.length ? marks[i + 2].start : undefined).trim().replace(/[;,.\s]+$/, "") : "";
+    const q = value.match(/^["“]([^"”]+)["”]/);
+    out.push({ kind: m.name, words: q ? q[1] : value.split(";")[0].trim(), shown });
+  });
+  return out;
+}
+const flat = (x) => String(x).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
 // Review rows: what was reviewed, what changed after, and whether a blocking finding is recorded as a repair.
 function reviewErrors(at, lid, r, values, verdictOf = () => null) {
   const errors = [];
@@ -881,6 +900,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     const final = {};
     const said = {};
     const review = { named: [], said };
+    let conds = null;
     const audiences = [];
     for (const l of [...list(o.layers), { id: "whole", name: "whole output" }]) {
       const r = find(l) || (l.id === "whole" ? rows["whole-output"] : null);
@@ -900,6 +920,19 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
         else if (r.verdict === "pass" && NOT_DONE.test(ev)) errors.push(`${at}: layer "${l.id}" is marked pass but its evidence says the check was not made ("${ev.slice(0, 80)}"); that is not checked.${NOT_DONE_MORE}`);
       }
       const items = l.id === "whole" ? list(o.whole && o.whole.evidence_items) : list(l.evidence_items);
+      // A claims row gives each condition's words and where it is shown, or "condition: none".
+      if (items.includes("condition") && r.verdict !== "n/a") {
+        conds = conditionsIn(ev);
+        if (r.verdict === "pass") for (const x of conds) if (wordCount(x.shown) < 1) errors.push(`${at}: layer "${l.id}" passes with ${x.kind} "${x.words.slice(0, 60)}" but no "shown in:" after it; name every surface that carries it (a qualifying condition sits on every surface that states the offer, a scope limit in the ad's own text)`);
+      }
+      // A cut never removes a condition or a scope limit the claims row lists.
+      if (items.includes("reviewer")) {
+        const after = itemValues(items, ev)["after review"] || "";
+        if (/^[`"*]*cut\b/i.test(after)) {
+          if (conds === null) info.push(`${at}: the cut after review was not checked against the conditions; the record has no claims row listing them`);
+          else for (const q of after.matchAll(/["“]([^"”]+)["”]/g)) for (const x of conds) if (flat(x.words) && flat(q[1]).includes(flat(x.words))) errors.push(`${at}: the cut "${q[1].slice(0, 60)}" removes the ${x.kind} "${x.words.slice(0, 60)}"; a cut never removes a condition or a scope limit: restore the line, or change it and have that one line re-checked`);
+        }
+      }
       // Once a review has run, its row tells the review's story on any verdict; only "pending" or "not started" is exempt.
       if (items.includes("reviewer") && r.verdict !== "n/a") {
         review.lid = l.id;

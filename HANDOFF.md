@@ -50,14 +50,19 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 - **Sealed sections (2026-11-16):** graded runs on a real business rewrote an earlier layer's section after the draft so the notes said the reads came first, and the record passed. Now a first `--layer` open seals each earlier layer's first section in the ledger with a copy beside it; the record fails a sealed section that was changed rather than added to below (a reopened layer is exempt; seals are for scratch notes, so an output's own file, which a change re-check corrects in place, is neither sealed nor seal-checked); a record dated before today whose scratch notes are gone is checked on its rows alone, with a note saying so, and a later line saying a file was read to its end corrects an earlier part read. Not rerun with a fresh agent at the time of this commit.
 
+- **Conditions seen and kept (2026-11-16):** a graded run on a real business delivered an ad whose short text, image band and headline stated the offer without the term that says which packages qualify, and cut a scope limit after the last review; the hub's rules let both through. The claims gate now separates a qualifying condition (on every surface that states the offer; a surface too short to hold it does not state the offer) from a scope limit (in the ad's own text, never cut); the claims row names each condition's words and `shown in:`, or `condition: none`; the brief reads each surface on its own; the record fails a quoted cut that contains a listed condition. Not rerun with a fresh agent at the time of this commit.
+
 ### Known next steps (not built)
+- The reviewed words are snapshotted when each review is requested, and the record fails any change after the last review that is not a quoted cut.
 - A second fresh look at the rendered file, or the row says `self-checked`.
 - The tool prints the review brief with every path from the loading section filled in, so the list handed to a reviewer cannot be trimmed.
 - A line count beside each loaded file.
 - The register verdict given separately for the hook and the body of each ad.
-- A condition that narrows a claim made on the image sits on the image or in the first lines of the primary text.
 - `--repair copy` prints the "when something changes" rows.
 - A stamped gate for change re-checks, so an output's own file can be sealed too.
+- The `Examples:` line is compared with the example folders the business's channel note names.
+- The loading layer names the business's playbook for the service, when one exists.
+- `--note <layer>` appends a dated correction to an earlier sealed layer, saying which layer was open.
 
 ## Previous session: 2026-11-03 Ecommerce Alley playbook review
 

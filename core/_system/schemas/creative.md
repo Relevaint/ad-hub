@@ -31,7 +31,7 @@ Date: <YYYY-MM-DD>
 | 3 cast-treatment | | cast and rendering as separate choices with reasons; the alternative considered | |
 | 4 visual-stop | | actual first frame/image, focal point, question; visual-alone stop reason for cold visual feeds, or the applicable test with its reason; hierarchy, competing details changed or kept | |
 | 5 connection | | opening/development/turn/payoff/action for video, or the complete composition for a static; key copy and CTA | |
-| 6 claims | | every claim mapped to supplied proof or left as a marked blank; where the permission behind any review or story is recorded; policy | |
+| 6 claims | | every claim mapped to supplied proof or left as a marked blank; where the permission behind any review or story is recorded; policy; condition: each condition's own words and shown in: every surface that carries it (scope limit: the same way), or condition: none | |
 | 7 review | | reviewer: fresh agent or self, with the reason; findings: how many, which blocked, the layers they sent work back to in square brackets, what was repaired, each repaired layer reopened with --repair (blocking found and repaired is fail, then pass); reviewed: the file or version given; after review: nothing changed, cut: each cut with its finding, or the lines changed since, each with the finding it repairs, and who re-checked them; audience: any, or the one the scores hold for; register: at register beside the owner's example quoted, or n/a: no owner examples for this channel; hook:, glance:, one job:, proof: each score with its reason; the seven verdicts with concrete reasons; batch sameness when applicable; revisions and the passes returned to | |
 | whole | | the set read as the operator sees it; nothing generated, no row promoted | |
 State: concept-ready | not ready, because ...
@@ -81,9 +81,9 @@ link it, then check them again after execution. Do not replace the rows with "al
 passed". Check it: `node <hub>/core/_system/scripts/workorder.mjs --record <this file>`.>
 
 ## Claims map
-| Claim in the ad | Proof row | Status |
-| --- | --- | --- |
-| "<the words>" | <row from the offer's proof table> | Owner-confirmed / Observed / BLANK to confirm |
+| Claim in the ad | Proof row | Status | Condition and where it is shown |
+| --- | --- | --- | --- |
+| "<the words>" | <row from the offer's proof table> | Owner-confirmed / Observed / BLANK to confirm | condition: "<its words>"; shown in: <each surface> (scope limit: the same way), or none |
 
 ## Copy
 ### Hook
