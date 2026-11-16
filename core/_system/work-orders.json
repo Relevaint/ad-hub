@@ -178,11 +178,17 @@
           "core/skills/ad-creative/references/composition-review.md#make-and-challenge-the-hierarchy"
         ],
         "check": "At delivery size, does the image stop on its own, read as one proposition at a glance, keep its hierarchy, and show exactly the gated claims with nothing cut off?",
-        "evidence": "The actual pixels viewed at feed size with the copy hidden, then restored; the safe zones; the composition review repeated on the render; the rubric scores including Finish.",
+        "evidence": "The actual pixels viewed at feed size with the copy hidden, then restored; the safe zones; the composition review repeated on the render; the rubric scores including Finish. Feed size: the size in pixels the file was viewed at. Copy hidden: what the image says alone. Safe zones: what sits inside and near them. Finish: the score and one reason.",
         "on_fail": "Repair the render and inspect again, three cycles at most. A file that cannot be opened here is not checked and the row stays copy-ready.",
         "returns_to": [
           "production",
           "visual-stop"
+        ],
+        "evidence_items": [
+          "feed size",
+          "copy hidden",
+          "safe zones",
+          "finish"
         ]
       }
     ],
@@ -258,11 +264,17 @@
           "core/skills/ad-creative/SKILL.md#6-inspect-the-render"
         ],
         "check": "Does each exported file play, hold its pacing, show only the gated claims and do the one job in the row?",
-        "evidence": "The final files played in full; sampled frames, a timeline preview and a file's existence do not count.",
+        "evidence": "The final files played in full; sampled frames, a timeline preview and a file's existence do not count. Delivery size: the size each file was played at. With sound: what was heard, start to finish. Muted: what the ad says with the sound off. Finish: the score and one reason.",
         "on_fail": "An unplayed file is unverified: say so, leave the row at copy-ready and name who can watch it.",
         "returns_to": [
           "edit",
           "captions-sound"
+        ],
+        "evidence_items": [
+          "delivery size",
+          "with sound",
+          "muted",
+          "finish"
         ]
       }
     ],
@@ -2709,10 +2721,16 @@
             "core/skills/ad-creative/SKILL.md#6-inspect-the-render"
           ],
           "check": "At delivery size, does each new asset read clearly, keep the proven element intact and show only the gated claims?",
-          "evidence": "The actual file viewed or played at delivery size beside the original.",
+          "evidence": "The actual file viewed or played at delivery size beside the original. Delivery size: the size in pixels the file was viewed or played at. Beside the original: what stayed identical and what changed. Safe zones: what sits inside and near them. Finish: the score and one reason.",
           "on_fail": "Repair and inspect again, three cycles at most; a file that cannot be opened here is not checked and the row stays copy-ready.",
           "returns_to": [
             "production"
+          ],
+          "evidence_items": [
+            "delivery size",
+            "beside the original",
+            "safe zones",
+            "finish"
           ]
         }
       ],

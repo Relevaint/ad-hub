@@ -46,6 +46,16 @@ Every session ends by updating this file, committing, and pushing. Not committed
 - **Still unproven:** no live ad account was touched in any run; the last finished ads (two static renders) were made under the round-2 version, not this one; a complete layer record shows no layer was skipped, not that the ad will win.
 - **For Clay to confirm, beside the three choices above:** (1) in every work order that writes copy, the review now reads the finished copy, placed after connection and claims and before the rejection pass; (2) a review can send an ad back for sounding unlike the owner (`below register`); (3) an offer sentence may match the owner's own statement of the offer; (4) a reviewed ad set costs up to three reviews and one closing re-check.
 
+- **Written after it is opened (2026-11-16):** a graded run on a real business wrote the finished file's check into the notes before opening that layer, and the record passed. Now `--layer` refuses a never-opened layer whose section is already in the notes, the record fails a section above its own `opened:` line, a missing ledger and a notes stamp the ledger lacks; the finished-file checks (`render-review`, the video `watch`, the remix `render-review`) name what was seen as evidence items (feed or delivery size, copy hidden or sound and muted, safe zones, Finish); `--record -` on a reply with only a `State:` line says how to end it, and the audience message says to copy the audience unchanged. Not rerun with a fresh agent at the time of this commit.
+
+### Known next steps (not built)
+- A second fresh look at the rendered file, or the row says `self-checked`.
+- The tool prints the review brief with every path from the loading section filled in, so the list handed to a reviewer cannot be trimmed.
+- A line count beside each loaded file.
+- The register verdict given separately for the hook and the body of each ad.
+- A condition that narrows a claim made on the image sits on the image or in the first lines of the primary text.
+- `--repair copy` prints the "when something changes" rows.
+
 ## Previous session: 2026-11-03 Ecommerce Alley playbook review
 
 - **When:** 2026-11-03, Ecommerce Alley playbook review.

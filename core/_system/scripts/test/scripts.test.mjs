@@ -356,6 +356,8 @@ test("creative: brand continuity comes from reviewed sources, not demographic de
 // ---- staged work: the output map, its pages and the layer record ----
 
 const wo = (...a) => run("workorder.mjs", ...a);
+// A notes file written by a test, with the ledger the tool would have kept beside it.
+const writeNotes = (fs, f, text) => { fs.writeFileSync(f, text); fs.writeFileSync(`${f}.opened`, (text.match(/<!--\s*(?:re)?opened:[^>]*-->/g) || []).join("\n") + "\n"); };
 const hubRoot = path.resolve(here, "../../../..");
 
 test("work orders: the real map is valid and its generated pages are current", () => {
@@ -682,23 +684,23 @@ test("work orders: a record names its notes, its evidence items and every failed
     assert.match(old.out, /the state does not name "destination" \(fail\)/);
     // 2. The corrected record, with a notes file written as the work went, passes.
     const good = path.join(tmp, "notes.md");
-    fs.writeFileSync(good, notes({ fundamentals: readAll(LOAD) }));
+    writeNotes(fs, good, notes({ fundamentals: readAll(LOAD) }));
     const ok = check("fixed.md", fixed(`Notes: ${good}`));
     assert.equal(ok.code, 0, ok.out);
     // 3. A Load first file missing under the loading layer, a thin heading, a part read and a missing path all fail.
-    fs.writeFileSync(path.join(tmp, "missing.md"), notes({ fundamentals: readAll(LOAD.slice(0, -1)) }));
+    writeNotes(fs, path.join(tmp, "missing.md"), notes({ fundamentals: readAll(LOAD.slice(0, -1)) }));
     const missing = check("m.md", fixed(`Notes: ${path.join(tmp, "missing.md")}`));
     assert.equal(missing.code, 1);
     assert.match(missing.out, /notes under layer "fundamentals" do not name core\/_system\/schemas\/creative\.md/);
-    fs.writeFileSync(path.join(tmp, "thin.md"), notes({ fundamentals: readAll(LOAD), premises: "Eight premises, four kept." }));
+    writeNotes(fs, path.join(tmp, "thin.md"), notes({ fundamentals: readAll(LOAD), premises: "Eight premises, four kept." }));
     const thin = check("t.md", fixed(`Notes: ${path.join(tmp, "thin.md")}`));
     assert.equal(thin.code, 1);
     assert.match(thin.out, /heading for layer "premises" has fewer than 15 words/);
-    fs.writeFileSync(path.join(tmp, "part.md"), notes({ fundamentals: `${readAll(LOAD)}\nopening-dynamics.md: lines 1-200 of 225.` }));
+    writeNotes(fs, path.join(tmp, "part.md"), notes({ fundamentals: `${readAll(LOAD)}\nopening-dynamics.md: lines 1-200 of 225.` }));
     const part = check("p.md", fixed(`Notes: ${path.join(tmp, "part.md")}`));
     assert.equal(part.code, 1);
     assert.match(part.out, /say a file was read in part/);
-    fs.writeFileSync(path.join(tmp, "noex.md"), notes({ fundamentals: readAll(LOAD).replace("\nExamples:", "\nAlso:") }));
+    writeNotes(fs, path.join(tmp, "noex.md"), notes({ fundamentals: readAll(LOAD).replace("\nExamples:", "\nAlso:") }));
     const noEx = check("x.md", fixed(`Notes: ${path.join(tmp, "noex.md")}`));
     assert.equal(noEx.code, 1);
     assert.match(noEx.out, /notes under layer "fundamentals" have no "Examples:" line/);
@@ -776,6 +778,7 @@ test("work orders: a review covers the delivered words, and a reworded line does
     const unnamed = check("unnamed.md", record({ rev: warm }));
     assert.equal(unnamed.code, 1);
     assert.match(unnamed.out, /the review's scores hold for one audience/);
+    assert.match(unnamed.out, /copy that audience after the state unchanged/);
     assert.equal(check("named.md", record({ rev: warm, state: "copy-ready for warm visitors; destination fail, page gap reported" })).code, 0);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
@@ -860,7 +863,7 @@ test("work orders: the tool hands out one layer at a time", async () => {
       const order = [...ids, "whole"].map((id, n) => stamp(id, swap && n === 1 ? 2 : swap && n === 2 ? 1 : n));
       const fix = (id) => (withStamps && id === "visual-stop" ? ["<!-- reopened: ad-concepts/visual-stop review 1 2026-11-15T09:30:00Z -->", "Repair (review 1): the frame's competing caption was removed, and the frame was read again at feed size with copy hidden."] : []);
       const lines = ["# Notes", ...ids.flatMap((id, n) => [withStamps ? order[n] : "", `## ${id}`, body(id), ...fix(id), ""]), withStamps ? order[ids.length] : ""];
-      fs.writeFileSync(path.join(tmp, name), lines.join("\n"));
+      writeNotes(fs, path.join(tmp, name), lines.join("\n"));
       return path.join(tmp, name);
     };
     const REV = "reviewer: fresh agent given the review brief word for word; findings: four, one blocking [visual-stop], repaired; reviewed: concepts-v1.md; after review: nothing changed; audience: any; register: at register beside the owner's frost caption example; hook: 4, the frost image stops the scroll; glance: 4, offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
@@ -947,7 +950,7 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     const body = (id) => (id === "fundamentals" ? `Read to the last line: ${c.load.join(", ")}; the channel note, each to its end.\nExamples: the two earlier ads the channel note names, each read to its end.` : `Result of the ${id} layer, written when it was reached: what was built, compared and rejected, and what the check found.`);
     const write = (name, { restamp = [], repairs = [], tail = [] } = {}) => {
       const lines = ["# Notes", ...ids.flatMap((id, n) => [stamp(id, n), `## ${id}`, body(id), ...(restamp.includes(id) ? [`<!-- reopened: ad-concepts/${id} review 1 2026-11-15T09:40:00Z -->`] : []), ...(repairs.includes(id) ? ["Repair (review 1): the second premise now carries the offer's end date, and the set was read again side by side."] : []), ""]), stamp("whole", ids.length), ...tail];
-      fs.writeFileSync(path.join(tmp, name), lines.join("\n"));
+      writeNotes(fs, path.join(tmp, name), lines.join("\n"));
       return path.join(tmp, name);
     };
     const SCORES = "audience: any; register: at register beside the owner's frost caption example; hook: 4, the frost image stops the scroll; glance: 4, offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
@@ -1001,6 +1004,91 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     assert.match(pipe(`State: not ready, written and reviewed. Record: ${file}\n`).out, /the reply's state calls the work reviewed, but the record's review row is not checked/);
     assert.match(pipe("State: not ready. Record: no-such-record.md\n").out, /points at the record "no-such-record\.md", which was not found/);
     assert.match(check("r10.md", nc("pending fresh review").replace("State: not ready (review not checked)", "State: not ready, reviewed (review not checked)")).out, /the state calls the work reviewed, but layer "review" is not checked/);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("work orders: a layer is written up after it is opened, and the finished file's check names what it saw", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-order-"));
+  const check = (name, text) => { const f = path.join(tmp, name); fs.writeFileSync(f, text); return wo("--record", f); };
+  const pipe = (input) => { const r = spawnSync(process.execPath, [path.join(scripts, "workorder.mjs"), "--record", "-"], { encoding: "utf8", input, cwd: tmp }); return { code: r.status, out: r.stdout + r.stderr }; };
+  const SEC = (id) => `\n## ${id}\nResult of the ${id} layer, written when it was reached: what was built, compared and rejected, and what the check found.\n`;
+  const count = (f) => (fs.readFileSync(f, "utf8").match(/<!-- opened: /g) || []).length;
+  try {
+    // 1. The gate: a never-opened layer whose section is already in the notes is refused, with no stamp.
+    const notes = path.join(tmp, "notes.md");
+    assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--notes", notes).code, 0);
+    fs.appendFileSync(notes, SEC("fundamentals") + SEC("premises"));
+    const early = wo("--id", "ad-concepts", "--layer", "premises", "--notes", notes);
+    assert.equal(early.code, 1);
+    assert.match(early.out, /Layer "premises" was never opened, but .* already holds a section for it.*remove what was written, open "premises", read what it prints/);
+    assert.equal(count(notes), 1);
+    assert.equal(count(`${notes}.opened`), 1);
+    fs.writeFileSync(notes, fs.readFileSync(notes, "utf8").replace(SEC("premises"), ""));
+    assert.equal(wo("--id", "ad-concepts", "--layer", "premises", "--notes", notes).code, 0);
+    // An earlier work order's section of the same layer id does not block this one.
+    const two = path.join(tmp, "two.md");
+    assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--notes", two).code, 0);
+    fs.appendFileSync(two, SEC("fundamentals"));
+    assert.equal(wo("--id", "ad-concepts", "--layer", "premises", "--notes", two).code, 0);
+    fs.appendFileSync(two, SEC("premises"));
+    assert.equal(wo("--id", "ad-copy", "--layer", "fundamentals", "--notes", two).code, 0);
+    fs.appendFileSync(two, SEC("fundamentals"));
+    const again = wo("--id", "ad-copy", "--layer", "premises", "--notes", two);
+    assert.equal(again.code, 0, again.out);
+    // 4. The --repair refusal says not to save the later layer's changes yet.
+    const rep = path.join(tmp, "rep.md");
+    assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--notes", rep).code, 0);
+    fs.appendFileSync(rep, SEC("fundamentals"));
+    assert.equal(wo("--id", "ad-concepts", "--layer", "premises", "--notes", rep).code, 0);
+    fs.appendFileSync(rep, SEC("premises"));
+    assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--repair", "1", "--notes", rep).code, 0);
+    assert.match(wo("--id", "ad-concepts", "--layer", "premises", "--repair", "1", "--notes", rep).out, /do not save this layer's changes to the output until this layer is reopened/);
+    // 2 and 3. The record: a section above its own opened line fails; the ledger must be there and hold every stamp.
+    const c = (await import("../workorder.mjs")).loadMap(hubRoot).work_orders.find((o) => o.id === "claims-check");
+    const ids = [...c.layers.map((l) => l.id), "whole"];
+    const stamp = (id, n) => `<!-- opened: claims-check/${id} 2026-11-16T09:${String(10 + n).padStart(2, "0")}:00Z -->`;
+    const body = (id) => (id === "claims-list" ? `Read to the last line: ${c.load.join(", ")}; the channel note, each to its end.\nExamples: the two earlier ads the channel note names, each read to its end.` : `Result of the ${id} layer, written when it was reached: what was built, compared and rejected, and what the check found.`);
+    const notesText = (swap) => ["# Notes", ...ids.flatMap((id, n) => (swap && id === "report" ? [`## ${id}`, body(id), stamp(id, n)] : [stamp(id, n), `## ${id}`, body(id)]))].join("\n") + "\n";
+    const rec = (f) => ["## Layer record", "Work order: claims-check", `Notes: ${f}`, "| Layer | Verdict | Evidence | Fix |", "| --- | --- | --- | --- |", ...c.layers.map((l) => `| ${l.id} | pass | the ${l.id} result read line by line in the notes |  |`), "| whole | pass | the report read top to bottom |  |", "State: checked, clean", ""].join("\n");
+    const inOrder = path.join(tmp, "in.md");
+    writeNotes(fs, inOrder, notesText(false));
+    assert.equal(check("r-in.md", rec(inOrder)).code, 0, check("r-in.md", rec(inOrder)).out);
+    const above = path.join(tmp, "above.md");
+    writeNotes(fs, above, notesText(true));
+    const a = check("r-above.md", rec(above));
+    assert.equal(a.code, 1);
+    assert.match(a.out, /layer "report" has its section \("report"\) above its own "opened:" line/);
+    fs.rmSync(`${inOrder}.opened`);
+    const noLedger = check("r-noled.md", rec(inOrder));
+    assert.equal(noLedger.code, 1);
+    assert.match(noLedger.out, /there is no ledger beside the notes file/);
+    writeNotes(fs, inOrder, notesText(false));
+    fs.writeFileSync(`${inOrder}.opened`, fs.readFileSync(`${inOrder}.opened`, "utf8").replace(stamp("policy", 2) + "\n", ""));
+    const typed = check("r-typed.md", rec(inOrder));
+    assert.equal(typed.code, 1);
+    assert.match(typed.out, /the notes hold "<!-- opened: claims-check\/policy .*", which the ledger does not; stamps are written by the tool, never typed/);
+    writeNotes(fs, inOrder, notesText(false));
+    const restored = fs.readFileSync(inOrder, "utf8").replace(stamp("policy", 2), "").replace("## policy", `${stamp("policy", 2)}\n## policy`);
+    fs.writeFileSync(inOrder, restored);
+    assert.equal(check("r-restored.md", rec(inOrder)).code, 0, "a hand-restored stamp identical to the ledger's passes");
+    // B1. The finished file's check names the feed size, what the image says alone, the safe zones and Finish.
+    const static_ = (rr) => ["## Layer record", "Work order: static-ad", "Notes: none (cannot write files here)", "| Layer | Verdict | Evidence | Fix |", "| --- | --- | --- | --- |",
+      "| fundamentals | pass | every Load first file and the channel note read to the last line |  |", "| premises | pass | closest earlier: the spring ad for the same kit leads on price, this idea on frost; five premises, three rejected |  |", "| cast-treatment | pass | hands only; illustrated rejected |  |", "| visual-stop | pass | frame read with copy hidden |  |", "| connection | pass | read start to end |  |", "| claims | pass | claims map against proof rows |  |",
+      "| copy | pass | own words: \"Frost comes early this year\" beside \"Beat the early frost\": new; corrections: the owner's two channel corrections quoted, both followed |  |",
+      "| review | pass | reviewer: fresh agent given the brief word for word; findings: three, none blocking; reviewed: draft v1; after review: nothing changed; audience: any; register: at register beside the owner's frost caption example; hook: 4, the frost image stops the scroll; glance: 4, offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly |  |",
+      "| destination | pass | the live page opened beside the ad, same offer and date |  |", "| production | pass | the 1080x1350 file opened, on-image text read against the copy letter by letter |  |", `| render-review | pass | ${rr} |  |`, "| whole | pass | the ad as a buyer sees it in feed |  |", "State: creative-ready", ""].join("\n");
+    const FULL = "feed size: 1080x1350 viewed at 390 px wide; copy hidden: a frost-bitten seedling beside a covered one, the kit reads as the cover; safe zones: headline and logo inside the 4:5 safe area; finish: 4, the only shape asked for, inspected at feed size";
+    const noFinish = check("s1.md", static_(FULL.replace(/; finish: .*$/, "")));
+    assert.equal(noFinish.code, 1);
+    assert.match(noFinish.out, /layer "render-review" passes without these evidence items: "finish:"/);
+    const full = check("s2.md", static_(FULL));
+    assert.equal(full.code, 0, full.out);
+    // B2. A reply with a State: line and nothing to check is told how to end.
+    assert.match(pipe("Three ads below.\n\nState: copy-ready\n").out, /end the reply with "State: <state>\. Record: <path>"/);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
