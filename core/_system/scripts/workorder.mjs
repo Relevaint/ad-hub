@@ -813,7 +813,8 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
     for (const m of body.matchAll(/^[\s>*-]*`?Examples:`?\s*(\S.*)$/gim)) {
       const v = m[1].trim();
       if (/^[`"*]*none\b/i.test(v)) continue;
-      const toks = (v.match(/[^\s,;()`"]+/g) || []).map((x) => x.replace(/[.:]+$/, "")).filter((x) => x.includes("/") || /\.\w{2,5}$/.test(x) || /[*?]/.test(x));
+      // Words in brackets on this line are the writer's notes about a path, not paths.
+      const toks = (v.replace(/\([^()]*\)/g, " ").match(/[^\s,;()`"]+/g) || []).map((x) => x.replace(/[.:]+$/, "")).filter((x) => x.includes("/") || /\.\w{2,5}$/.test(x) || /[*?]/.test(x));
       if (!toks.length) errors.push(`${at}: the "Examples:" line under layer "${l.id}" names no path ("${v.slice(0, 60)}"); name each example the channel rules point at by its path, or write "Examples: none" with why`);
       for (const x of toks) {
         if (/[*?]/.test(x)) errors.push(`${at}: the "Examples:" line under layer "${l.id}" uses a pattern ("${x}"); name each example file or folder by its own path`);
@@ -825,15 +826,22 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
     const FILE = /[\w./-]+\.(?:md|json|mjs|js|ts|tsx|txt|ya?ml|csv|html)\b/g;
     const corrected = (i) => { const names = bl[i].match(FILE) || []; return names.length > 0 && names.every((n) => bl.slice(i + 1).some((x) => x.includes(n) && !partRead(x))); };
     for (const [i, line] of bl.entries()) if (partRead(line) && !corrected(i)) errors.push(`${at}: the notes under layer "${l.id}" say a file was read in part ("${line.trim().slice(0, 80)}"); read it to its last line, then record it`);
-    // Something left undone is a disclosure and passes, unless the line names a Load first file.
+    // Something left undone is a disclosure and passes, unless the same sentence names a Load first file
+    // (notes are often one paragraph to a line: a disclosure in one sentence says nothing about a file named in another).
     for (const line of bl) {
       if (partRead(line) || !LEFT_UNDONE.test(line)) continue;
-      for (const f of list(o.load)) {
-        const base = path.basename(f);
-        const forms = [f, `${path.basename(path.dirname(f))}/${base}`];
-        if (bases.filter((b) => b === base).length === 1) forms.push(base);
-        // A path as the line writes it, never a piece of one: another skill's SKILL.md is not this one.
-        if (forms.some((x) => new RegExp(`(?<![A-Za-z0-9_${x.includes("/") ? "" : "/."}-])${esc(x)}(?![A-Za-z0-9_-])`).test(line))) errors.push(`${at}: the notes under layer "${l.id}" leave ${f} undone ("${line.trim().slice(0, 80)}"); it is a Load first file and is read to its last line`);
+      const cuts = [0, ...[...line.matchAll(/(?<=[.!?])\s+(?=[A-Z("'`])/g)].map((m) => m.index + m[0].length), line.length];
+      const told = new Set();
+      for (const u of line.matchAll(new RegExp(LEFT_UNDONE.source, "gi"))) {
+        const k = cuts.findIndex((c, i) => i < cuts.length - 1 && c <= u.index && u.index < cuts[i + 1]);
+        const sentence = k < 0 ? line : line.slice(cuts[k], cuts[k + 1]);
+        for (const f of list(o.load)) {
+          const base = path.basename(f);
+          const forms = [f, `${path.basename(path.dirname(f))}/${base}`];
+          if (bases.filter((b) => b === base).length === 1) forms.push(base);
+          // A path as the sentence writes it, never a piece of one: another skill's SKILL.md is not this one.
+          if (!told.has(f) && forms.some((x) => new RegExp(`(?<![A-Za-z0-9_${x.includes("/") ? "" : "/."}-])${esc(x)}(?![A-Za-z0-9_-])`).test(sentence))) { told.add(f); errors.push(`${at}: the notes under layer "${l.id}" leave ${f} undone ("${sentence.trim().slice(0, 80)}"); it is a Load first file and is read to its last line`); }
+        }
       }
     }
   }
