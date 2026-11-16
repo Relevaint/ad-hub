@@ -658,7 +658,7 @@ const stampLine = (text, id, lid) => String(text).split("\n").findIndex((l) => n
 // line under a heading with that layer's id carries the words the ledger asked for that layer after the stamp.
 // Marks of the version before ("<!-- mark: WORD-NN -->", ledger lines without "asked") are still read as they were.
 const LEDGER_MARK = /<!--\s*mark:\s*([a-z0-9-]+)\/([a-z0-9-]+)\s+([0-9a-f]{16})\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)(\s+asked)?\s*-->/g;
-const NOTE_MARK = /<!--\s*mark:\s*([^>]*?)\s*-->/g;
+const NOTE_MARK = /<!--\s*mark:\s*(.*?)\s*-->/g;
 const markHash = (w) => createHash("sha256").update(w).digest("hex").slice(0, 16);
 const utc = (now) => now.toISOString().replace(/\.\d{3}Z$/, "Z");
 // Words compared in lower case with everything but letters and digits dropped.
@@ -670,14 +670,9 @@ const LABELED = /^\s*(?:[-*]\s+)?\*\*([^*:]+):\*\*/;
 function askMark(file, id, lid, now, lines) {
   const labeled = lines.map((l, i) => ({ l, i, m: l.match(LABELED) })).filter((x) => x.m && !/\(\d+ lines[^)]*\)\s*$/.test(x.l.trim()));
   const shuffle = (xs) => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = randomInt(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  let picked;
-  const fixed = process.env.WORKORDER_ASK;
-  if (fixed) picked = fixed.split(",").map((x) => labeled.find((y) => y.m[1].trim().toLowerCase() === x.trim().toLowerCase())).filter(Boolean);
-  if (!picked || !picked.length) {
-    const check = labeled.find((x) => x.m[1].trim() === "Check");
-    const others = shuffle(labeled.filter((x) => x !== check)).slice(0, check ? 2 : 3);
-    picked = shuffle(check ? [check, ...others] : others);
-  }
+  const check = labeled.find((x) => x.m[1].trim() === "Check");
+  const others = shuffle(labeled.filter((x) => x !== check)).slice(0, check ? 2 : 3);
+  const picked = shuffle(check ? [check, ...others] : others);
   let question, words;
   if (picked.length) {
     const names = picked.map((x, k) => `W${k + 1} ${k === 0 ? "is " : ""}the last word of the **${x.m[1].trim()}** line`);
@@ -1110,7 +1105,13 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
   for (const r of records) {
     inRecord.add(r.line - 1);
     if (r.compact) continue;
-    for (let j = r.line; j < allLines.length && !/^\s*(?:#{1,6}\s|```)/.test(allLines[j]); j++) inRecord.add(j);
+    // A table record is its own lines only: its fields, its rows and the blank lines between them. The first other line ends it,
+    // so open items written under the State line, with or without a heading, are outside the record.
+    for (let j = r.line; j < allLines.length; j++) {
+      const t = allLines[j].trim();
+      if (t && !t.startsWith("|") && !/^(?:Work order|Notes|Date|State)\s*:/i.test(t)) break;
+      inRecord.add(j);
+    }
   }
   const outside = `${allLines.filter((_, i) => !inRecord.has(i)).join("\n")}\n${opts.extra || ""}`;
   for (const rec of records) {
