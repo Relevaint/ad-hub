@@ -510,6 +510,12 @@ export function conditionsIn(evidence) {
 }
 const flat = (x) => String(x).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
+// Whether the record's notes ledger was written by this version (it holds a question's "asked" line).
+function askedLedger(rec, cwd) {
+  if (!rec.notes || /^none\b/i.test(rec.notes)) return false;
+  const f = path.resolve(cwd, rec.notes);
+  return existsSync(f) && / asked\s*-->/.test(ledgerText(f));
+}
 // Review rows: what was reviewed, what changed after, and whether a blocking finding is recorded as a repair.
 function reviewErrors(at, lid, r, values, verdictOf = () => null) {
   const errors = [];
@@ -646,25 +652,43 @@ export function firstSection(text, id, lid) {
 const stampLine = (text, id, lid) => String(text).split("\n").findIndex((l) => new RegExp(`<!--\\s*opened:\\s*${esc(id)}/${esc(lid)}\\s`).test(l));
 
 // ---------------------------------------------------------------- marks
-// Every printout of a layer carries one line "<!-- mark: WORD-NN -->" at a place in its middle; the ledger keeps
-// only a hash of it, "<!-- mark: <work order>/<layer> <hash> <UTC time> -->". A stamp is answered when a line under a
-// heading with that layer's id carries a mark the ledger issued for that layer at or after the stamp.
-const MARK_WORDS = ["AMBER", "BIRCH", "CEDAR", "DELTA", "EMBER", "FERN", "GROVE", "HARBOR", "IRIS", "JUNIPER", "KESTREL", "LUMEN", "MAPLE", "NECTAR", "ORCHID", "PEBBLE", "QUILL", "RAVEN", "SABLE", "TIDE", "UMBER", "VIOLET", "WILLOW", "YARROW", "ZEPHYR"];
-const LEDGER_MARK = /<!--\s*mark:\s*([a-z0-9-]+)\/([a-z0-9-]+)\s+([0-9a-f]{16})\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\s*-->/g;
-const NOTE_MARK = /<!--\s*mark:\s*([A-Z]+-\d{2})\s*-->/g;
+// Every printout of a layer carries one line, at a place in its middle, that asks for the mark: the last words of
+// the Check line and two other labeled lines of that printout, picked fresh each time. The ledger keeps only a hash
+// of the expected words, "<!-- mark: <work order>/<layer> <hash> <UTC time> asked -->". A stamp is answered when a
+// line under a heading with that layer's id carries the words the ledger asked for that layer after the stamp.
+// Marks of the version before ("<!-- mark: WORD-NN -->", ledger lines without "asked") are still read as they were.
+const LEDGER_MARK = /<!--\s*mark:\s*([a-z0-9-]+)\/([a-z0-9-]+)\s+([0-9a-f]{16})\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)(\s+asked)?\s*-->/g;
+const NOTE_MARK = /<!--\s*mark:\s*(.*?)\s*-->/g;
 const markHash = (w) => createHash("sha256").update(w).digest("hex").slice(0, 16);
 const utc = (now) => now.toISOString().replace(/\.\d{3}Z$/, "Z");
-export const MARK_SENTENCE = "This printout carries one line that begins `<!-- mark:`; copy that line as it is under this layer's heading in the notes. The next layer does not open without it, and the record fails without it.";
-// The one place a mark is issued: its hash goes to the ledger, the mark itself only into the printout.
-function issueMark(file, id, lid, now) {
-  const fixed = process.env.WORKORDER_MARK;
-  const w = fixed && /^[A-Z]+-\d{2}$/.test(fixed) ? fixed : `${MARK_WORDS[randomInt(MARK_WORDS.length)]}-${String(randomInt(100)).padStart(2, "0")}`;
-  appendFileSync(ledgerOf(file), `<!-- mark: ${id}/${lid} ${markHash(w)} ${utc(now)} -->\n`);
-  return w;
+// Words compared in lower case with everything but letters and digits dropped.
+export const markWords = (s) => String(s).split(/\s+/).map((w) => w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "")).filter(Boolean).join(" ");
+const lastWord = (line) => (String(line).split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).pop() || "");
+export const MARK_SENTENCE = "One line in the middle of this printout asks for this layer's mark, a few words read off the lines it names; write them under this layer's heading in the notes as it says. The next layer does not open without it, and the record fails without it.";
+const LABELED = /^\s*(?:[-*]\s+)?\*\*([^*:]+):\*\*/;
+// The one place a mark is asked: pick the lines, write the hash of their last words, return the question.
+function askMark(file, id, lid, now, lines) {
+  const labeled = lines.map((l, i) => ({ l, i, m: l.match(LABELED) })).filter((x) => x.m && !/\(\d+ lines[^)]*\)\s*$/.test(x.l.trim()));
+  const shuffle = (xs) => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = randomInt(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const check = labeled.find((x) => x.m[1].trim() === "Check");
+  const others = shuffle(labeled.filter((x) => x !== check)).slice(0, check ? 2 : 3);
+  const picked = shuffle(check ? [check, ...others] : others);
+  let question, words;
+  if (picked.length) {
+    const names = picked.map((x, k) => `W${k + 1} ${k === 0 ? "is " : ""}the last word of the **${x.m[1].trim()}** line`);
+    const said = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+    question = `Mark for this printout: under this layer's heading in the notes write <!-- mark: ${picked.map((_, k) => `W${k + 1}`).join(" ")} -->, where ${said} of this printout (letters and digits only; case does not matter).`;
+    words = picked.map((x) => lastWord(x.l));
+  } else {
+    const last = [...lines].reverse().find((l) => l.trim()) || "";
+    question = "Mark for this printout: under this layer's heading in the notes write <!-- mark: W1 -->, where W1 is the last word of the last line of this printout that is not blank (letters and digits only; case does not matter).";
+    words = [lastWord(last)];
+  }
+  appendFileSync(ledgerOf(file), `<!-- mark: ${id}/${lid} ${markHash(markWords(words.join(" ")))} ${utc(now)} asked -->\n`);
+  return question;
 }
-// The mark goes on its own line between two paragraphs or list items, outside tables and fences, in the middle half.
-function placeMark(out, w) {
-  const lines = out.split("\n");
+// The question goes on its own line between two paragraphs or list items, outside tables and fences, in the middle half.
+function placeMark(lines, q) {
   const ok = [];
   let fence = false;
   for (let i = 1; i < lines.length; i++) {
@@ -674,12 +698,13 @@ function placeMark(out, w) {
     if (/^\s*\|/.test(a) || /^\s*\|/.test(b) || /^\s*```/.test(b)) continue;
     if (!a.trim() || /^\s*(?:[-*]|\d+\.)\s/.test(b)) ok.push(i);
   }
-  const at = ok.length ? ok[parseInt(markHash(w).slice(0, 8), 16) % ok.length] : Math.max(0, lines.length - 1);
-  lines.splice(at, 0, `<!-- mark: ${w} -->`);
-  return lines.join("\n");
+  const at = ok.length ? ok[randomInt(ok.length)] : Math.max(0, lines.length - 1);
+  const out = [...lines];
+  out.splice(at, 0, q);
+  return out.join("\n");
 }
 export function ledgerMarks(ledger, id) {
-  return [...String(ledger).matchAll(LEDGER_MARK)].filter((m) => m[1] === id).map((m) => ({ layer: m[2], hash: m[3], time: m[4], pos: m.index }));
+  return [...String(ledger).matchAll(LEDGER_MARK)].filter((m) => m[1] === id).map((m) => ({ layer: m[2], hash: m[3], time: m[4], asked: Boolean(m[5]), pos: m.index }));
 }
 // Where the ledger's first mark line sits: stamps before it were written by the version before and need no answer.
 const firstMarkPos = (ledger) => { const m = String(ledger).match(new RegExp(LEDGER_MARK.source)); return m ? m.index : null; };
@@ -703,8 +728,9 @@ export function ledgerStamps(ledger, id) {
 // The one place a stamp is checked: is it answered by a mark copied under its layer's heading? The mark must have
 // been issued for that layer after the stamp (the ledger is written in order, so its order is the time order).
 export function answered(text, ledger, id, st) {
-  const issued = ledgerMarks(ledger, id).filter((m) => m.layer === st.layer && m.pos > st.pos).map((m) => m.hash);
-  return marksUnder(text, st.layer).some((w) => issued.includes(markHash(w)));
+  const issued = ledgerMarks(ledger, id).filter((m) => m.layer === st.layer && m.pos > st.pos);
+  // The one place an answer is checked: asked words in their compared form; a mark of the version before as written.
+  return marksUnder(text, st.layer).some((w) => issued.some((m) => m.hash === (m.asked ? markHash(markWords(w)) : markHash(w))));
 }
 // Stamps this version must see answered: those at or after the ledger's first mark.
 export function unanswered(text, ledger, id) {
@@ -719,15 +745,15 @@ export function unanswered(text, ledger, id) {
   const firstCall = prior && prior.layer === markLayer && String(ledger).slice(lastBefore, since).split("\n").length <= 2 ? lastBefore : -1;
   return stampsAll.filter((st) => (st.pos > since || st.pos === firstCall) && !answered(text, ledger, id, st));
 }
-const unansweredMsg = (st, hub, id, notes) => `Layer "${st.layer}" has an unanswered stamp ("${st.text}"): its printout was not read to the mark. Print it again (${tool(hub)} --id ${id} --layer ${st.layer} --notes ${notes}), read it through, and copy the mark line it carries under its heading.`;
+const unansweredMsg = (st, hub, id, notes) => `Layer "${st.layer}" has an unanswered stamp ("${st.text}"): the mark under "${st.layer}" is missing or is not what its printout asked for. Print the layer again (${tool(hub)} --id ${id} --layer ${st.layer} --notes ${notes}; it asks a new question), read it through, and write the words it asks for under the layer's heading.`;
 function gate(hub, o, file, text, notes) {
   const open = unanswered(text, ledgerText(file), o.id);
   return open.length ? { code: 1, out: unansweredMsg(open[0], hub, o.id, notes) } : null;
 }
-// The printout: the mark sentence first, then the body with one mark at a place in its middle.
+// The printout: the mark sentence first, then the body with one question at a place in its middle.
 function printout(file, o, lid, now, head, body) {
-  const w = issueMark(file, o.id, lid, now);
-  return placeMark([...head, MARK_SENTENCE, "", ...body].join("\n"), w);
+  const lines = [...head, MARK_SENTENCE, "", ...body].join("\n").split("\n");
+  return placeMark(lines, askMark(file, o.id, lid, now, lines));
 }
 
 // A re-check after a repair: --layer <id> --recheck <review number>.
@@ -860,7 +886,7 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
   }
   // Read to the mark: each stamp of a passed layer (at or after the ledger's first mark) is answered.
   const passedNow = new Set(Object.entries(final).filter(([, v]) => v === "pass").map(([k]) => k));
-  for (const st of unanswered(raw, ledgerText(file), o.id)) if (passedNow.has(st.layer)) errors.push(`${at}: layer "${st.layer}" has an unanswered stamp ("${st.text}"): its printout was not read to the mark. Print it again (workorder.mjs --id ${o.id} --layer ${st.layer} --notes ${given}), read it through, and copy the mark line it carries under its heading`);
+  for (const st of unanswered(raw, ledgerText(file), o.id)) if (passedNow.has(st.layer)) errors.push(`${at}: layer "${st.layer}" has an unanswered stamp ("${st.text}"): the mark under "${st.layer}" is missing or is not what its printout asked for. Print the layer again (workorder.mjs --id ${o.id} --layer ${st.layer} --notes ${given}; it asks a new question), read it through, and write the words it asks for under the layer's heading`);
   // A passed layer's section sits below its own opened: line.
   for (const l of [...list(o.layers), { id: "whole" }]) {
     if (final[l.id] !== "pass") continue;
@@ -1065,7 +1091,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
   if (pointer) {
     const file = path.resolve(cwd, pointer[1]);
     if (!existsSync(file)) return { errors: [`the reply points at the record "${pointer[1]}", which was not found (paths are relative to the current directory, or absolute)`], records };
-    const inner = checkRecord(hub, readFileSync(file, "utf8"), forcedId, { cwd, file });
+    const inner = checkRecord(hub, readFileSync(file, "utf8"), forcedId, { cwd, file, extra: text });
     const said = (text.match(/State:\s*([^\n]*?)\.?\s*Record:/i) || [])[1];
     const rec = inner.records[0];
     if (said && rec && rec.claimed && !said.toLowerCase().replace(/[`*]/g, "").trim().startsWith(rec.claimed)) inner.errors.push(`the reply says "State: ${said.trim()}", but the record in ${pointer[1]} supports "${rec.claimed}"`);
@@ -1073,6 +1099,21 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     return inner;
   }
   if (!records.length) errors.push(opts.stdin && /(?:^|\s)State:\s*\S/m.test(text) ? 'the reply has a "State:" line but no record to check; end the reply with "State: <state>. Record: <path>" naming the file that holds the layer record (or give the full one-line "Layers (<work order>): ..." record)' : 'no "## Layer record" section and no "Layers (<work order>): ..." line found');
+  // The text outside every layer record: where the open items of a review are named with their tags.
+  const allLines = text.split("\n");
+  const inRecord = new Set();
+  for (const r of records) {
+    inRecord.add(r.line - 1);
+    if (r.compact) continue;
+    // A table record is its own lines only: its fields, its rows and the blank lines between them. The first other line ends it,
+    // so open items written under the State line, with or without a heading, are outside the record.
+    for (let j = r.line; j < allLines.length; j++) {
+      const t = allLines[j].trim();
+      if (t && !t.startsWith("|") && !/^(?:Work order|Notes|Date|State)\s*:/i.test(t)) break;
+      inRecord.add(j);
+    }
+  }
+  const outside = `${allLines.filter((_, i) => !inRecord.has(i)).join("\n")}\n${opts.extra || ""}`;
   for (const rec of records) {
     const id = forcedId || rec.id;
     const at = `layer record at line ${rec.line}`;
@@ -1109,6 +1150,19 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
       if (items.includes("condition") && r.verdict !== "n/a") {
         conds = conditionsIn(ev);
         if (r.verdict === "pass") for (const x of conds) if (wordCount(x.shown) < 1) errors.push(`${at}: layer "${l.id}" passes with ${x.kind} "${x.words.slice(0, 60)}" but no "shown in:" after it; name every surface that carries it (a qualifying condition sits on every surface that states the offer, a scope limit in the ad's own text)`);
+      }
+      // What the last review did not block reaches the reply, each finding tagged [R<N>-<number>] outside the record.
+      if (items.includes("reviewer") && r.verdict === "pass" && !/^[\s`"*(]*pending\b/i.test(ev) && askedLedger(rec, cwd)) {
+        const told = itemValues(items, ev);
+        if (told.findings && !/^[`"*]*self\b/i.test(told.reviewer || "")) {
+          const nb = told.findings.match(/not blocking \(review\s*(\d+)\)\s*:\s*(.*)$/i);
+          if (!nb) errors.push(`${at}: layer "${l.id}" gives "findings:" without its last part; end it with "not blocking (review <N>): <numbers, or none>", naming the last review and the numbers of its findings that were not blocking`);
+          else {
+            const nums = /^[`"*]*none\b/i.test(nb[2].trim()) ? [] : nb[2].split(/\s*(?:,|\band\b)\s*/).map((x) => x.trim().replace(/[.;`*]+$/g, "")).filter((x) => /^[A-Za-z]?\d+$/.test(x));
+            const missingTags = nums.filter((x) => !outside.includes(`[R${nb[1]}-${x}]`)).map((x) => `[R${nb[1]}-${x}]`);
+            if (missingTags.length) errors.push(`${at}: layer "${l.id}" lists findings of review ${nb[1]} that were not blocking, but ${missingTags.join(", ")} ${missingTags.length > 1 ? "are" : "is"} not in the text checked; each goes in the reply as an open item in plain words ending with its tag${opts.file && !opts.extra ? " (this record was checked as a file: the open items sit in that file, outside the layer record, or pipe the whole reply with --record -)" : ""}`);
+          }
+        }
       }
       // A cut never removes a condition or a scope limit the claims row lists.
       if (items.includes("reviewer")) {

@@ -67,6 +67,9 @@ Every session ends by updating this file, committing, and pushing. Not committed
 - **After round 13 (2026-11-16):** graded runs on a real business showed layer printouts cut short (piped through `head`, `tail` or thrown away, the section appended in the same command) and re-check lines typed in bulk, before the change they re-checked. Now every printout of a layer carries one `<!-- mark: WORD-NN -->` line at a place in its middle (the ledger keeps its hash): nothing new is stamped, and the record fails, while a stamp's mark is not copied under its layer's heading.
 - A re-check after a repair is made through the tool: `--layer <id> --recheck <N>` adds a heading and a `rechecked:` stamp, and the record needs that stamp and the `Re-checked (review N):` line for every later layer already open (a ledger from the version before, with no mark line, keeps the typed-line check).
 - This change came after round 13 and has not been rerun with a fresh agent at the time of this commit.
+- **The mark is asked for (2026-11-16):** the first graded runs of the version before, on a real business, showed the mark fetched with a search and the layer unread, findings the last review did not block dropped from the reply, and a line the owner's voice file forbids passed because the brief named only the channel's rules. Now each printout asks, in one line in its middle, for the last words of its Check line and two other labeled lines picked fresh each time (the ledger keeps a hash marked `asked`; marks of the version before still pass).
+- The row with a fresh review ends `findings:` with `not blocking (review N): <numbers or none>`, and on a ledger with an `asked` line the record fails until each is in the reply as an open item ending `[R<N>-<number>]`; the brief asks the reviewer for a closing `Findings: ...; blocking: ...; not blocking: ....` line, and a line breaking a rule in any of the owner's files is blocking.
+- This change has not been rerun with a fresh agent at the time of this commit.
 
 
 ### Known next steps (not built)
@@ -82,7 +85,6 @@ Every session ends by updating this file, committing, and pushing. Not committed
 - The loading layer names the business's playbook for the service, when one exists.
 - `--note <layer>` appends a dated correction to an earlier sealed layer, saying which layer was open.
 - A surface that names any offer term states the offer, and offer terms are written as the source names them; the claims row lists `terms:` for the checker.
-- `--record -` reads the last review's numbered open items and fails a reply that neither carries nor closes each one.
 - `--layer <id> --return <from layer>` for a return to a layer before the review, with its own heading and stamp.
 - The reply form labels one primary text per ad, so paragraphs are not read as alternatives.
 

@@ -35,9 +35,9 @@ skipped layer visible to the agent itself and to whoever reads the result.
    a layer whose section is already there, and the record fails a stamp the ledger lacks. When
    the next layer opens, the earlier sections of a scratch notes file are sealed: a correction is
    added below, never rewritten in (a layer reopened with `--repair` is exempt); an output's own
-   file changes only through a repair or a change re-check. Every printout carries one line
-   `<!-- mark: WORD-NN -->`: copy it under that layer's heading; nothing new is stamped, and
-   the record does not pass, while a stamp's mark is missing. `--all` prints every layer at once, for a person reading or a
+   file changes only through a repair or a change re-check. Every printout asks, in one line
+   in its middle, for a mark read off its own lines: write it under that layer's heading;
+   nothing new is stamped, and the record does not pass, while a mark is missing or wrong. `--all` prints every layer at once, for a person reading or a
    session that cannot write a notes file at all.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
    not to polishing a later layer. After a repair, check again every later layer that
@@ -249,7 +249,9 @@ the lines changed since, their findings and who re-checked them) on any verdict;
 evidence beginning `pending` is exempt. A review that blocked is `fail, then pass` once
 repaired; `findings:` names in square brackets the layers it sent work back to
 (`findings: 4 blocking [premises, copy], all repaired`), each `fail, then pass` with its
-`reopened:` line and repair paragraph. Scores that hold for one audience say so in
+`reopened:` line and repair paragraph. `findings:` ends `not blocking (review <N>): <numbers,
+or none>` for the last review, and each of those goes in the reply as an open item ending
+with its tag, `[R<N>-<number>]`. Scores that hold for one audience say so in
 `audience:`, and the state names that audience.
 
 > You did not make this. Trust nothing in the maker's notes or an earlier review until you have opened the file
@@ -282,10 +284,12 @@ repaired; `findings:` names in square brackets the layers it sent work back to
 >    the draft is a finding.
 >
 > Return numbered findings (line, rule or source, fix), each marked blocking or not; do not
-> rewrite the work. Blocking is only: a fact, price, date, condition, claim or word, stated or
+> rewrite the work. End with one line: `Findings: <how many>; blocking: <their numbers, or
+> none>; not blocking: <their numbers, or none>.` Blocking is only: a fact, price, date, condition, claim or word, stated or
 > implied, that no source supports or that drops its source's condition, wherever it is and
-> whoever passed it before; a line or picture the owner's rules for this channel forbid (such
-> as a generated result or before and after); a required read skipped; a `reworded`
+> whoever passed it before; a line or picture that breaks a rule of the owner's, whichever of
+> the owner's files states it (channel note, voice file, never-bend list), such as a generated
+> result or before and after; a required read skipped; a `reworded`
 > line; a piece `below register`; a rubric score below its floor; a sentence or argument
 > repeated across a set; a work-order layer check the output fails. Anything else (a preference, a stronger
 > alternative, anything about the stamps) is an open item for the reply, not blocking.
