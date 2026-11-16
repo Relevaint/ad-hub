@@ -761,6 +761,9 @@ test("work orders: a review covers the delivered words, and a reworded line does
     const reworded = check("reworded.md", record({ own: 'own words: "Kit free with every planner" beside "Free kit with your planner" from the spring email: reworded' }));
     assert.equal(reworded.code, 1);
     assert.match(reworded.out, /layer "copy" passes with a line its own words item marks reworded/);
+    // client claim: the owner's product claim as a fact with its conditions, in a new sentence, passes; reworded still fails.
+    const claim = check("claim.md", record({ own: 'own words: "Roots stay warm down to minus five" beside "the kit keeps roots warm to -5C" from the offer page: client claim (offer/garden-kit.md, line 12)' }));
+    assert.equal(claim.code, 0, claim.out);
     assert.equal(check("notreworded.md", record({ own: 'own words: "Frost comes early this year" beside "Beat the early frost": new, not reworded' })).code, 0);
     // 4. Scores that hold for one audience: the state names it.
     const warm = review({ audience: "warm visitors only, hook 3 if served cold" });
@@ -913,6 +916,9 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     assert.equal(one.code, 0, one.out);
     assert.ok(one.out.includes(c.layers[0].check), "the repair prints the layer's block");
     assert.match(one.out, /begins "Repair \(review 1\):"/);
+    // The check comes first, so a reader that keeps only the first line still sees it; the order comes before the block.
+    assert.equal(one.out.split("\n")[0], `Check (ad-concepts/fundamentals, reopened for review 1): ${c.layers[0].check}`);
+    assert.match(one.out.split("\n")[1], /^Write the new lines after this reopen, not before it\./);
     assert.match(fs.readFileSync(notes, "utf8"), /^<!-- reopened: ad-concepts\/fundamentals review 1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z -->$/m);
     assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--repair", "1", "--notes", notes).code, 0);
     assert.equal(reopened(notes), 2);
@@ -925,6 +931,11 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     assert.equal(wo("--id", "ad-concepts", "--layer", "premises", "--repair", "1", "--notes", notes).code, 0);
     assert.match(fs.readFileSync(notes, "utf8"), /\n## premises: repair 1\n<!-- reopened: ad-concepts\/premises review 1 [^>]*-->\n$/, "--repair adds the layer's repair heading with the stamp under it");
     assert.equal(wo("--id", "ad-concepts", "--layer", "premises", "--repair", "0", "--notes", notes).code, 2);
+    // A repair written before its reopen is refused by the tool and failed by the checker.
+    fs.appendFileSync(notes, "\n## premises, more\nRepair (review 2): the kept premise now names the frost date, and the set was read again side by side.\n");
+    const early = wo("--id", "ad-concepts", "--layer", "premises", "--repair", "2", "--notes", notes);
+    assert.equal(early.code, 1);
+    assert.match(early.out, /already has a "Repair \(review 2\):" paragraph .* written before the layer was reopened/);
     // 3. The record: a layer the findings name is reopened after the review opened and has its repair paragraph.
     const stamp = (id, n) => `<!-- opened: ad-concepts/${id} 2026-11-15T09:${String(10 + n).padStart(2, "0")}:00Z -->`;
     const body = (id) => (id === "fundamentals" ? `Read to the last line: ${c.load.join(", ")}; the channel note, each to its end.\nExamples: the two earlier ads the channel note names, each read to its end.` : `Result of the ${id} layer, written when it was reached: what was built, compared and rejected, and what the check found.`);
@@ -943,6 +954,12 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     assert.match(noRepair.out, /"premises", but its notes section has no repair paragraph; .*"Repair \(review <N>\):/);
     const both = check("r3.md", rec(write("n3.md", { restamp: ["premises"], repairs: ["premises"] })));
     assert.equal(both.code, 0, both.out);
+    // --record on a pass prints the reply's closing line and the Layers rule.
+    assert.match(both.out, /End the reply with: State: concept-ready\. Record: .*r3\.md/);
+    assert.match(both.out, /A Layers \(\.\.\.\) line in the reply is only ever the full one-line record, and must pass --record -/);
+    const unstamped = check("r3a.md", rec(write("n3a.md", { restamp: ["premises"], repairs: ["premises", "connection"] })));
+    assert.equal(unstamped.code, 1);
+    assert.match(unstamped.out, /layer "connection" has a "Repair \(review 1\):" paragraph but no "reopened: ad-concepts\/connection review 1" line/);
     // The repair written at the end of the file, under the heading --repair adds, counts for that layer; under another layer's heading it does not.
     const PARA = "Repair (review 1): the second premise now carries the offer's end date, and the set was read again side by side.";
     const atEnd = check("r3b.md", rec(write("n3b.md", { tail: ["", "## premises: repair 1", "<!-- reopened: ad-concepts/premises review 1 2026-11-15T09:40:00Z -->", PARA] })));
@@ -1044,7 +1061,7 @@ test("work orders: pointers in a business repo carry the staged-work step", asyn
 test("staged work: the contract keeps its rules explicit", async () => {
   const { readFileSync } = await import("node:fs");
   const text = readFileSync(path.join(hubRoot, "core/_system/staged-work.md"), "utf8");
-  for (const rule of [/One layer, one question/, /Do not draft the finished piece and check it afterward/, /Evidence is something that was looked at/, /`n\/a` with the reason/, /`not checked` with the reason/, /does not pass its parent/, /dependents lose their pass/, /not a request for the operator to\s+approve each step/, /Three repair cycles/, /never padded/, /Tested structure is not tested performance/, /Naming a gap is a pass/, /One verdict per row/, /`carried`/, /a pass whose evidence says the check was not made is a `not checked`/, /emergency stop covers only/]) {
+  for (const rule of [/One layer, one question/, /Do not draft the finished piece and check it afterward/, /Evidence is something that was looked at/, /`n\/a` with the reason/, /`not checked` with the reason/, /does not pass its parent/, /dependents lose their pass/, /not a request for the operator to\s+approve each step/, /Three reviews and one closing re-check/, /never padded/, /Tested structure is not tested performance/, /Naming a gap is a pass/, /One verdict per row/, /`carried`/, /a pass whose evidence says the check was not made is a `not checked`/, /emergency stop covers only/]) {
     assert.match(text, rule);
   }
   // Stamps are read, never repaired; the brief's last line says what blocking means.
@@ -1053,13 +1070,19 @@ test("staged work: the contract keeps its rules explicit", async () => {
   // Round five: register is a verdict and blocks; the last review is named; a changed word is not a cut; every re-check runs the facts check on the whole output.
   assert.match(text, /a piece `below register`; a rubric score below its floor/);
   assert.match(text, /`at register`\s+>?\s*or `below register`/);
-  assert.match(text, /is the last review/);
   assert.match(text, /A change to any word that remains,\s+grammar included, is not a cut/);
-  assert.match(text, /runs check 2 on the\s+whole output/);
+  assert.match(text, /runs checks 2 and 5 on the\s+whole output \(a repair can move a sentence into an unchanged field\), checks 3 and 4 on the\s+changed lines only/);
   assert.match(text, /earlier\s+ads for the same offer or service/);
+  // A closing re-check after the last allowed review, and which review is the last; client claim; the reviewer names what it was not given.
+  assert.match(text, /a closing re-check by a fresh\s+agent reads only those lines against their findings, plus checks 2 and 5 on the whole output/);
+  assert.match(text, /The\s+last review is the closing re-check when one ran, otherwise the review that ended the loop\s+with nothing blocking/);
+  assert.match(text, /is `client claim` \(source and line\), not `reworded`/);
+  assert.match(text, /`client claim: <source\s+>\s+and line>`/);
+  assert.match(text, /name any file\s+>\s+the maker's notes say was read that is not among your paths; that is a finding/);
+  assert.match(text, /The paths are every path\s+under the loading layer's heading in the notes/);
   // The plain statement of the offer is an offer term, in the rule and in the brief.
   assert.match(text, /the plain statement of the offer's terms \(what is bought, by when, what comes with\s+it, its conditions\) is an offer term wherever it appears/);
-  assert.match(text, />\s+statement of the offer's terms is an offer term even when it matches the owner's own/);
+  assert.match(text, /the plain statement of\s+>\s+the offer's terms is an offer term even when it matches the owner's own/);
   assert.match(text, /--repair <review number>/);
   assert.match(text, /only change is a cut/);
   assert.match(text, /`State: <state>\. Record: <path>`/);

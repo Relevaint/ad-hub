@@ -575,13 +575,16 @@ function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
   const order = [...layers.map((l) => l.id), "whole"];
   const open = order.slice(0, at).find((x) => re.some((r) => r.layer === x && r.review === n) && !hasRepair(secs, x, n));
   if (open) return { code: 1, out: `Layer "${lid}" cannot be reopened for review ${n} yet: layer "${open}", earlier in the work order, was reopened for review ${n} and has no "Repair (review ${n}):" paragraph under its heading in ${notes}. Write that repair first, then reopen "${lid}".` };
+  // A repair is written after its reopen, not before it.
+  if (!re.some((r) => r.layer === lid && r.review === n) && hasRepair(secs, lid, n)) return { code: 1, out: `Layer "${lid}" already has a "Repair (review ${n}):" paragraph in ${notes}, written before the layer was reopened for review ${n}. A repair is written after its reopen: remove that paragraph, reopen the layer, read its check again, then write the repair under the heading the reopen adds.` };
   const line = `<!-- reopened: ${o.id}/${lid} review ${n} ${now.toISOString().replace(/\.\d{3}Z$/, "Z")} -->\n`;
   // The repair gets its own heading carrying the layer id, so what is appended below it is that layer's.
   const head = `\n## ${lid}: repair ${n}\n`;
   writeFileSync(file, (text && !text.endsWith("\n") ? `${text}\n` : text) + head + line);
   appendFileSync(ledgerOf(file), line);
   const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
-  return { code: 0, out: [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}, reopened for review ${n}. Paths are relative to the hub: ${hub}`, "", block, `A heading "## ${lid}: repair ${n}" was added at the end of ${notes}. Write directly under it a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are.`].join("\n") };
+  const check = lid === "whole" ? o.whole.check : layers[at].check;
+  return { code: 0, out: [`Check (${o.id}/${lid}, reopened for review ${n}): ${check}`, `Write the new lines after this reopen, not before it. A heading "## ${lid}: repair ${n}" was added at the end of ${notes}; directly under it write a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are.`, `Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block].join("\n") };
 }
 
 // Open one layer: the gate, the stamp, then the block.
@@ -644,6 +647,11 @@ function checkNotes(o, rec, final, at, cwd, review = {}) {
     const since = review.lid && opened[review.lid];
     if (!re.some((r) => r.layer === x && (!since || r.time > since))) errors.push(`${at}: the review's findings send work back to "${x}", but the notes have no "reopened: ${o.id}/${x} review <N>" line after the review was opened; reopen it with ${cmd.replace("<layer>", x)}`);
     if (!hasRepair(secs, x)) errors.push(`${at}: the review's findings send work back to "${x}", but its notes section has no repair paragraph; under its heading, below what is there, write "Repair (review <N>): what changed and what was looked at afterwards"`);
+  }
+  for (const l of [...list(o.layers), { id: "whole" }]) {
+    for (const s of secs.filter((x) => namesWord(x.heading, l.id))) for (const m of `${s.heading}\n${s.body.join("\n")}`.matchAll(/^[\s>*_-]*(?:\d+[.)]\s*)?[*_]*Repair \(review\s*(\d+)\)/gim)) {
+      if (!re.some((r) => r.layer === l.id && r.review === Number(m[1]))) errors.push(`${at}: layer "${l.id}" has a "Repair (review ${m[1]}):" paragraph but no "reopened: ${o.id}/${l.id} review ${m[1]}" line; a repair is written after its reopen: ${cmd.replace("<layer>", l.id).replace("<review number>", m[1])}`);
+    }
   }
   for (const x of [...new Set(re.map((r) => r.layer))]) {
     const said = (review.said || {})[x];
@@ -894,6 +902,11 @@ export function main(argv) {
     const { errors, records } = checkRecord(hub, readFileSync(file, "utf8"), args.id, { stdin: file === 0 });
     for (const e of errors) console.log(`FAIL  ${e}`);
     console.log(`${errors.length ? "Record failed" : "Record passed"}: ${records.length} layer record(s), ${errors.length} problem(s).`);
+    const rec = records.find((r) => r.state);
+    if (!errors.length && file !== 0 && rec) {
+      console.log(`End the reply with: State: ${rec.state.replace(/[.\s]+$/, "")}. Record: ${args.record}`);
+      console.log("A Layers (...) line in the reply is only ever the full one-line record, and must pass --record -.");
+    }
     return errors.length ? 1 : 0;
   }
   if (args.repair !== undefined && !args.layer) throw new UsageError("--repair goes with --layer <layer id> and --notes <file>");

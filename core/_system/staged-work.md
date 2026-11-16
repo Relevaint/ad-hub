@@ -80,7 +80,7 @@ skipped layer visible to the agent itself and to whoever reads the result.
 - **Layer checks are the agent's own work.** They are not a request for the operator to
   approve each step. The approvals that already exist (spend authority, the approvals log,
   the business's sign-off on proof) are unchanged and are never replaced by a layer verdict.
-- **Three repair cycles, then stop.** The limit is a stopping point, not a pass. Work that
+- **Three reviews and one closing re-check, then stop.** The limit is a stopping point, not a pass. Work that
   still fails is withheld from the ready set and reported with what failed. A requested
   count is never padded with failed work.
 - **Review with a fresh agent when one can be started,** handed [the review brief](#the-review-brief)
@@ -93,7 +93,10 @@ skipped layer visible to the agent itself and to whoever reads the result.
   exact; the plain statement of the offer's terms (what is bought, by when, what comes with
   it, its conditions) is an offer term wherever it appears and may match the owner's own
   statement of it, so own words is judged on the hook, the picture, the reason, the argument
-  and the close. Across a set, no sentence, opening or argument repeats from ad to ad; offer terms may.
+  and the close. A product claim the owner's material makes, stated as a fact with its
+  conditions in a new sentence, is `client claim` (source and line), not `reworded`; only
+  the owner's sentence copied whole or with words swapped is `reworded`, and an offer term
+  is never the owner's whole sentence about what the product does. Across a set, no sentence, opening or argument repeats from ad to ad; offer terms may.
 
 ## When something changes
 
@@ -190,8 +193,8 @@ from a record is written into the hub.
 
 ## The review brief
 
-Handed word for word to the reviewer, with the paths filled in. The paths are the maker's
-full list of files read, unchanged (whole files, never chosen sections), plus every example
+Handed word for word to the reviewer, with the paths filled in. The paths are every path
+under the loading layer's heading in the notes, unchanged (whole files, never chosen sections), plus every example
 the business's channel rules point at, opened or not. When no fresh agent can be started,
 the maker runs it as a separate pass after the draft is finished and answers every item in
 writing in the notes file. It adds to the review layer's own gates and scores.
@@ -201,8 +204,7 @@ review is requested, and the request names it. The first review reads everything
 whole brief. Each blocking finding is repaired at the layer it names, reopened with
 `--layer <layer id> --repair <review number> --notes <file>`, which adds a heading for that
 layer's repair; directly under it a paragraph beginning `Repair (review <N>):` says what
-changed and what was looked at after.
-A layer resting on a repaired one is checked again for what changed and says so under its
+changed and what was looked at after. A layer resting on a repaired one is checked again for what changed and says so under its
 heading; a layer no finding touched keeps its section and row; nothing written is deleted
 or rewritten. The `opened:` lines and their ledger record the first build once: a finding
 about them is an open item for the reply, never repaired by opening layers again, a new
@@ -210,16 +212,21 @@ notes file or waiting between opens.
 
 A later review is a re-check, not a new review, by a fresh agent whenever the first was. Its
 request hands over the earlier replies and the changed lines (old, new); the reviewer says
-whether each earlier blocking finding is closed, quoting the new line, runs check 2 on the
-whole output, checks 3 to 5 on the changed lines only, and check 7. A forbidden line blocks
-wherever it is found. The loop ends when a review returns nothing blocking, and that review,
-the last allowed or an earlier one, is the last review. After it the only change is a cut:
+whether each earlier blocking finding is closed, quoting the new line, runs checks 2 and 5 on the
+whole output (a repair can move a sentence into an unchanged field), checks 3 and 4 on the
+changed lines only, and check 7. A forbidden line blocks
+wherever it is found. The loop ends when a review returns nothing blocking. After the last
+allowed review, each blocking finding gets one last repair by the smallest change (a cut
+where a cut works, otherwise that line only rewritten), and a closing re-check by a fresh
+agent reads only those lines against their findings, plus checks 2 and 5 on the whole output. The
+last review is the closing re-check when one ran, otherwise the review that ended the loop
+with nothing blocking. After it the only change is a cut:
 whole sentences or whole fields removed (never a condition, a required string or an offer
 term), each quoted in full in `after review: cut:`. A change to any word that remains,
 grammar included, is not a cut: it is re-checked while reviews remain, or the row is
 `not checked` naming the line. A piece `below register` is rewritten at the layer that wrote
 it, never cut, while reviews remain; after the last review it is named beside the state.
-A piece no cut repairs is withheld. Text
+A piece is withheld only if the closing re-check still blocks it and no cut repairs it. Text
 changed after the last fresh review and re-checked only by the maker is not reviewed: the
 row is `partial`, names the changed lines, and the state falls to match. Only a session
 that cannot start a fresh agent records a self re-check as a pass, with `reviewer: self`.
@@ -238,12 +245,14 @@ repaired; `findings:` names in square brackets the layers it sent work back to
 > notes file, the sources, and the owner's rules and examples for this channel (paths
 > below). Answer each check with a quoted line and a verdict:
 >
-> 1. Open every source and every rules or examples file to its last line.
+> 1. Open every source and every rules or examples file to its last line, and name any file
+>    the maker's notes say was read that is not among your paths; that is a finding.
 > 2. Every fact, price, date, name and claim traces to a source and keeps the conditions
 >    its source attaches; nothing is implied that no source supports.
 > 3. Own words: facts carry over, sentences do not. Quote the two closest existing passages
->    beside the lines that resemble them, each `new`, `offer term` or `reworded`; the plain
->    statement of the offer's terms is an offer term even when it matches the owner's own.
+>    beside the lines that resemble them, each `new`, `offer term`, `client claim: <source
+>    and line>` or `reworded`, as the own-words rule defines them; the plain statement of
+>    the offer's terms is an offer term even when it matches the owner's own.
 > 4. The owner's register: quote each of the owner's corrections for this channel that the
 >    piece follows or breaks, and say what the owner would cut first. End with `at register`
 >    or `below register` beside the owner's own example you set it against, quoted (or
