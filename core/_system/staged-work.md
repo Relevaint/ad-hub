@@ -29,9 +29,13 @@ skipped layer visible to the agent itself and to whoever reads the result.
    next. The finished piece is assembled from the layer results, never drafted first and
    labelled afterward. Order is the tool's: a layer opens once the layers before it are
    written down, and each first open leaves an `opened:` line with the time in the notes
-   file and in the tool's ledger beside it (`<notes file>.opened`, kept where it is), which
+   file and in the tool's ledger beside it (`<notes file>.opened`, kept where it is and committed
+   with the file when the file is kept), which
    the record checker reads. A section is written after its layer is opened: the tool refuses
-   a layer whose section is already there, and the record fails a stamp the ledger lacks. `--all` prints every layer at once, for a person reading or a
+   a layer whose section is already there, and the record fails a stamp the ledger lacks. When
+   the next layer opens, the earlier sections of a scratch notes file are sealed: a correction is
+   added below, never rewritten in (a layer reopened with `--repair` is exempt); an output's own
+   file changes only through a repair or a change re-check. `--all` prints every layer at once, for a person reading or a
    session that cannot write a notes file at all.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
    not to polishing a later layer. After a repair, check again every later layer that
@@ -147,7 +151,8 @@ as the work proceeds: the job, the premises kept and rejected, the claims, the r
 findings and the repairs. It is the output's own file when the work order writes one;
 for a reply, a scratch file outside the hub, and outside the business repo unless the
 business says outputs go there. Only a session that cannot write files writes
-`Notes: none (why)`.
+`Notes: none (why)`. A record dated before today whose scratch notes are gone is checked on
+its rows alone, and the checker says so.
 
 ```markdown
 ## Layer record

@@ -48,6 +48,8 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 - **Written after it is opened (2026-11-16):** a graded run on a real business wrote the finished file's check into the notes before opening that layer, and the record passed. Now `--layer` refuses a never-opened layer whose section is already in the notes, the record fails a section above its own `opened:` line, a missing ledger and a notes stamp the ledger lacks; the finished-file checks (`render-review`, the video `watch`, the remix `render-review`) name what was seen as evidence items (feed or delivery size, copy hidden or sound and muted, safe zones, Finish); `--record -` on a reply with only a `State:` line says how to end it, and the audience message says to copy the audience unchanged. Not rerun with a fresh agent at the time of this commit.
 
+- **Sealed sections (2026-11-16):** graded runs on a real business rewrote an earlier layer's section after the draft so the notes said the reads came first, and the record passed. Now a first `--layer` open seals each earlier layer's first section in the ledger with a copy beside it; the record fails a sealed section that was changed rather than added to below (a reopened layer is exempt; seals are for scratch notes, so an output's own file, which a change re-check corrects in place, is neither sealed nor seal-checked); a record dated before today whose scratch notes are gone is checked on its rows alone, with a note saying so, and a later line saying a file was read to its end corrects an earlier part read. Not rerun with a fresh agent at the time of this commit.
+
 ### Known next steps (not built)
 - A second fresh look at the rendered file, or the row says `self-checked`.
 - The tool prints the review brief with every path from the loading section filled in, so the list handed to a reviewer cannot be trimmed.
@@ -55,6 +57,7 @@ Every session ends by updating this file, committing, and pushing. Not committed
 - The register verdict given separately for the hook and the body of each ad.
 - A condition that narrows a claim made on the image sits on the image or in the first lines of the primary text.
 - `--repair copy` prints the "when something changes" rows.
+- A stamped gate for change re-checks, so an output's own file can be sealed too.
 
 ## Previous session: 2026-11-03 Ecommerce Alley playbook review
 

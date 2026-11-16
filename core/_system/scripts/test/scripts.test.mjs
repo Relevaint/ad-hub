@@ -1094,6 +1094,114 @@ test("work orders: a layer is written up after it is opened, and the finished fi
   }
 });
 
+test("work orders: what a layer wrote stays written once the next layer opens", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const { loadMap, sealCopy } = await import("../workorder.mjs");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-seal-"));
+  const c = loadMap(hubRoot).work_orders.find((o) => o.id === "claims-check");
+  const check = (name, text) => { const f = path.join(tmp, name); fs.writeFileSync(f, text); return wo("--record", f); };
+  const body = (id) => (id === "claims-list" ? `Read to the last line: ${c.load.join(", ")}; the channel note, each to its end.\nExamples: the two earlier ads the channel note names, each read to its end.` : `Result of the ${id} layer, written when it was reached: what was built, compared and rejected, and what the check found.`);
+  const rec = (f) => ["## Layer record", "Work order: claims-check", `Notes: ${f}`, "| Layer | Verdict | Evidence | Fix |", "| --- | --- | --- | --- |", ...c.layers.map((l) => `| ${l.id} | pass | the ${l.id} result read line by line in the notes |  |`), "| whole | pass | the report read top to bottom |  |", "State: checked, clean", ""].join("\n");
+  const build = (name) => {
+    const f = path.join(tmp, name);
+    for (const l of [...c.layers.map((x) => x.id), "whole"]) {
+      const r = wo("--id", "claims-check", "--layer", l, "--notes", f);
+      assert.equal(r.code, 0, r.out);
+      if (l !== "whole") fs.appendFileSync(f, `\n## ${l}\n${body(l)}\n`);
+    }
+    return f;
+  };
+  const [L1, L2] = c.layers.map((l) => l.id);
+  try {
+    // 1. Opening layer 2 seals layer 1 and keeps a copy; opening layer 3 seals layer 2 and leaves layer 1's seal alone.
+    const f = path.join(tmp, "n.md");
+    assert.equal(wo("--id", "claims-check", "--layer", L1, "--notes", f).code, 0);
+    fs.appendFileSync(f, `\n## ${L1}\n${body(L1)}\n`);
+    const before = fs.readFileSync(f, "utf8");
+    const open2 = wo("--id", "claims-check", "--layer", L2, "--notes", f);
+    assert.match(open2.out, new RegExp(`^Sealed: ${L1}\\. Their sections are now added to below, never rewritten\\.`));
+    const led1 = fs.readFileSync(`${f}.opened`, "utf8");
+    assert.match(led1, new RegExp(`<!-- sealed: claims-check/${L1} [0-9a-f]{16} \\d+ \\S+Z -->`));
+    assert.ok(fs.existsSync(sealCopy(f, "claims-check", L1)));
+    assert.equal(fs.readFileSync(f, "utf8").replace(before, "").trim().split("\n").length, 1, "the notes gain only the stamp");
+    fs.appendFileSync(f, `\n## ${L2}\n${body(L2)}\n`);
+    wo("--id", "claims-check", "--layer", c.layers[2].id, "--notes", f);
+    const led2 = fs.readFileSync(`${f}.opened`, "utf8");
+    assert.equal((led2.match(new RegExp(`sealed: claims-check/${L1} `, "g")) || []).length, 1);
+    assert.match(led2, new RegExp(`sealed: claims-check/${L2} `));
+    assert.ok(led2.includes(led1.match(/<!-- sealed:[^>]*-->/)[0]), "layer 1's seal stands as it was");
+    // 2. A changed sealed section fails, naming the layer and the copy; added text passes; restored text passes.
+    const g = build("g.md");
+    assert.equal(check("r0.md", rec(g)).code, 0, check("r0.md", rec(g)).out);
+    const orig = fs.readFileSync(g, "utf8");
+    fs.writeFileSync(g, orig.replace("what was built, compared and rejected", "what was built, weighed and rejected"));
+    const swapped = check("r1.md", rec(g));
+    assert.equal(swapped.code, 1);
+    assert.match(swapped.out, new RegExp(`layer "${L2}" was sealed when the next layer opened, and its section has changed since \\(sealed copy: .*${L2}\\.md\\)`));
+    fs.writeFileSync(g, orig.replace("Examples: the two earlier ads the channel note names, each read to its end.\n", ""));
+    assert.equal(check("r2.md", rec(g)).code, 1, "a removed line fails");
+    // A record dated the day after its seals is still checked; there is no date exemption.
+    fs.writeFileSync(g, orig.replace("what was built, compared and rejected", "what was built, weighed and rejected"));
+    assert.match(check("r2b.md", rec(g).replace("Work order: claims-check", "Work order: claims-check\nDate: 2099-01-01")).out, /was sealed when the next layer opened/);
+    // Seals are for scratch notes: a record kept in its own notes file (the output's own file) is not seal-checked.
+    const ownFile = path.join(tmp, "own.md");
+    fs.writeFileSync(ownFile, `${fs.readFileSync(g, "utf8")}\n${rec(ownFile)}`);
+    fs.copyFileSync(`${g}.opened`, `${ownFile}.opened`);
+    const ownCheck = wo("--record", ownFile);
+    assert.doesNotMatch(ownCheck.out, /was sealed when the next layer opened/);
+    // A record dated before today whose scratch notes are gone is checked on its rows alone, and says so.
+    const goneRec = (d) => rec(path.join(tmp, "gone-notes.md")).replace("Work order: claims-check", `Work order: claims-check\nDate: ${d}`);
+    const earlier = check("r-gone.md", goneRec("2026-01-02"));
+    assert.equal(earlier.code, 0, earlier.out);
+    assert.match(earlier.out, /NOTE  layer record at line 1 is an earlier record \(dated 2026-01-02\) whose notes file ".*gone-notes\.md" is gone; its rows were checked as written/);
+    const todays = check("r-today.md", goneRec(new Date().toISOString().slice(0, 10)));
+    assert.equal(todays.code, 1);
+    assert.match(todays.out, /the notes file ".*gone-notes\.md" was not found/);
+    // The tool does not seal a file it can tell is an output: it already holds a layer record.
+    const out = path.join(tmp, "out.md");
+    fs.writeFileSync(out, "# Ad draft\n\n## Layer record\nWork order: claims-check\n");
+    assert.equal(wo("--id", "claims-check", "--layer", L1, "--notes", out).code, 0);
+    fs.appendFileSync(out, `\n## ${L1}\n${body(L1)}\n`);
+    assert.doesNotMatch(wo("--id", "claims-check", "--layer", L2, "--notes", out).out, /^Sealed:/);
+    assert.doesNotMatch(fs.readFileSync(`${out}.opened`, "utf8"), /sealed:/);
+    fs.writeFileSync(g, orig.replace(`## ${L2}\n`, `Read later, while ${L2} was open: the policy notes again, to the last line.\n\n## ${L2}\n`));
+    assert.equal(check("r3.md", rec(g)).code, 0, "text added below a sealed section passes");
+    fs.writeFileSync(g, orig);
+    assert.equal(check("r4.md", rec(g)).code, 0, "restored text passes");
+    // 5. A notes file rewritten wholesale with the same text (line-end whitespace aside) passes.
+    fs.writeFileSync(g, orig.split("\n").map((x) => (x.startsWith("Result") ? `${x}   ` : x)).join("\n") + "\n\n");
+    assert.equal(check("r5.md", rec(g)).code, 0);
+    // 3. A layer with a reopened stamp is exempt from its seal.
+    fs.writeFileSync(g, orig.replace(`## ${L2}\n${body(L2)}`, `## ${L2}\nRewritten after the review: ${body(L2)}`));
+    assert.equal(check("r6.md", rec(g)).code, 1);
+    assert.equal(wo("--id", "claims-check", "--layer", L2, "--repair", "1", "--notes", g).code, 0);
+    fs.appendFileSync(g, "Repair (review 1): the second claim now carries its condition, and the proof row was read again after.\n");
+    assert.doesNotMatch(check("r7.md", rec(g)).out, /was sealed when the next layer opened/);
+    // 6. A ledger with no sealed lines passes as before.
+    const h = build("h.md");
+    fs.writeFileSync(`${h}.opened`, fs.readFileSync(`${h}.opened`, "utf8").split("\n").filter((x) => !x.includes("sealed:")).join("\n"));
+    fs.writeFileSync(h, fs.readFileSync(h, "utf8").replace("what was built, compared and rejected", "what was built, weighed and rejected"));
+    assert.equal(check("r8.md", rec(h)).code, 0);
+    // 4. A correction added below a sealed loading section answers an earlier part read.
+    const r = loadMap(hubRoot).work_orders.find((o) => o.id === "readiness");
+    const rIds = r.layers.map((l) => l.id);
+    const m = path.join(tmp, "m.md");
+    assert.equal(wo("--id", "readiness", "--layer", rIds[0], "--notes", m).code, 0);
+    fs.appendFileSync(m, `\n## ${rIds[0]}\nRead to the last line: ${r.load.join(", ")}, each to its end.\nbrief.md: lines 1-40 of 90.\nExamples: none, the business keeps no channel rules for this.\n`);
+    for (const l of [...rIds.slice(1), "whole"]) { wo("--id", "readiness", "--layer", l, "--notes", m); if (l !== "whole") fs.appendFileSync(m, `\n## ${l}\n${body(l)}\n`); }
+    const rRec = ["## Layer record", "Work order: readiness", `Notes: ${m}`, "| Layer | Verdict | Evidence | Fix |", "| --- | --- | --- | --- |", ...rIds.map((l) => `| ${l} | pass | the ${l} result read line by line in the notes |  |`), "| whole | pass | the readiness file read top to bottom |  |", "State: recorded, no live gaps here", ""].join("\n");
+    const bad = check("r9.md", rRec);
+    assert.match(bad.out, /say a file was read in part \("brief\.md: lines 1-40 of 90/);
+    fs.writeFileSync(m, fs.readFileSync(m, "utf8").replace(`\n## ${rIds[1]}\n`, `\nRead later, while ${rIds[1]} was open: brief.md (90 lines), to its last line.\n\n## ${rIds[1]}\n`));
+    const fixed = check("r10.md", rRec);
+    assert.doesNotMatch(fixed.out, /say a file was read in part/);
+    assert.doesNotMatch(fixed.out, /was sealed when the next layer opened/, "the correction is added below the sealed text");
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("work orders: a broken map fails the check", async () => {
   const fs = await import("node:fs");
   const os = await import("node:os");
