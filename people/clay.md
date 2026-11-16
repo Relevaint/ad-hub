@@ -76,6 +76,7 @@ Worth reading so nobody makes them a third time.
 - Reporting keys as fake or missing when the tool being used only returns hashed values. He caught this and was right.
 - Marking something done without verifying it.
 - Claiming a repo was superseded when it was live and just idle.
+- Opening a report on test creative with the funnel. He asked for ads to look at, and reply after reply led with the landing page not carrying the offer. His words (2026-11-16): "I'm looking at the ads and videos right now, not a whole funnel. These are tests so who cares where they point to. They aren't live nor expected to be." When he asks for creative to look at, report the creative; where it would point is one line at the end, or nothing, until he talks about running it. (The last sentence is the agent's reading of his correction.)
 - Overstating how much a change improved things. He asked directly whether earlier work would have been wrong, and the honest answer was partly, with a correction to an overclaim.
 
 ---
