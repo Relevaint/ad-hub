@@ -671,7 +671,7 @@ test("work orders: a record names its notes, its evidence items and every failed
   const opened = (id, n) => `<!-- opened: ad-copy/${id} 2026-11-15T10:${String(10 + n).padStart(2, "0")}:00Z -->`;
   // The review's blocking findings sent work back to claims and copy: each was reopened with --repair and its repair written below.
   const repaired = (id) => (["claims", "copy"].includes(id) ? [`<!-- reopened: ad-copy/${id} review 1 2026-11-15T10:3${id === "claims" ? 0 : 1}:00Z -->`, `Repair (review 1): the ${id} finding was fixed here, and the changed lines were read again against the proof table afterwards.`] : []);
-  const notes = (over = {}) => ["# Notes, spring offer ads", ...["fundamentals", "premises", "cast-treatment", "visual-stop", "connection", "claims", "copy", "review"].flatMap((id, n) => [opened(id, n), `## ${id}`, over[id] !== undefined ? over[id] : para(id), ...repaired(id), ""]), opened("destination", 8), opened("whole", 9)].join("\n");
+  const notes = (over = {}) => ["# Notes, spring offer ads", ...["fundamentals", "premises", "cast-treatment", "visual-stop", "connection", "claims", "copy", "review"].flatMap((id, n) => [opened(id, n), `## ${id}`, over[id] !== undefined ? over[id] : para(id), ...repaired(id), ""]), opened("destination", 8), opened("whole", 9), "", "## whole", "Re-checked (review 1): the repaired claim and copy were read again here against what this layer had passed."].join("\n");
   const readAll = (files) => `Read to the last line: ${files.join(", ")}; the business's channel note, each to its end.\n${EXAMPLES} The offer is the spring kit, sold until May 1.`;
   const REVIEW = "reviewer: fresh agent given the review brief word for word; findings: five, two blocking (a repeated opening, an unsupported speed claim) [copy, claims], both repaired; reviewed: concepts-draft-v2.md; after review: nothing changed; audience: any; register: at register beside the owner's frost caption example; hook: 4, the frozen seedling stops the scroll; glance: 4, offer reads in one second; one job: 4, one promise per ad; proof: 3, proof row 2 quoted with its condition";
   const fixed = (notesLine) => `Layers (ad-copy): fundamentals pass (every Load first file and the business's channel note read to the last line, named in the notes) · premises pass (closest earlier: the spring ad for the same kit leads on price, this idea on frost; eight premises in the notes, four rejected with reasons) · cast-treatment pass (cast and rendering chosen per concept, alternatives in the notes) · visual-stop pass (first frames read with copy hidden) · connection pass (each concept read start to end) · claims fail, then pass (condition: “Order by May 1”; shown in: the image, the headline and both primary texts; claims map against the proof table; the speed claim cut after review) · review fail, then pass (${REVIEW}) · copy fail, then pass (fields against the claims map; own words: closest are the spring email opening and the offer page intro, both rewritten; corrections: the owner's two channel corrections quoted, both followed) · destination fail (the live page does not show the offer; reported as a page gap) · whole pass (set: no primary text or headline repeats across the four ads, only the offer dates). State: copy-ready; destination fail, page gap reported to the business. ${notesLine}\n`;
@@ -706,6 +706,26 @@ test("work orders: a record names its notes, its evidence items and every failed
     const noEx = check("x.md", fixed(`Notes: ${path.join(tmp, "noex.md")}`));
     assert.equal(noEx.code, 1);
     assert.match(noEx.out, /notes under layer "fundamentals" have no "Examples:" line/);
+    // Under the loading layer, only a part read fails; something left undone is a disclosure, unless it names a Load first file.
+    const loadLine = (line, n) => { const f = path.join(tmp, `ld-${n}.md`); writeNotes(fs, f, notes({ fundamentals: `${readAll(LOAD)}\n${line}` })); return check(`rld-${n}.md`, fixed(`Notes: ${f}`)); };
+    ["The offer rests in part on the owner's note of 2026-11-11.", "Did not open the SEO files: not needed for this request.", "Not opened, not required: ads/research/competitors.md (no competitor claim in this ad).", "The live page cannot be reached from this session.", "Did not get to the playbook for another service: not this request."].forEach((line, n) => {
+      const r = loadLine(line, n);
+      assert.equal(r.code, 0, `${line}\n${r.out}`);
+    });
+    const loadFirst = loadLine("Did not open copy-and-hooks.md: not needed for this request.", 9);
+    assert.equal(loadFirst.code, 1);
+    assert.match(loadFirst.out, /leave core\/skills\/ad-creative\/references\/copy-and-hooks\.md undone .* it is a Load first file and is read to its last line/);
+    // A Load first file is named by a path as the line writes it, never by a piece of one: another skill's SKILL.md is not this one.
+    const otherSkill = loadLine("Not opened, not required: core/skills/ad-launch/SKILL.md (no launch in this request).", 50);
+    assert.equal(otherSkill.code, 0, otherSkill.out);
+    assert.match(loadLine("Did not open SKILL.md.", 51).out, /leave core\/skills\/ad-creative\/SKILL\.md undone/);
+    assert.equal(loadLine("Not opened: old-copy-and-hooks.md (an earlier copy).", 52).code, 0);
+    ["brief.md, first 200 lines", "brief.md, lines 1 to 80", "skimmed brief.md", "brief.md was not read in full", "brief.md: not read to its last line", "read brief.md in part", "did not finish brief.md", "searched brief.md only"].forEach((line, n) => {
+      assert.match(loadLine(line, 20 + n).out, /say a file was read in part/, line);
+    });
+    assert.doesNotMatch(loadLine("brief.md, first 200 lines\nRead later, while premises was open: brief.md (240 lines), to its last line.", 40).out, /say a file was read in part/);
+    // The loading layer says so where the section is written.
+    assert.match(wo("--id", "ad-copy", "--layer", "fundamentals", "--notes", path.join(tmp, "open-load.md")).out, /that is a disclosure, not a part read, unless the line names a Load first file/);
     // The Examples: line names each example by a path that exists; a missing path or a pattern fails, naming it.
     const exLine = (line) => { const f = path.join(tmp, `ex-${Math.abs(line.length)}.md`); writeNotes(fs, f, notes({ fundamentals: readAll(LOAD).replace(EXAMPLES, line) })); return check(`rx-${line.length}.md`, fixed(`Notes: ${f}`)); };
     const missingEx = exLine(`Examples: ${fx("business/ads/rejected-sept")}, ${fx("business/notes/brand-notes.md")}, each read to its end.`);
@@ -888,7 +908,9 @@ test("work orders: the tool hands out one layer at a time", async () => {
       // Swapped: premises and cast-treatment trade times, so the later layer was opened first.
       const order = [...ids, "whole"].map((id, n) => stamp(id, swap && n === 1 ? 2 : swap && n === 2 ? 1 : n));
       const fix = (id) => (withStamps && id === "visual-stop" ? ["<!-- reopened: ad-concepts/visual-stop review 1 2026-11-15T09:30:00Z -->", "Repair (review 1): the frame's competing caption was removed, and the frame was read again at feed size with copy hidden."] : []);
-      const lines = ["# Notes", ...ids.flatMap((id, n) => [withStamps ? order[n] : "", `## ${id}`, body(id), ...fix(id), ""]), withStamps ? order[ids.length] : ""];
+      // Layers after the repaired one, already open, say they were re-checked for review 1.
+      const rc = (id) => (withStamps && ["connection", "claims"].includes(id) ? ["Re-checked (review 1): the repaired frame was read again against this layer's result."] : []);
+      const lines = ["# Notes", ...ids.flatMap((id, n) => [withStamps ? order[n] : "", `## ${id}`, body(id), ...fix(id), ...rc(id), ""]), withStamps ? order[ids.length] : "", ...(withStamps ? ["", "## whole", "Re-checked (review 1): the set was read again after the frame repair."] : [])];
       writeNotes(fs, path.join(tmp, name), lines.join("\n"));
       return path.join(tmp, name);
     };
@@ -954,6 +976,7 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     // The check comes first, so a reader that keeps only the first line still sees it; the order comes before the block.
     assert.equal(one.out.split("\n")[0], `Check (ad-concepts/fundamentals, reopened for review 1): ${c.layers[0].check}`);
     assert.match(one.out.split("\n")[1], /^Write the new lines after this reopen, not before it\./);
+    assert.match(one.out, /Every later layer already open, apart from the one that carries the fresh review, is then reopened for review 1 or gets a line under its heading that begins "Re-checked \(review 1\):"/);
     assert.match(fs.readFileSync(notes, "utf8"), /^<!-- reopened: ad-concepts\/fundamentals review 1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z -->$/m);
     assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--repair", "1", "--notes", notes).code, 0);
     assert.equal(reopened(notes), 2);
@@ -974,19 +997,34 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     // 3. The record: a layer the findings name is reopened after the review opened and has its repair paragraph.
     const stamp = (id, n) => `<!-- opened: ad-concepts/${id} 2026-11-15T09:${String(10 + n).padStart(2, "0")}:00Z -->`;
     const body = (id) => (id === "fundamentals" ? `Read to the last line: ${c.load.join(", ")}; the channel note, each to its end.\n${EXAMPLES}` : `Result of the ${id} layer, written when it was reached: what was built, compared and rejected, and what the check found.`);
-    const write = (name, { restamp = [], repairs = [], tail = [] } = {}) => {
-      const lines = ["# Notes", ...ids.flatMap((id, n) => [stamp(id, n), `## ${id}`, body(id), ...(restamp.includes(id) ? [`<!-- reopened: ad-concepts/${id} review 1 2026-11-15T09:40:00Z -->`] : []), ...(repairs.includes(id) ? ["Repair (review 1): the second premise now carries the offer's end date, and the set was read again side by side."] : []), ""]), stamp("whole", ids.length), ...tail];
+    const write = (name, { restamp = [], repairs = [], tail = [], recheck = 1, skipRc = [], wholeLate = false } = {}) => {
+      // Layers after premises, already open, say they were re-checked for review 1 (the review layer carries the fresh review).
+      const rc = (id) => (ids.indexOf(id) > ids.indexOf("premises") && id !== "review" && !restamp.includes(id) && !skipRc.includes(id) && recheck ? [`Re-checked (review ${recheck}): the repaired premise was read again against this layer's result.`] : []);
+      const wholeStamp = wholeLate ? "<!-- opened: ad-concepts/whole 2026-11-15T09:50:00Z -->" : stamp("whole", ids.length);
+      const wholeRc = skipRc.includes("whole") || !recheck ? [] : ["", "## whole", `Re-checked (review ${recheck}): the set was read again after the premise repair.`];
+      const lines = ["# Notes", ...ids.flatMap((id, n) => [stamp(id, n), `## ${id}`, body(id), ...(restamp.includes(id) ? [`<!-- reopened: ad-concepts/${id} review 1 2026-11-15T09:40:00Z -->`] : []), ...(repairs.includes(id) ? ["Repair (review 1): the second premise now carries the offer's end date, and the set was read again side by side."] : []), ...rc(id), ""]), wholeStamp, ...wholeRc, ...tail];
       writeNotes(fs, path.join(tmp, name), lines.join("\n"));
       return path.join(tmp, name);
     };
     const SCORES = "audience: any; register: at register beside the owner's frost caption example; hook: 4, the frost image stops the scroll; glance: 4, offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
-    const rec = (notesFile, { premises = "fail, then pass", cast = "pass", rev } = {}) => `Layers (ad-concepts): fundamentals pass (every Load first file read to its end) · premises ${premises} (closest earlier: the spring ad for the same kit leads on price, this idea on frost; five compared, three rejected; the end date added after review) · cast-treatment ${cast} (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (condition: “Order by May 1”; shown in: the image, the headline and both primary texts; claims map against proof rows) · ${rev || `review fail, then pass (reviewer: fresh agent given the brief word for word; findings: 2 blocking [premises], all repaired; reviewed: concepts-v1.md; after review: nothing changed; ${SCORES})`} · whole pass (set read as the operator sees it). State: concept-ready. Notes: ${notesFile}\n`;
+    const rec = (notesFile, { premises = "fail, then pass", cast = "pass", claimsV = "pass", rev } = {}) => `Layers (ad-concepts): fundamentals pass (every Load first file read to its end) · premises ${premises} (closest earlier: the spring ad for the same kit leads on price, this idea on frost; five compared, three rejected; the end date added after review) · cast-treatment ${cast} (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims ${claimsV} (condition: “Order by May 1”; shown in: the image, the headline and both primary texts; claims map against proof rows) · ${rev || `review fail, then pass (reviewer: fresh agent given the brief word for word; findings: 2 blocking [premises], all repaired; reviewed: concepts-v1.md; after review: nothing changed; ${SCORES})`} · whole pass (set read as the operator sees it). State: concept-ready. Notes: ${notesFile}\n`;
     const noStamp = check("r1.md", rec(write("n1.md", { repairs: ["premises"] })));
     assert.equal(noStamp.code, 1);
     assert.match(noStamp.out, /findings send work back to "premises", but the notes have no "reopened: ad-concepts\/premises review <N>" line .* --layer premises --repair <review number>/);
     const noRepair = check("r2.md", rec(write("n2.md", { restamp: ["premises"] })));
     assert.equal(noRepair.code, 1);
     assert.match(noRepair.out, /"premises", but its notes section has no repair paragraph; .*"Repair \(review <N>\):/);
+    // After a repair, each later layer already open is reopened for that review or says "Re-checked (review N):".
+    const noRc = check("rc1.md", rec(write("rc1n.md", { restamp: ["premises"], repairs: ["premises"], skipRc: ["claims"] })));
+    assert.equal(noRc.code, 1);
+    assert.match(noRc.out, /layer "premises" was reopened for review 1 while layer "claims", later in the work order, was already open; reopen "claims" too \(.*--layer claims --repair 1 .*\), or write under a heading with "claims" a line "Re-checked \(review 1\):/);
+    assert.equal((noRc.out.match(/while layer "claims", later in the work order/g) || []).length, 1, "one finding per later layer and review");
+    assert.match(check("rc2.md", rec(write("rc2n.md", { restamp: ["premises"], repairs: ["premises"], recheck: 2 }))).out, /reopen "cast-treatment" too/, "another review's number does not count");
+    const reopenedInstead = check("rc3.md", rec(write("rc3n.md", { restamp: ["premises", "claims"], repairs: ["premises", "claims"] }), { claimsV: "fail, then pass" }));
+    assert.equal(reopenedInstead.code, 0, reopenedInstead.out);
+    // A layer opened after the repair needs no line; the review layer, which carries the fresh review, never does.
+    const late = check("rc4.md", rec(write("rc4n.md", { restamp: ["premises"], repairs: ["premises"], skipRc: ["whole"], wholeLate: true })));
+    assert.equal(late.code, 0, late.out);
     const both = check("r3.md", rec(write("n3.md", { restamp: ["premises"], repairs: ["premises"] })));
     assert.equal(both.code, 0, both.out);
     // --record on a pass prints the reply's closing line and the Layers rule.
