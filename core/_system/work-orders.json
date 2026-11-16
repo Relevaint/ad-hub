@@ -4053,7 +4053,13 @@
         "review the results",
         "what did we learn from the ads",
         "pull the results",
-        "results snapshot"
+        "results snapshot",
+        "how did last week's ads do",
+        "how did the ads do last week",
+        "how did the campaign perform",
+        "what is working in our ads right now",
+        "what's working in our ads",
+        "which ads are working"
       ],
       "not_for": "A review pauses nothing and moves nothing. Which ads should go is answered at ad-manage's session, with this review's evidence.",
       "owner": "ad-review",

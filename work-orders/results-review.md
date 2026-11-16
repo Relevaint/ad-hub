@@ -2,7 +2,7 @@
 
 # Work order: What the results mean (`results-review`)
 
-**When the ask is:** "how are the ads doing", "which ad is winning", "are the ads failing", "only one sale, are the ads failing", "review the results", "what did we learn from the ads", "pull the results", "results snapshot"
+**When the ask is:** "how are the ads doing", "which ad is winning", "are the ads failing", "only one sale, are the ads failing", "review the results", "what did we learn from the ads", "pull the results", "results snapshot", "how did last week's ads do", "how did the ads do last week", "how did the campaign perform", "what is working in our ads right now", "what's working in our ads", "which ads are working"
 
 **Not this:** A review pauses nothing and moves nothing. Which ads should go is answered at ad-manage's session, with this review's evidence.
 
