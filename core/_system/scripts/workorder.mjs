@@ -47,6 +47,7 @@
 
 import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import { DEFAULT_HUB, parseArgs, UsageError, loadSkills, run, isMain } from "./lib.mjs";
 import { words } from "./route.mjs";
 
@@ -583,6 +584,42 @@ export function earlySections(text, lid) {
   }
   return out;
 }
+// Seals: when a layer is first opened, each earlier layer's first section (not a repair section) is
+// sealed in the ledger, "<!-- sealed: <work order>/<layer> <checksum> <line count> <UTC time> -->", and a
+// copy is kept in "<notes file>.sealed/<work order>.<layer>.md". The record check then requires the sealed
+// text to still begin that section: added below, never rewritten.
+const SEAL = /<!--\s*sealed:\s*([a-z0-9-]+)\/([a-z0-9-]+)\s+([0-9a-f]+)\s+(\d+)\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\s*-->/g;
+export const sealDir = (file) => `${file}.sealed`;
+export const sealCopy = (file, id, lid) => path.join(sealDir(file), `${id}.${lid}.md`);
+export function seals(ledger, id) {
+  const out = {};
+  for (const m of String(ledger).matchAll(SEAL)) if (m[1] === id && !(m[2] in out)) out[m[2]] = { sum: m[3], lines: Number(m[4]), time: m[5] };
+  return out;
+}
+const sumOf = (lines) => createHash("sha256").update(lines.join("\n")).digest("hex").slice(0, 16);
+// The first section of a layer: the first heading that starts with its id (not a repair heading), at or after
+// this work order's own stamp for it when the notes hold one; its lines to the next heading, stamps dropped,
+// line ends trimmed, trailing blank lines dropped.
+export function firstSection(text, id, lid) {
+  const lines = String(text).split("\n");
+  const from = Math.max(0, stampLine(text, id, lid));
+  let fence = false, start = -1;
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (/^\s*```/.test(lines[i])) fence = !fence;
+    const h = !fence && /^#{1,6}\s/.test(lines[i]) && lines[i].match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
+    if (start < 0) {
+      if (i >= from && h && new RegExp(`^[\\s\\d.)*_\x60]*${esc(lid)}(?![a-z0-9-])`, "i").test(h[1]) && !/:\s*repair\b/i.test(h[1])) { start = i; out.push(lines[i].trimEnd()); }
+      continue;
+    }
+    if (h) break;
+    if (/^\s*<!--\s*(?:re)?opened:.*-->\s*$/.test(lines[i])) continue;
+    out.push(lines[i].trimEnd());
+  }
+  while (out.length && !out[out.length - 1].trim()) out.pop();
+  return start < 0 ? null : out;
+}
+
 const stampLine = (text, id, lid) => String(text).split("\n").findIndex((l) => new RegExp(`<!--\\s*opened:\\s*${esc(id)}/${esc(lid)}\\s`).test(l));
 
 // Reopen a layer a review finding named: --layer <id> --repair <review number>.
@@ -625,15 +662,30 @@ export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = ne
   if (!(lid in stamps(`${text}\n${ledgerText(file)}`, o.id)) && earlySections(text, lid).length) {
     return { code: 1, out: `Layer "${lid}" was never opened, but ${notes} already holds a section for it. A layer's section is written after the layer is opened: remove what was written, open "${lid}", read what it prints, then write the section.` };
   }
+  const sealed = [];
   if (!(lid in stamps(`${text}\n${ledgerText(file)}`, o.id))) {
     mkdirSync(path.dirname(file), { recursive: true });
-    const line = `<!-- opened: ${o.id}/${lid} ${now.toISOString().replace(/\.\d{3}Z$/, "Z")} -->\n`;
+    const time = now.toISOString().replace(/\.\d{3}Z$/, "Z");
+    const have = seals(ledgerText(file), o.id);
+    // An output's own file (it holds a layer record, or the creative file's frontmatter) is corrected in place by a
+    // change re-check, so it is not sealed: seals are for scratch notes.
+    const output = /^#{2,6}\s+Layer record\b/im.test(text) || /^---\n[\s\S]*?^id:\s*\S/m.test(text);
+    for (const l of output ? [] : layers.slice(0, at)) {
+      const sec = l.id in have ? null : firstSection(text, o.id, l.id);
+      if (!sec) continue;
+      mkdirSync(sealDir(file), { recursive: true });
+      writeFileSync(sealCopy(file, o.id, l.id), `${sec.join("\n")}\n`);
+      appendFileSync(ledgerOf(file), `<!-- sealed: ${o.id}/${l.id} ${sumOf(sec)} ${sec.length} ${time} -->\n`);
+      sealed.push(l.id);
+    }
+    const line = `<!-- opened: ${o.id}/${lid} ${time} -->\n`;
     writeFileSync(file, text && !text.endsWith("\n") ? `${text}\n${line}` : text + line);
     appendFileSync(ledgerOf(file), line);
   }
   const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
   const next = at < layers.length - 1 ? layers[at + 1].id : at === layers.length - 1 ? "whole" : null;
   const L = [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block];
+  if (sealed.length) L.unshift(`Sealed: ${sealed.join(", ")}. Their sections are now added to below, never rewritten.`, "");
   L.push(`Write this layer's result in ${notes} under a heading with \`${lid}\` before opening the next.`);
   L.push(next ? `Next: ${tool(hub)} --id ${o.id} --layer ${next} --notes ${notes}` : `Then check the record: ${tool(hub)} --record <file> (or --record - for a reply).`);
   return { code: 0, out: L.join("\n") };
@@ -641,7 +693,7 @@ export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = ne
 
 // The notes file behind a record: a heading per passed layer with real sentences under it,
 // and the loading layer naming every file under Load first, none of them read in part.
-function checkNotes(o, rec, final, at, cwd, review = {}) {
+function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
   const errors = [];
   const given = rec.notes;
   if (/^none\b/i.test(given)) {
@@ -657,6 +709,18 @@ function checkNotes(o, rec, final, at, cwd, review = {}) {
   // The ledger is the tool's: it must be there, and every stamp in the notes must be in it, text for text.
   if (!existsSync(ledgerOf(file))) errors.push(`${at}: there is no ledger beside the notes file (${path.basename(ledgerOf(file))}); the ledger is written by --layer and is kept beside the notes, never deleted`);
   else { const led = ledgerText(file); for (const m of raw.matchAll(ANY_STAMP)) if (!led.includes(m[0])) errors.push(`${at}: the notes hold "${m[0]}", which the ledger does not; stamps are written by the tool, never typed`); }
+  // Sealed sections: the sealed text still begins the layer's first section (a reopened layer is exempt).
+  // Seals are for scratch notes: a record kept in its own notes file (the output's own file) is not seal-checked.
+  const sealedNow = own === file ? {} : seals(ledgerText(file), o.id);
+  const reop = reopenings(`${raw}\n${ledgerText(file)}`, o.id);
+  for (const [lid, sl] of Object.entries(sealedNow)) {
+    if (reop.some((r) => r.layer === lid)) continue;
+    const cur = firstSection(raw, o.id, lid) || [];
+    const copy = sealCopy(file, o.id, lid);
+    const want = existsSync(copy) ? readFileSync(copy, "utf8").replace(/\n$/, "").split("\n").map((x) => x.trimEnd()) : null;
+    const same = want ? want.length <= cur.length && want.every((x, i) => x === cur[i]) : cur.length >= sl.lines && sumOf(cur.slice(0, sl.lines)) === sl.sum;
+    if (!same) errors.push(`${at}: layer "${lid}" was sealed when the next layer opened, and its section has changed since (sealed copy: ${copy}). A section already written is not rewritten: restore the sealed text and write what changed below it, saying which layer was open at the time`);
+  }
   // A passed layer's section sits below its own opened: line.
   for (const l of [...list(o.layers), { id: "whole" }]) {
     if (final[l.id] !== "pass") continue;
@@ -704,7 +768,11 @@ function checkNotes(o, rec, final, at, cwd, review = {}) {
       if (!forms.some((x) => new RegExp(`(?<![A-Za-z0-9_-])${esc(x)}`).test(body))) errors.push(`${at}: the notes under layer "${l.id}" do not name ${f}; name every file under Load first, each read to its last line`);
     }
     if (!/^[\s>*-]*`?Examples:`?\s*\S/im.test(body)) errors.push(`${at}: the notes under layer "${l.id}" have no "Examples:" line; name every example the business's channel rules point at, each read to its end, or write "Examples: none" with why`);
-    for (const line of body.split("\n")) if (partRead(line)) errors.push(`${at}: the notes under layer "${l.id}" say a file was read in part ("${line.trim().slice(0, 80)}"); read it to its last line, then record it`);
+    // The last statement about a file counts: a later line naming it as read to its end corrects an earlier part read.
+    const bl = body.split("\n");
+    const FILE = /[\w./-]+\.(?:md|json|mjs|js|ts|tsx|txt|ya?ml|csv|html)\b/g;
+    const corrected = (i) => { const names = bl[i].match(FILE) || []; return names.length > 0 && names.every((n) => bl.slice(i + 1).some((x) => x.includes(n) && !partRead(x))); };
+    for (const [i, line] of bl.entries()) if (partRead(line) && !corrected(i)) errors.push(`${at}: the notes under layer "${l.id}" say a file was read in part ("${line.trim().slice(0, 80)}"); read it to its last line, then record it`);
   }
   return errors;
 }
@@ -722,6 +790,8 @@ export function parseRecords(text) {
         if (wo) { rec.id = wo[1]; continue; }
         const nt = t.match(/^Notes:\s*(.*)$/i);
         if (nt) { rec.notes = cleanNotes(nt[1]); continue; }
+        const dt = t.match(/^Date:\s*(\d{4}-\d{2}-\d{2})/i);
+        if (dt) { rec.date = dt[1]; continue; }
         const st = t.match(/^State:\s*(.*)$/i);
         if (st) { const x = takeNotes(st[1]); rec.state = x.rest.trim(); if (x.notes) rec.notes = x.notes; continue; }
         if (t.startsWith("|")) {
@@ -785,12 +855,13 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
   const by = Object.fromEntries(list(map.work_orders).map((o) => [o.id, o]));
   const records = parseRecords(text);
   const errors = [];
+  const info = [];
   // A reply whose record is in a file ends "State: <state>. Record: <path>": check that file.
   const pointer = !records.length && opts.stdin && [...text.matchAll(/(?:^|\s)Record:\s*`?([^\s`]+?)`?\.?\s*$/gm)].pop();
   if (pointer) {
     const file = path.resolve(cwd, pointer[1]);
     if (!existsSync(file)) return { errors: [`the reply points at the record "${pointer[1]}", which was not found (paths are relative to the current directory, or absolute)`], records };
-    const inner = checkRecord(hub, readFileSync(file, "utf8"), forcedId, { cwd });
+    const inner = checkRecord(hub, readFileSync(file, "utf8"), forcedId, { cwd, file });
     const said = (text.match(/State:\s*([^\n]*?)\.?\s*Record:/i) || [])[1];
     const rec = inner.records[0];
     if (said && rec && rec.claimed && !said.toLowerCase().replace(/[`*]/g, "").trim().startsWith(rec.claimed)) inner.errors.push(`the reply says "State: ${said.trim()}", but the record in ${pointer[1]} supports "${rec.claimed}"`);
@@ -855,7 +926,10 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     }
     if (rec.notes === undefined || rec.notes === null) {
       if (rec.compact || opts.stdin) errors.push(`${at}: no "Notes:" line; name the notes file that holds each layer's result, or "Notes: none (why)"`);
-    } else errors.push(...checkNotes(o, rec, final, at, cwd, review));
+    } else if (rec.date && rec.date < new Date().toISOString().slice(0, 10) && !/^none\b/i.test(rec.notes) && !existsSync(path.resolve(cwd, rec.notes))) {
+      // An earlier record whose scratch notes did not outlive their session: its rows are checked as written.
+      info.push(`${at} is an earlier record (dated ${rec.date}) whose notes file "${rec.notes}" is gone; its rows were checked as written, the notes checks (sections, stamps, seals, ledger) were skipped`);
+    } else errors.push(...checkNotes(o, rec, final, at, cwd, review, opts.file ? path.resolve(cwd, opts.file) : null));
     if (!rec.state) { errors.push(`${at}: no "State:" line`); continue; }
     // Every layer that failed, was not checked or is partial is named beside the state.
     const unnamed = Object.entries(final).filter(([lid, v]) => ["fail", "not checked", "partial"].includes(v) && !namesWord(rec.state, lid)).map(([lid, v]) => `"${lid}" (${v})`);
@@ -892,7 +966,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     const needed = list(claimed.needs);
     if (needed.length && needed.every((n) => final[n] === "n/a")) errors.push(`${at}: state "${claimed.state}" rests only on n/a rows; n/a alone cannot support a state`);
   }
-  return { errors, records };
+  return { errors, records, info };
 }
 
 // ---------------------------------------------------------------- CLI
@@ -931,8 +1005,9 @@ export function main(argv) {
   if (args.record) {
     const file = args.record === "-" ? 0 : path.resolve(args.record);
     if (file !== 0 && !existsSync(file)) throw new UsageError(`file not found: ${args.record}`);
-    const { errors, records } = checkRecord(hub, readFileSync(file, "utf8"), args.id, { stdin: file === 0 });
+    const { errors, records, info = [] } = checkRecord(hub, readFileSync(file, "utf8"), args.id, { stdin: file === 0, file: file === 0 ? null : file });
     for (const e of errors) console.log(`FAIL  ${e}`);
+    for (const n of info) console.log(`NOTE  ${n}`);
     console.log(`${errors.length ? "Record failed" : "Record passed"}: ${records.length} layer record(s), ${errors.length} problem(s).`);
     const rec = records.find((r) => r.state);
     if (!errors.length && file !== 0 && rec) {
