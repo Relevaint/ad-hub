@@ -47,7 +47,7 @@
 
 import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
-import { createHash } from "node:crypto";
+import { createHash, randomInt } from "node:crypto";
 import { DEFAULT_HUB, parseArgs, UsageError, loadSkills, run, isMain } from "./lib.mjs";
 import { words } from "./route.mjs";
 
@@ -594,7 +594,7 @@ export function hasRepair(secs, lid, n = null) {
 // First-build headings for a layer (they start with the layer id; a repair heading is not one) that were
 // written before it was opened: the nearest stamp above them is not a stamp of that same layer (an earlier
 // work order's section for a layer with the same id sits under that work order's own stamp).
-const ANY_STAMP = /<!--\s*(?:re)?opened:\s*([a-z0-9-]+)\/([a-z0-9-]+)[^>]*-->/g;
+const ANY_STAMP = /<!--\s*(?:(?:re)?opened|rechecked):\s*([a-z0-9-]+)\/([a-z0-9-]+)[^>]*-->/g;
 export function earlySections(text, lid) {
   const lines = String(text).split("\n");
   const out = [];
@@ -603,7 +603,7 @@ export function earlySections(text, lid) {
     for (const m of lines[i].matchAll(ANY_STAMP)) near = m[2];
     if (/^\s*```/.test(lines[i])) fence = !fence;
     const h = !fence && lines[i].match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
-    if (h && new RegExp(`^[\\s\\d.)*_\x60]*${esc(lid)}(?![a-z0-9-])`, "i").test(h[1]) && !/:\s*repair\b/i.test(h[1]) && near !== lid) out.push({ heading: h[1], line: i });
+    if (h && new RegExp(`^[\\s\\d.)*_\x60]*${esc(lid)}(?![a-z0-9-])`, "i").test(h[1]) && !/:\s*(?:repair|re-check)\b/i.test(h[1]) && near !== lid) out.push({ heading: h[1], line: i });
   }
   return out;
 }
@@ -632,11 +632,11 @@ export function firstSection(text, id, lid) {
     if (/^\s*```/.test(lines[i])) fence = !fence;
     const h = !fence && /^#{1,6}\s/.test(lines[i]) && lines[i].match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
     if (start < 0) {
-      if (i >= from && h && new RegExp(`^[\\s\\d.)*_\x60]*${esc(lid)}(?![a-z0-9-])`, "i").test(h[1]) && !/:\s*repair\b/i.test(h[1])) { start = i; out.push(lines[i].trimEnd()); }
+      if (i >= from && h && new RegExp(`^[\\s\\d.)*_\x60]*${esc(lid)}(?![a-z0-9-])`, "i").test(h[1]) && !/:\s*(?:repair|re-check)\b/i.test(h[1])) { start = i; out.push(lines[i].trimEnd()); }
       continue;
     }
     if (h) break;
-    if (/^\s*<!--\s*(?:re)?opened:.*-->\s*$/.test(lines[i])) continue;
+    if (/^\s*<!--.*-->\s*$/.test(lines[i])) continue;
     out.push(lines[i].trimEnd());
   }
   while (out.length && !out[out.length - 1].trim()) out.pop();
@@ -644,6 +644,111 @@ export function firstSection(text, id, lid) {
 }
 
 const stampLine = (text, id, lid) => String(text).split("\n").findIndex((l) => new RegExp(`<!--\\s*opened:\\s*${esc(id)}/${esc(lid)}\\s`).test(l));
+
+// ---------------------------------------------------------------- marks
+// Every printout of a layer carries one line "<!-- mark: WORD-NN -->" at a place in its middle; the ledger keeps
+// only a hash of it, "<!-- mark: <work order>/<layer> <hash> <UTC time> -->". A stamp is answered when a line under a
+// heading with that layer's id carries a mark the ledger issued for that layer at or after the stamp.
+const MARK_WORDS = ["AMBER", "BIRCH", "CEDAR", "DELTA", "EMBER", "FERN", "GROVE", "HARBOR", "IRIS", "JUNIPER", "KESTREL", "LUMEN", "MAPLE", "NECTAR", "ORCHID", "PEBBLE", "QUILL", "RAVEN", "SABLE", "TIDE", "UMBER", "VIOLET", "WILLOW", "YARROW", "ZEPHYR"];
+const LEDGER_MARK = /<!--\s*mark:\s*([a-z0-9-]+)\/([a-z0-9-]+)\s+([0-9a-f]{16})\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\s*-->/g;
+const NOTE_MARK = /<!--\s*mark:\s*([A-Z]+-\d{2})\s*-->/g;
+const markHash = (w) => createHash("sha256").update(w).digest("hex").slice(0, 16);
+const utc = (now) => now.toISOString().replace(/\.\d{3}Z$/, "Z");
+export const MARK_SENTENCE = "This printout carries one line that begins `<!-- mark:`; copy that line as it is under this layer's heading in the notes. The next layer does not open without it, and the record fails without it.";
+// The one place a mark is issued: its hash goes to the ledger, the mark itself only into the printout.
+function issueMark(file, id, lid, now) {
+  const fixed = process.env.WORKORDER_MARK;
+  const w = fixed && /^[A-Z]+-\d{2}$/.test(fixed) ? fixed : `${MARK_WORDS[randomInt(MARK_WORDS.length)]}-${String(randomInt(100)).padStart(2, "0")}`;
+  appendFileSync(ledgerOf(file), `<!-- mark: ${id}/${lid} ${markHash(w)} ${utc(now)} -->\n`);
+  return w;
+}
+// The mark goes on its own line between two paragraphs or list items, outside tables and fences, in the middle half.
+function placeMark(out, w) {
+  const lines = out.split("\n");
+  const ok = [];
+  let fence = false;
+  for (let i = 1; i < lines.length; i++) {
+    if (/^\s*```/.test(lines[i - 1])) fence = !fence;
+    if (fence || i < lines.length / 4 || i > (lines.length * 3) / 4) continue;
+    const a = lines[i - 1], b = lines[i];
+    if (/^\s*\|/.test(a) || /^\s*\|/.test(b) || /^\s*```/.test(b)) continue;
+    if (!a.trim() || /^\s*(?:[-*]|\d+\.)\s/.test(b)) ok.push(i);
+  }
+  const at = ok.length ? ok[parseInt(markHash(w).slice(0, 8), 16) % ok.length] : Math.max(0, lines.length - 1);
+  lines.splice(at, 0, `<!-- mark: ${w} -->`);
+  return lines.join("\n");
+}
+export function ledgerMarks(ledger, id) {
+  return [...String(ledger).matchAll(LEDGER_MARK)].filter((m) => m[1] === id).map((m) => ({ layer: m[2], hash: m[3], time: m[4], pos: m.index }));
+}
+// Where the ledger's first mark line sits: stamps before it were written by the version before and need no answer.
+const firstMarkPos = (ledger) => { const m = String(ledger).match(new RegExp(LEDGER_MARK.source)); return m ? m.index : null; };
+// The marks copied under headings that carry a layer's id.
+function marksUnder(text, lid) {
+  const out = [];
+  let cur = null, fence = false;
+  for (const line of String(text).split("\n")) {
+    if (/^\s*```/.test(line)) fence = !fence;
+    const h = !fence && line.match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
+    if (h) { cur = h[1]; continue; }
+    if (cur !== null && namesWord(cur, lid)) for (const m of line.matchAll(NOTE_MARK)) out.push(m[1]);
+  }
+  return out;
+}
+// Every stamp of a work order in the ledger, with its layer, kind and time.
+const LEDGER_STAMP = /<!--\s*(opened|reopened|rechecked):\s*([a-z0-9-]+)\/([a-z0-9-]+)(?:\s+review\s+(\d+))?\s+(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\s*-->/g;
+export function ledgerStamps(ledger, id) {
+  return [...String(ledger).matchAll(LEDGER_STAMP)].filter((m) => m[2] === id).map((m) => ({ kind: m[1], layer: m[3], review: m[4] ? Number(m[4]) : null, time: m[5], text: m[0], pos: m.index }));
+}
+// The one place a stamp is checked: is it answered by a mark copied under its layer's heading? The mark must have
+// been issued for that layer after the stamp (the ledger is written in order, so its order is the time order).
+export function answered(text, ledger, id, st) {
+  const issued = ledgerMarks(ledger, id).filter((m) => m.layer === st.layer && m.pos > st.pos).map((m) => m.hash);
+  return marksUnder(text, st.layer).some((w) => issued.includes(markHash(w)));
+}
+// Stamps this version must see answered: those at or after the ledger's first mark.
+export function unanswered(text, ledger, id) {
+  const since = firstMarkPos(ledger);
+  if (since === null) return [];
+  // The stamp written in the same call as the first mark sits just before it: it is held to the mark too.
+  const stampsAll = ledgerStamps(ledger, id);
+  const before = stampsAll.filter((st) => st.pos < since).map((st) => st.pos);
+  const lastBefore = before.length ? Math.max(...before) : -1;
+  const markLayer = (String(ledger).slice(since).match(new RegExp(LEDGER_MARK.source)) || [])[2];
+  const prior = stampsAll.find((st) => st.pos === lastBefore);
+  const firstCall = prior && prior.layer === markLayer && String(ledger).slice(lastBefore, since).split("\n").length <= 2 ? lastBefore : -1;
+  return stampsAll.filter((st) => (st.pos > since || st.pos === firstCall) && !answered(text, ledger, id, st));
+}
+const unansweredMsg = (st, hub, id, notes) => `Layer "${st.layer}" has an unanswered stamp ("${st.text}"): its printout was not read to the mark. Print it again (${tool(hub)} --id ${id} --layer ${st.layer} --notes ${notes}), read it through, and copy the mark line it carries under its heading.`;
+function gate(hub, o, file, text, notes) {
+  const open = unanswered(text, ledgerText(file), o.id);
+  return open.length ? { code: 1, out: unansweredMsg(open[0], hub, o.id, notes) } : null;
+}
+// The printout: the mark sentence first, then the body with one mark at a place in its middle.
+function printout(file, o, lid, now, head, body) {
+  const w = issueMark(file, o.id, lid, now);
+  return placeMark([...head, MARK_SENTENCE, "", ...body].join("\n"), w);
+}
+
+// A re-check after a repair: --layer <id> --recheck <review number>.
+function recheckLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
+  const layers = list(o.layers);
+  const order = [...layers.map((l) => l.id), "whole"];
+  if (!(lid in stamps(`${text}\n${ledgerText(file)}`, o.id))) return { code: 1, out: `Layer "${lid}" was never opened, so there is nothing to re-check: open it first with ${tool(hub)} --id ${o.id} --layer ${lid} --notes ${notes}` };
+  const re = reopenings(`${text}\n${ledgerText(file)}`, o.id).filter((r) => r.review === n && order.indexOf(r.layer) >= 0 && order.indexOf(r.layer) < at);
+  if (!re.length) return { code: 1, out: `Layer "${lid}" cannot be re-checked for review ${n}: no layer before it was reopened for review ${n}. A re-check follows a repair upstream.` };
+  const open = [...new Set(re.map((r) => r.layer))].find((x) => !hasRepair(secs, x, n));
+  if (open) return { code: 1, out: `Layer "${lid}" cannot be re-checked for review ${n} yet: layer "${open}", earlier in the work order, was reopened for review ${n} and has no "Repair (review ${n}):" paragraph under its heading in ${notes}. Write that repair first, then re-check "${lid}".` };
+  const held = gate(hub, o, file, text, notes);
+  if (held) return held;
+  const line = `<!-- rechecked: ${o.id}/${lid} review ${n} ${utc(now)} -->\n`;
+  writeFileSync(file, (text && !text.endsWith("\n") ? `${text}\n` : text) + `\n## ${lid}: re-check (review ${n})\n` + line);
+  appendFileSync(ledgerOf(file), line);
+  const check = lid === "whole" ? o.whole.check : layers[at].check;
+  const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
+  const ups = [...new Set(re.map((r) => r.layer))];
+  return { code: 0, out: printout(file, o, lid, now, [`Check (${o.id}/${lid}, re-checked for review ${n}): ${check}`, `Reopened for review ${n}, upstream: ${ups.join(", ")}. Their "Repair (review ${n}):" paragraphs are what changed. A heading "## ${lid}: re-check (review ${n})" was added at the end of ${notes}; directly under it write a paragraph that begins "Re-checked (review ${n}):" and names what changed upstream and what was looked at here, by a file path or a quoted line of the output.`], [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block]) };
+}
 
 // Reopen a layer a review finding named: --layer <id> --repair <review number>.
 function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
@@ -655,6 +760,8 @@ function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
   if (open) return { code: 1, out: `Layer "${lid}" cannot be reopened for review ${n} yet: layer "${open}", earlier in the work order, was reopened for review ${n} and has no "Repair (review ${n}):" paragraph under its heading in ${notes}. Write that repair first, then reopen "${lid}"; do not save this layer's changes to the output until this layer is reopened.` };
   // A repair is written after its reopen, not before it.
   if (!re.some((r) => r.layer === lid && r.review === n) && hasRepair(secs, lid, n)) return { code: 1, out: `Layer "${lid}" already has a "Repair (review ${n}):" paragraph in ${notes}, written before the layer was reopened for review ${n}. A repair is written after its reopen: remove that paragraph, reopen the layer, read its check again, then write the repair under the heading the reopen adds.` };
+  const held = gate(hub, o, file, text, notes);
+  if (held) return held;
   const line = `<!-- reopened: ${o.id}/${lid} review ${n} ${now.toISOString().replace(/\.\d{3}Z$/, "Z")} -->\n`;
   // The repair gets its own heading carrying the layer id, so what is appended below it is that layer's.
   const head = `\n## ${lid}: repair ${n}\n`;
@@ -662,11 +769,11 @@ function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
   appendFileSync(ledgerOf(file), line);
   const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
   const check = lid === "whole" ? o.whole.check : layers[at].check;
-  return { code: 0, out: [`Check (${o.id}/${lid}, reopened for review ${n}): ${check}`, `Write the new lines after this reopen, not before it. A heading "## ${lid}: repair ${n}" was added at the end of ${notes}; directly under it write a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are. Every later layer already open, apart from the one that carries the fresh review, is then reopened for review ${n} or gets a line under its heading that begins "Re-checked (review ${n}):" and says what changed upstream and what was looked at there.`, `Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block].join("\n") };
+  return { code: 0, out: printout(file, o, lid, now, [`Check (${o.id}/${lid}, reopened for review ${n}): ${check}`, `Write the new lines after this reopen, not before it. A heading "## ${lid}: repair ${n}" was added at the end of ${notes}; directly under it write a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are. Every later layer already open, apart from the one that carries the fresh review, is then reopened the same way if it changes, or re-checked with --layer <id> --recheck ${n}.`], [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block]) };
 }
 
 // Open one layer: the gate, the stamp, then the block.
-export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = new Date(), repair = null) {
+export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = new Date(), repair = null, recheck = null) {
   const layers = list(o.layers);
   const at = lid === "whole" ? layers.length : layers.findIndex((l) => l.id === lid);
   if (at < 0) throw new UsageError(`work order ${o.id} has no layer "${lid}"; its layers: ${layers.map((l) => l.id).join(", ")}, whole`);
@@ -676,6 +783,10 @@ export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = ne
   if (repair !== null) {
     if (!/^[1-9]\d*$/.test(String(repair))) throw new UsageError("--repair takes the review number: 1 for the first review, 2 for the second");
     return repairLayer(hub, o, map, at, lid, notes, file, text, secs, Number(repair), now);
+  }
+  if (recheck !== null) {
+    if (!/^[1-9]\d*$/.test(String(recheck))) throw new UsageError("--recheck takes the review number: 1 for the first review, 2 for the second");
+    return recheckLayer(hub, o, map, at, lid, notes, file, text, secs, Number(recheck), now);
   }
   const missing = layers.slice(0, at).filter((l) => !written(secs, l.id));
   if (missing.length) {
@@ -687,6 +798,9 @@ export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = ne
   }
   const sealed = [];
   if (!(lid in stamps(`${text}\n${ledgerText(file)}`, o.id))) {
+    // Nothing new is stamped while a stamp is unanswered.
+    const held = gate(hub, o, file, text, notes);
+    if (held) return held;
     mkdirSync(path.dirname(file), { recursive: true });
     const time = now.toISOString().replace(/\.\d{3}Z$/, "Z");
     const have = seals(ledgerText(file), o.id);
@@ -708,10 +822,10 @@ export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = ne
   const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
   const next = at < layers.length - 1 ? layers[at + 1].id : at === layers.length - 1 ? "whole" : null;
   const L = [`Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block];
-  if (sealed.length) L.unshift(`Sealed: ${sealed.join(", ")}. Their sections are now added to below, never rewritten.`, "");
   L.push(`Write this layer's result in ${notes} under a heading with \`${lid}\` before opening the next.`);
   L.push(next ? `Next: ${tool(hub)} --id ${o.id} --layer ${next} --notes ${notes}` : `Then check the record: ${tool(hub)} --record <file> (or --record - for a reply).`);
-  return { code: 0, out: L.join("\n") };
+  mkdirSync(path.dirname(file), { recursive: true });
+  return { code: 0, out: printout(file, o, lid, now, sealed.length ? [`Sealed: ${sealed.join(", ")}. Their sections are now added to below, never rewritten.`] : [], L) };
 }
 
 // The notes file behind a record: a heading per passed layer with real sentences under it,
@@ -744,6 +858,9 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
     const same = want ? want.length <= cur.length && want.every((x, i) => x === cur[i]) : cur.length >= sl.lines && sumOf(cur.slice(0, sl.lines)) === sl.sum;
     if (!same) errors.push(`${at}: layer "${lid}" was sealed when the next layer opened, and its section has changed since (sealed copy: ${copy}). A section already written is not rewritten: restore the sealed text and write what changed below it, saying which layer was open at the time`);
   }
+  // Read to the mark: each stamp of a passed layer (at or after the ledger's first mark) is answered.
+  const passedNow = new Set(Object.entries(final).filter(([, v]) => v === "pass").map(([k]) => k));
+  for (const st of unanswered(raw, ledgerText(file), o.id)) if (passedNow.has(st.layer)) errors.push(`${at}: layer "${st.layer}" has an unanswered stamp ("${st.text}"): its printout was not read to the mark. Print it again (workorder.mjs --id ${o.id} --layer ${st.layer} --notes ${given}), read it through, and copy the mark line it carries under its heading`);
   // A passed layer's section sits below its own opened: line.
   for (const l of [...list(o.layers), { id: "whole" }]) {
     if (final[l.id] !== "pass") continue;
@@ -762,9 +879,14 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
   // review was opened and has its "Repair (review" paragraph; a reopened layer is never a plain pass.
   const re = reopenings(`${raw}\n${ledgerText(file)}`, o.id);
   const cmd = `workorder.mjs --id ${o.id} --layer <layer> --repair <review number> --notes ${given}`;
+  // Which came first: the ledger's order when it holds both stamps (it is written in order), else their times.
+  const lst = ledgerStamps(ledgerText(file), o.id);
+  const posOf = (kind, lid, n = null) => { const x = lst.find((st) => st.kind === kind && st.layer === lid && (n === null || st.review === n)); return x ? x.pos : null; };
+  const inOrder = firstMarkPos(ledgerText(file)) !== null;
+  const before = (a, b, ta, tb) => (inOrder && a !== null && b !== null ? a < b : ta < tb);
   for (const x of list(review.named)) {
     const since = review.lid && opened[review.lid];
-    if (!re.some((r) => r.layer === x && (!since || r.time > since))) errors.push(`${at}: the review's findings send work back to "${x}", but the notes have no "reopened: ${o.id}/${x} review <N>" line after the review was opened; reopen it with ${cmd.replace("<layer>", x)}`);
+    if (!re.some((r) => r.layer === x && (!since || before(posOf("opened", review.lid), posOf("reopened", x, r.review), since, r.time)))) errors.push(`${at}: the review's findings send work back to "${x}", but the notes have no "reopened: ${o.id}/${x} review <N>" line after the review was opened; reopen it with ${cmd.replace("<layer>", x)}`);
     if (!hasRepair(secs, x)) errors.push(`${at}: the review's findings send work back to "${x}", but its notes section has no repair paragraph; under its heading, below what is there, write "Repair (review <N>): what changed and what was looked at afterwards"`);
   }
   for (const l of [...list(o.layers), { id: "whole" }]) {
@@ -775,6 +897,7 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
   // After a repair, each later layer already open (not the one carrying the fresh review) is reopened for the
   // same review or carries "Re-checked (review N):" under a heading with its id.
   const order = [...list(o.layers), { id: "whole", evidence_items: list(o.whole && o.whole.evidence_items) }];
+  const marked = firstMarkPos(ledgerText(file)) !== null;
   for (const n of [...new Set(re.map((r) => r.review))].sort((x, y) => x - y)) {
     // One finding per later layer and review, named from the earliest layer reopened for that review.
     const mine = re.filter((r) => r.review === n && order.some((l) => l.id === r.layer));
@@ -783,10 +906,20 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
     const first = mine.map((r) => r.time).sort()[0];
     const source = order[from].id;
     for (const l of order.slice(from + 1)) {
-      if (final[l.id] !== "pass" || list(l.evidence_items).includes("reviewer") || !opened[l.id] || opened[l.id] >= first) continue;
+      const firstPos = Math.min(...mine.map((r) => posOf("reopened", r.layer, n)).filter((x) => x !== null));
+      if (final[l.id] !== "pass" || list(l.evidence_items).includes("reviewer") || !opened[l.id] || !before(posOf("opened", l.id), Number.isFinite(firstPos) ? firstPos : null, opened[l.id], first)) continue;
       if (mine.some((r) => r.layer === l.id)) continue;
       const line = new RegExp(`^[\\s>*_-]*(?:\\d+[.)]\\s*)?[*_]*Re-checked \\(review\\s*${n}\\)`, "im");
-      if (secs.some((x) => namesWord(x.heading, l.id) && (line.test(x.heading) || line.test(x.body.join("\n"))))) continue;
+      const typed = secs.some((x) => namesWord(x.heading, l.id) && (line.test(x.heading) || line.test(x.body.join("\n"))));
+      const recmd = `workorder.mjs --id ${o.id} --layer ${l.id} --recheck ${n} --notes ${given}`;
+      if (marked) {
+        const stamped = ledgerStamps(ledgerText(file), o.id).some((st) => st.kind === "rechecked" && st.layer === l.id && st.review === n);
+        if (stamped && typed) continue;
+        if (typed && !stamped) { errors.push(`${at}: layer "${l.id}" has a "Re-checked (review ${n}):" line but no "rechecked: ${o.id}/${l.id} review ${n}" stamp; a re-check is made through the tool: ${recmd}`); continue; }
+        errors.push(`${at}: layer "${source}" was reopened for review ${n} while layer "${l.id}", later in the work order, was already open; reopen "${l.id}" too (${cmd.replace("<layer>", l.id).replace("<review number>", String(n))}), or re-check it (${recmd}) and write under the heading it adds a line "Re-checked (review ${n}): what changed upstream and what was looked at here"`);
+        continue;
+      }
+      if (typed) continue;
       errors.push(`${at}: layer "${source}" was reopened for review ${n} while layer "${l.id}", later in the work order, was already open; reopen "${l.id}" too (${cmd.replace("<layer>", l.id).replace("<review number>", String(n))}), or write under a heading with "${l.id}" a line "Re-checked (review ${n}): what changed upstream and what was looked at here"`);
     }
   }
@@ -1101,11 +1234,12 @@ export function main(argv) {
     }
     return errors.length ? 1 : 0;
   }
-  if (args.repair !== undefined && !args.layer) throw new UsageError("--repair goes with --layer <layer id> and --notes <file>");
+  if ((args.repair !== undefined || args.recheck !== undefined) && !args.layer) throw new UsageError("--repair and --recheck go with --layer <layer id> and --notes <file>");
   // --layer opens one layer of the work order named by --id (or matched by --for).
   const openOne = (o, map) => {
     if (!args.notes) throw new UsageError("--layer needs --notes <path to the notes file>; a session that cannot write a notes file at all reads the page with --all");
-    const r = openLayer(hub, o, map, String(args.layer), args.notes, process.cwd(), new Date(), args.repair === undefined ? null : args.repair);
+    if (args.repair !== undefined && args.recheck !== undefined) throw new UsageError("--repair and --recheck do not go together");
+    const r = openLayer(hub, o, map, String(args.layer), args.notes, process.cwd(), new Date(), args.repair === undefined ? null : args.repair, args.recheck === undefined ? null : args.recheck);
     console.log(r.out);
     return r.code;
   };

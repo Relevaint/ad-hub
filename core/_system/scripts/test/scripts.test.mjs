@@ -8,6 +8,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { existsSync, readFileSync, appendFileSync } from "node:fs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const scripts = path.resolve(here, "..");
@@ -355,7 +356,34 @@ test("creative: brand continuity comes from reviewed sources, not demographic de
 
 // ---- staged work: the output map, its pages and the layer record ----
 
-const wo = (...a) => run("workorder.mjs", ...a);
+const woRaw = (...a) => run("workorder.mjs", ...a);
+// Most tests are about other rules, so this runner answers each printout's mark the way an agent does: the mark line
+// is copied under the layer's heading once that heading is the last one in the notes (the whole output gets its own).
+const pendingMarks = new Map();
+const flushMarks = (only) => {
+  for (const [f, list] of pendingMarks) {
+    if (only && f !== only) continue;
+    if (!existsSync(f)) { pendingMarks.delete(f); continue; }
+    const keep = [];
+    for (const p of list) {
+      const t = readFileSync(f, "utf8");
+      const last = [...t.matchAll(/^#{1,6}\s+(.+)$/gm)].pop();
+      const names = last && new RegExp(`(?<![a-z0-9-])${p.lid}(?![a-z0-9-])`, "i").test(last[1]);
+      if (!names && p.lid !== "whole") { keep.push(p); continue; }
+      appendFileSync(f, `${t && !t.endsWith("\n") ? "\n" : ""}${names ? "" : "\n## whole\n"}<!-- mark: ${p.mark} -->\n`);
+    }
+    if (keep.length) pendingMarks.set(f, keep); else pendingMarks.delete(f);
+  }
+};
+const wo = (...a) => {
+  const ni = a.indexOf("--notes"), li = a.indexOf("--layer");
+  if (a.includes("--record")) flushMarks();
+  if (ni >= 0 && li >= 0) flushMarks(path.resolve(a[ni + 1]));
+  const r = woRaw(...a);
+  const m = r.out && r.out.match(/<!-- mark: ([A-Z]+-\d{2}) -->/);
+  if (ni >= 0 && li >= 0 && r.code === 0 && m) { const f = path.resolve(a[ni + 1]); pendingMarks.set(f, [...(pendingMarks.get(f) || []).filter((p) => p.lid !== a[li + 1]), { lid: a[li + 1], mark: m[1] }]); }
+  return r;
+};
 // An Examples: line naming real files by path, as the loading layer's notes must.
 const EXAMPLES = `Examples: ${fx("business/notes/brand-notes.md")}, ${fx("business/ads/offers/cake.md")}, each read to its end.`;
 // A notes file written by a test, with the ledger the tool would have kept beside it.
@@ -897,7 +925,8 @@ test("work orders: the tool hands out one layer at a time", async () => {
     assert.equal(stampsIn(rewritten), 0);
     assert.equal(wo("--id", "ad-copy", "--layer", "fundamentals", "--notes", rewritten).code, 0);
     assert.equal(stampsIn(rewritten), 0, "a layer whose stamp is in the ledger is not stamped again");
-    assert.equal(fs.readFileSync(`${rewritten}.opened`, "utf8"), first1);
+    const stampsOnly = (x) => x.split("\n").filter((l) => !l.includes("<!-- mark:")).join("\n");
+    assert.equal(stampsOnly(fs.readFileSync(`${rewritten}.opened`, "utf8")), stampsOnly(first1));
     // The stamp lines do not count toward a section's words.
     fs.appendFileSync(notes, "\n## premises\nFour kept.\n");
     assert.equal(wo("--id", "ad-copy", "--layer", "cast-treatment", "--notes", notes).code, 1);
@@ -985,7 +1014,7 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     // The check comes first, so a reader that keeps only the first line still sees it; the order comes before the block.
     assert.equal(one.out.split("\n")[0], `Check (ad-concepts/fundamentals, reopened for review 1): ${c.layers[0].check}`);
     assert.match(one.out.split("\n")[1], /^Write the new lines after this reopen, not before it\./);
-    assert.match(one.out, /Every later layer already open, apart from the one that carries the fresh review, is then reopened for review 1 or gets a line under its heading that begins "Re-checked \(review 1\):"/);
+    assert.match(one.out, /Every later layer already open, apart from the one that carries the fresh review, is then reopened the same way if it changes, or re-checked with --layer <id> --recheck 1\./);
     assert.match(fs.readFileSync(notes, "utf8"), /^<!-- reopened: ad-concepts\/fundamentals review 1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z -->$/m);
     assert.equal(wo("--id", "ad-concepts", "--layer", "fundamentals", "--repair", "1", "--notes", notes).code, 0);
     assert.equal(reopened(notes), 2);
@@ -1197,7 +1226,7 @@ test("work orders: what a layer wrote stays written once the next layer opens", 
     const led1 = fs.readFileSync(`${f}.opened`, "utf8");
     assert.match(led1, new RegExp(`<!-- sealed: claims-check/${L1} [0-9a-f]{16} \\d+ \\S+Z -->`));
     assert.ok(fs.existsSync(sealCopy(f, "claims-check", L1)));
-    assert.equal(fs.readFileSync(f, "utf8").replace(before, "").trim().split("\n").length, 1, "the notes gain only the stamp");
+    assert.equal(fs.readFileSync(f, "utf8").replace(before, "").trim().split("\n").filter((l) => !l.includes("<!-- mark:")).length, 1, "the notes gain only the stamp (and the mark the agent copied)");
     fs.appendFileSync(f, `\n## ${L2}\n${body(L2)}\n`);
     wo("--id", "claims-check", "--layer", c.layers[2].id, "--notes", f);
     const led2 = fs.readFileSync(`${f}.opened`, "utf8");
@@ -1270,6 +1299,179 @@ test("work orders: what a layer wrote stays written once the next layer opens", 
     const fixed = check("r10.md", rRec);
     assert.doesNotMatch(fixed.out, /say a file was read in part/);
     assert.doesNotMatch(fixed.out, /was sealed when the next layer opened/, "the correction is added below the sealed text");
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("work orders: a printout is read to its mark, and a re-check is made through the tool", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const { createHash } = await import("node:crypto");
+  const { loadMap, MARK_SENTENCE } = await import("../workorder.mjs");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-mark-"));
+  const run2 = (mark, ...a) => { const r = spawnSync(process.execPath, [path.join(scripts, "workorder.mjs"), ...a], { encoding: "utf8", env: { ...process.env, ...(mark ? { WORKORDER_MARK: mark } : {}) } }); return { code: r.status, out: r.stdout + r.stderr }; };
+  const markOf = (out) => (out.match(/<!-- mark: [A-Z]+-\d{2} -->/) || [])[0];
+  const stampCount = (f) => (fs.readFileSync(`${f}.opened`, "utf8").match(/<!-- (?:re)?opened:|<!-- rechecked:/g) || []).length;
+  const check = (name, text) => { const f = path.join(tmp, name); fs.writeFileSync(f, text); return woRaw("--record", f); };
+  const map = loadMap(hubRoot);
+  const cc = map.work_orders.find((o) => o.id === "claims-check");
+  const ac = map.work_orders.find((o) => o.id === "ad-concepts");
+  const long = (id) => `Result of the ${id} layer, written as an agent writes it, in one long paragraph line: what was built and what was compared and rejected, which source lines were opened and quoted, and what the check found when it was answered from the evidence the layer names, with nothing left for later.`;
+  try {
+    // A1. One mark per printout, away from the ends; a new one each time; the ledger keeps its hash only; the sentence comes first.
+    const n1 = path.join(tmp, "a1.md");
+    const p1 = run2("CEDAR-11", "--id", "claims-check", "--layer", "claims-list", "--notes", n1);
+    assert.equal(p1.code, 0, p1.out);
+    const lines = p1.out.split("\n");
+    const at = lines.findIndex((l) => l === "<!-- mark: CEDAR-11 -->");
+    assert.equal(lines.filter((l) => /<!-- mark: [A-Z]+-\d{2} -->/.test(l)).length, 1);
+    assert.ok(at > 0 && at < lines.length - 1 && at >= Math.floor(lines.length / 4) && at <= Math.ceil((lines.length * 3) / 4), `mark at ${at} of ${lines.length}`);
+    assert.ok(lines.slice(0, 3).join("\n").includes(MARK_SENTENCE));
+    const led = fs.readFileSync(`${n1}.opened`, "utf8");
+    assert.match(led, new RegExp(`<!-- mark: claims-check/claims-list ${createHash("sha256").update("CEDAR-11").digest("hex").slice(0, 16)} \\S+Z -->`));
+    assert.ok(!led.includes("CEDAR-11") && !fs.readFileSync(n1, "utf8").includes("CEDAR-11"), "the mark is only in the printout");
+    const p1b = run2(null, "--id", "claims-check", "--layer", "claims-list", "--notes", n1);
+    assert.notEqual(markOf(p1b.out), markOf(p1.out));
+    // A2. The next layer waits for the mark; a made-up one does not count; a fresh printout's mark does.
+    const sec = (f, id, mark) => fs.appendFileSync(f, `\n## ${id}\n${mark ? `${mark}\n` : ""}${id === cc.layers[0].id ? `Read to the last line: ${cc.load.join(", ")}.\n${EXAMPLES}\n` : ""}${long(id)}\n`);
+    const n2 = path.join(tmp, "a2.md");
+    run2("MAPLE-21", "--id", "claims-check", "--layer", "claims-list", "--notes", n2);
+    sec(n2, "claims-list", null);
+    const held = run2("RAVEN-31", "--id", "claims-check", "--layer", "proof-map", "--notes", n2);
+    assert.equal(held.code, 1);
+    assert.match(held.out, /Layer "claims-list" has an unanswered stamp .* its printout was not read to the mark\. Print it again .*--layer claims-list/);
+    assert.equal(stampCount(n2), 1, "no stamp was written");
+    fs.appendFileSync(n2, "<!-- mark: TIDE-99 -->\n");
+    assert.equal(run2(null, "--id", "claims-check", "--layer", "proof-map", "--notes", n2).code, 1, "a made-up mark does not count");
+    fs.appendFileSync(n2, "<!-- mark: MAPLE-21 -->\n");
+    assert.equal(run2("RAVEN-31", "--id", "claims-check", "--layer", "proof-map", "--notes", n2).code, 0);
+    const n2b = path.join(tmp, "a2b.md");
+    run2("MAPLE-22", "--id", "claims-check", "--layer", "claims-list", "--notes", n2b);
+    sec(n2b, "claims-list", null);
+    const again = run2("IRIS-40", "--id", "claims-check", "--layer", "claims-list", "--notes", n2b);
+    assert.equal(again.code, 0, "printing an open layer is never refused");
+    fs.appendFileSync(n2b, "<!-- mark: IRIS-40 -->\n");
+    assert.equal(run2(null, "--id", "claims-check", "--layer", "proof-map", "--notes", n2b).code, 0);
+    // proof-map's printout (RAVEN-31) is not copied in n2: a repair is refused the same way.
+    sec(n2, "proof-map", null);
+    const repHeld = run2(null, "--id", "claims-check", "--layer", "claims-list", "--repair", "1", "--notes", n2);
+    assert.equal(repHeld.code, 1);
+    assert.match(repHeld.out, /Layer "proof-map" has an unanswered stamp/);
+    // A3 and A5. A record built through the tool, every mark copied below its section (seals hold), passes; one missing fails.
+    const n3 = path.join(tmp, "a3.md");
+    for (const id of [...cc.layers.map((l) => l.id), "whole"]) {
+      const r = run2(null, "--id", "claims-check", "--layer", id, "--notes", n3);
+      assert.equal(r.code, 0, r.out);
+      if (id === "whole") fs.appendFileSync(n3, `\n## whole\n${markOf(r.out)}\n`);
+      else { sec(n3, id, null); fs.appendFileSync(n3, `${markOf(r.out)}\n`); }
+    }
+    const rec3 = (f, v = {}) => ["## Layer record", "Work order: claims-check", `Notes: ${f}`, "| Layer | Verdict | Evidence | Fix |", "| --- | --- | --- | --- |", ...cc.layers.map((l) => `| ${l.id} | ${v[l.id] || "pass"} | the ${l.id} result read line by line in the notes |  |`), "| whole | pass | the report read top to bottom |  |", "State: checked, clean", ""].join("\n");
+    const ok3 = check("r3.md", rec3(n3));
+    assert.equal(ok3.code, 0, ok3.out);
+    const full3 = fs.readFileSync(n3, "utf8");
+    const policyMark = full3.split("\n").find((l, i, all) => /<!-- mark:/.test(l) && all.slice(0, i).reverse().find((x) => /^## /.test(x)) === "## policy");
+    fs.writeFileSync(n3, full3.replace(`${policyMark}\n`, ""));
+    const miss3 = check("r3b.md", rec3(n3));
+    assert.equal(miss3.code, 1);
+    assert.match(miss3.out, /layer "policy" has an unanswered stamp \("<!-- opened: claims-check\/policy /);
+    fs.writeFileSync(n3, full3);
+    // A reopening needs its own mark: reopen report, write its repair, copy no mark.
+    const rr = run2(null, "--id", "claims-check", "--layer", "report", "--repair", "1", "--notes", n3);
+    assert.equal(rr.code, 0, rr.out);
+    fs.appendFileSync(n3, "Repair (review 1): the verdict table now names the second claim's proof row, and the table was read again after.\n");
+    const miss3b = check("r3c.md", rec3(n3, { report: "fail, then pass" }));
+    assert.match(miss3b.out, /layer "report" has an unanswered stamp \("<!-- reopened: claims-check\/report review 1 /);
+    assert.doesNotMatch(miss3b.out, /was sealed when the next layer opened/);
+    // A4. Notes from the version before (no mark line) are not held to marks for their older stamps; the next stamp is.
+    const n4 = path.join(tmp, "a4.md");
+    writeNotes(fs, n4, `<!-- opened: claims-check/claims-list 2026-11-15T09:10:00Z -->\n## claims-list\nRead to the last line: ${cc.load.join(", ")}.\n${EXAMPLES}\n${long("claims-list")}\n`);
+    const old = run2("FERN-12", "--id", "claims-check", "--layer", "proof-map", "--notes", n4);
+    assert.equal(old.code, 0, old.out);
+    sec(n4, "proof-map", null);
+    assert.match(run2(null, "--id", "claims-check", "--layer", "policy", "--notes", n4).out, /Layer "proof-map" has an unanswered stamp/);
+    // B. ad-concepts built through the tool with every mark copied, then premises reopened for review 1.
+    const body = (id) => (id === "fundamentals" ? `Read to the last line: ${ac.load.join(", ")}; the channel note, each to its end.\n${EXAMPLES}\n${long(id)}` : long(id));
+    const build = (name, upto = "whole") => {
+      const f = path.join(tmp, name);
+      for (const id of [...ac.layers.map((l) => l.id), "whole"]) {
+        const r = run2(null, "--id", "ad-concepts", "--layer", id, "--notes", f);
+        assert.equal(r.code, 0, r.out);
+        fs.appendFileSync(f, id === "whole" ? `\n## whole\n${markOf(r.out)}\n` : `\n## ${id}\n${body(id)}\n${markOf(r.out)}\n`);
+        if (id === upto) break;
+      }
+      return f;
+    };
+    const repair = (f, id = "premises", n = 1) => { const r = run2(null, "--id", "ad-concepts", "--layer", id, "--repair", String(n), "--notes", f); assert.equal(r.code, 0, r.out); fs.appendFileSync(f, `Repair (review ${n}): the ${id} result now carries the offer's end date, and the set was read again side by side.\n${markOf(r.out)}\n`); };
+    const recheck = (f, id, n = 1, line = true) => { const r = run2(null, "--id", "ad-concepts", "--layer", id, "--recheck", String(n), "--notes", f); assert.equal(r.code, 0, r.out); fs.appendFileSync(f, `${line ? `Re-checked (review ${n}): premises now names the end date (its repair paragraph); the ${id} section was read again against it.\n` : ""}${markOf(r.out)}\n`); return r; };
+    const SCORES = "audience: any; register: at register beside the owner's frost caption example; hook: 4, the frost image stops the scroll; glance: 4, offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
+    const recB = (f, v = {}) => `Layers (ad-concepts): fundamentals pass (every Load first file read to its end) · premises fail, then pass (closest earlier: the spring ad for the same kit leads on price, this idea on frost; five compared, three rejected; the end date added after review) · cast-treatment ${v["cast-treatment"] || "pass"} (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (condition: “Order by May 1”; shown in: the image, the headline and both primary texts; claims map against proof rows) · review fail, then pass (reviewer: fresh agent given the brief word for word; findings: 2 blocking [premises], all repaired; reviewed: concepts-v1.md; after review: nothing changed; ${SCORES}) · whole pass (set read as the operator sees it). State: concept-ready. Notes: ${f}\n`;
+    const later = ["cast-treatment", "visual-stop", "connection", "claims", "whole"];
+    // B1. --recheck refuses with no reopening upstream, on a layer never opened, and while the upstream repair is unwritten.
+    const b1 = build("b1.md", "connection");
+    assert.match(run2(null, "--id", "ad-concepts", "--layer", "connection", "--recheck", "1", "--notes", b1).out, /no layer before it was reopened for review 1/);
+    assert.match(run2(null, "--id", "ad-concepts", "--layer", "claims", "--recheck", "1", "--notes", b1).out, /Layer "claims" was never opened/);
+    const rp = run2(null, "--id", "ad-concepts", "--layer", "premises", "--repair", "1", "--notes", b1);
+    fs.appendFileSync(b1, `${markOf(rp.out)}\n`);
+    assert.match(run2(null, "--id", "ad-concepts", "--layer", "connection", "--recheck", "1", "--notes", b1).out, /layer "premises", earlier in the work order, was reopened for review 1 and has no "Repair \(review 1\):" paragraph/);
+    fs.appendFileSync(b1, "Repair (review 1): the premise now carries the end date, and the set was read again side by side.\n");
+    const rc1 = run2("SABLE-55", "--id", "ad-concepts", "--layer", "connection", "--recheck", "1", "--notes", b1);
+    assert.equal(rc1.code, 0, rc1.out);
+    assert.ok(rc1.out.includes(ac.layers.find((l) => l.id === "connection").check));
+    assert.match(rc1.out, /Reopened for review 1, upstream: premises\./);
+    assert.match(rc1.out, /begins "Re-checked \(review 1\):" and names what changed upstream and what was looked at here, by a file path or a quoted line/);
+    assert.ok(rc1.out.includes("<!-- mark: SABLE-55 -->"));
+    assert.match(fs.readFileSync(b1, "utf8"), /\n## connection: re-check \(review 1\)\n<!-- rechecked: ad-concepts\/connection review 1 \S+Z -->\n$/);
+    assert.match(fs.readFileSync(`${b1}.opened`, "utf8"), /<!-- rechecked: ad-concepts\/connection review 1 \S+Z -->/);
+    // A2 for --recheck: refused while a stamp is unanswered (the repair's printout was not read to its mark).
+    const b7 = build("b7.md", "connection");
+    run2(null, "--id", "ad-concepts", "--layer", "premises", "--repair", "1", "--notes", b7);
+    fs.appendFileSync(b7, "Repair (review 1): the premise now carries the end date, and the set was read again side by side.\n");
+    const rcHeld = run2(null, "--id", "ad-concepts", "--layer", "connection", "--recheck", "1", "--notes", b7);
+    assert.equal(rcHeld.code, 1);
+    assert.match(rcHeld.out, /Layer "premises" has an unanswered stamp \("<!-- reopened: ad-concepts\/premises review 1 /);
+    // B2. Neither: one finding per later layer, naming both layers and both commands.
+    const b2 = build("b2.md");
+    repair(b2);
+    const none = check("rb1.md", recB(b2));
+    assert.equal(none.code, 1);
+    assert.equal((none.out.match(/while layer "cast-treatment", later in the work order/g) || []).length, 1);
+    assert.match(none.out, /layer "premises" was reopened for review 1 while layer "cast-treatment", later in the work order, was already open; reopen "cast-treatment" too \(.*--layer cast-treatment --repair 1 .*\), or re-check it \(.*--layer cast-treatment --recheck 1 .*\)/);
+    // A typed line with no stamp: a re-check is made through the tool.
+    fs.appendFileSync(b2, "\n## cast-treatment, after review 1\nRe-checked (review 1): nothing here changed.\n");
+    assert.match(check("rb2.md", recB(b2)).out, /layer "cast-treatment" has a "Re-checked \(review 1\):" line but no "rechecked: ad-concepts\/cast-treatment review 1" stamp; a re-check is made through the tool/);
+    // Re-checked through the tool, every later layer: passes.
+    const b3 = build("b3.md");
+    repair(b3);
+    for (const id of later) recheck(b3, id);
+    const allOk = check("rb3.md", recB(b3));
+    assert.equal(allOk.code, 0, allOk.out);
+    // The later layer reopened instead: passes.
+    const b4 = build("b4.md");
+    repair(b4);
+    repair(b4, "cast-treatment");
+    for (const id of later.slice(1)) recheck(b4, id);
+    const reopened = check("rb4.md", recB(b4, { "cast-treatment": "fail, then pass" }));
+    assert.equal(reopened.code, 0, reopened.out);
+    // A stamp for another review does not count.
+    const b5 = build("b5.md");
+    repair(b5);
+    for (const id of later.slice(1)) recheck(b5, id);
+    const r2 = createHash("sha256").update("QUILL-02").digest("hex").slice(0, 16);
+    const t2 = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+    const st2 = `<!-- rechecked: ad-concepts/cast-treatment review 2 ${t2} -->`;
+    fs.appendFileSync(`${b5}.opened`, `${st2}\n<!-- mark: ad-concepts/cast-treatment ${r2} ${t2} -->\n`);
+    fs.appendFileSync(b5, `\n## cast-treatment: re-check (review 2)\n${st2}\nRe-checked (review 2): the frame was read again.\n<!-- mark: QUILL-02 -->\n`);
+    assert.match(check("rb5.md", recB(b5)).out, /reopen "cast-treatment" too/);
+    // B3. A layer opened after the repair needs nothing; the review layer never does.
+    const b6 = build("b6.md", "review");
+    repair(b6);
+    for (const id of later.slice(0, -1)) recheck(b6, id);
+    const w = run2(null, "--id", "ad-concepts", "--layer", "whole", "--notes", b6);
+    assert.equal(w.code, 0, w.out);
+    fs.appendFileSync(b6, `\n## whole\n${markOf(w.out)}\n`);
+    const lateOk = check("rb6.md", recB(b6));
+    assert.equal(lateOk.code, 0, lateOk.out);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

@@ -35,7 +35,9 @@ skipped layer visible to the agent itself and to whoever reads the result.
    a layer whose section is already there, and the record fails a stamp the ledger lacks. When
    the next layer opens, the earlier sections of a scratch notes file are sealed: a correction is
    added below, never rewritten in (a layer reopened with `--repair` is exempt); an output's own
-   file changes only through a repair or a change re-check. `--all` prints every layer at once, for a person reading or a
+   file changes only through a repair or a change re-check. Every printout carries one line
+   `<!-- mark: WORD-NN -->`: copy it under that layer's heading; nothing new is stamped, and
+   the record does not pass, while a stamp's mark is missing. `--all` prints every layer at once, for a person reading or a
    session that cannot write a notes file at all.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
    not to polishing a later layer. After a repair, check again every later layer that
@@ -212,8 +214,9 @@ whole brief. Each blocking finding is repaired at the layer it names, reopened w
 `--layer <layer id> --repair <review number> --notes <file>`, which adds a heading for that
 layer's repair; directly under it a paragraph beginning `Repair (review <N>):` says what
 changed and what was looked at after. Every later layer already open (the whole output too,
-the review layer apart) is reopened for that review or carries `Re-checked (review <N>):`
-under its heading: what changed upstream, what was looked at; a layer no finding touched keeps its section and row; nothing written is deleted
+the review layer apart) is reopened the same way if it changes, or re-checked with
+`--layer <id> --recheck <N>`, under whose heading `Re-checked (review <N>):` names what
+changed upstream and what was looked at; a layer no finding touched keeps its section and row; nothing written is deleted
 or rewritten. The `opened:` lines and their ledger record the first build once: a finding
 about them is an open item for the reply, never repaired by opening layers again, a new
 notes file or waiting between opens.
