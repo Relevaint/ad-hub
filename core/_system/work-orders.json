@@ -26,7 +26,7 @@
           "core/skills/ad-creative/references/opening-dynamics.md#the-table-awareness-decides-the-opening"
         ],
         "check": "Do the candidates differ in the underlying idea rather than the wording, does each have a payoff the product is part of, and does the chosen idea differ from the closest ad the business already ran for this offer or service?",
-        "evidence": "The premises side by side, with the ones rejected and why. Closest earlier: the closest earlier ad, post or email the business has for the same offer or service, opened and named by path, and how the chosen idea differs (or `none on file` and what was searched).",
+        "evidence": "The premises side by side, with the ones rejected and why. Closest earlier: the closest earlier ad, post or email the business has for the same offer or service, opened and named by path, and how the chosen idea differs, its picture included: a picture or subject reused from that ad counts as no difference for the visual stop, and is said so (or `none on file` and what was searched).",
         "on_fail": "Write new premises here. A category slogan or a novelty with no product payoff is rejected, not polished; an idea that does not differ from the closest earlier one fails here, not at the review.",
         "evidence_items": [
           "closest earlier"
