@@ -62,7 +62,10 @@ const WEAK = /^(ok(ay)?|done|yes|y|good|great|fine|looks (good|fine|ok(ay)?|grea
 const THIN = /^(skipped|skip|not needed|not applicable|does not apply|doesn't apply|not relevant|no need)[.!]?$/i;
 // A not checked whose reason is in the writer's own hands: the check can be made, so it is made.
 // A source read in part: a search, a head, a range that stops before the end, a skim.
-const PART_READ = /\b(?:read in part|in part|partly read|partially read|partial read|only partly|skimmed|skim(?:med)? only|first \d+ lines|grep(?:ped)? only|by grep|head only|not (?:opened|read) in full)\b/i;
+// A line saying a file was read in part. "in part" counts only beside a read or an open.
+const PART_READ = /\b(?:(?:read|opened|open)\b(?:[^.;]|\.(?=\S)){0,60}?\bin part|partly read|partially read|partial read|only partly|skim(?:med)?|first \d+ lines|(?:searched|grep(?:ped)?)\b(?:[^.;]|\.(?=\S)){0,60}?\bonly|by grep|head only|head -\d+|not (?:opened|read) in full|not read to its (?:last line|end)|not to its (?:last line|end)|did(?: not|n't) finish|ran out of room)\b/i;
+// A line saying something was left undone: a disclosure, which passes unless it names a Load first file.
+const LEFT_UNDONE = /\b(?:did(?: not|n't) (?:open|read|get to)|not opened|not read|left unopened|cannot be (?:reached|made|opened|run)|no time)\b/i;
 const NOT_DONE_MORE = " Do not delete a true limit to make the row pass: change the verdict, or say what was looked at in its place (a named substitute, such as the repository copy of a live page, is evidence when the row says it is a substitute).";
 const IN_HAND = /\b(?:partly read|partial read|read only in part|only partly|skimmed|not (?:opened|read) in full|did(?: not|n't) (?:read|open|finish|get to)|ran out of (?:time|room|context)|no time|self-review only|only a self-review|no (?:fresh|second) reviewer)\b/i;
 
@@ -248,7 +251,7 @@ export function layerBlock(o, l, i, map, prefix = "", hub = null) {
   L.push(`- **Check:** ${l.check}`);
   L.push(`- **Evidence:** ${l.evidence}`);
   if (list(l.evidence_items).length) L.push(itemLine(l.evidence_items));
-  if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read (its earlier ads for the same offer or service among them), each read to its last line, and write an `Examples:` line naming by path every example the business's channel rules point at, no patterns (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.");
+  if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read (its earlier ads for the same offer or service among them), each read to its last line, and write an `Examples:` line naming by path every example the business's channel rules point at, no patterns (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there. What was left undone may be said plainly, with why (`not opened, not required: <path>`; a step this session cannot make): that is a disclosure, not a part read, unless the line names a Load first file.");
   L.push(`- **If it fails:** ${l.on_fail}`, "");
   void map;
   return L.join("\n");
@@ -535,7 +538,8 @@ const REWORDED = /(?<!\b(?:not|no|none)\s+)\breworded\b/i;
 // A line saying a source was read only in part: the patterns above, or a range that stops before the file's end.
 function partRead(line) {
   if (PART_READ.test(line)) return true;
-  return [...line.matchAll(/\blines?\s+(\d+)\s*(?:-|–|to)\s*(\d+)\s+of\s+(\d+)/gi)].some((m) => Number(m[1]) > 1 || Number(m[2]) < Number(m[3]));
+  // A line range: with "of N", a part read when it stops short or starts late; without it, always.
+  return [...line.matchAll(/\blines?\s+(\d+)\s*(?:-|–|to)\s*(\d+)(?:\s+of\s+(\d+))?/gi)].some((m) => m[3] === undefined || Number(m[1]) > 1 || Number(m[2]) < Number(m[3]));
 }
 
 function sections(text) {
@@ -658,7 +662,7 @@ function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
   appendFileSync(ledgerOf(file), line);
   const block = lid === "whole" ? wholeBlock(o, "", hub) : layerBlock(o, layers[at], at, map, "", hub);
   const check = lid === "whole" ? o.whole.check : layers[at].check;
-  return { code: 0, out: [`Check (${o.id}/${lid}, reopened for review ${n}): ${check}`, `Write the new lines after this reopen, not before it. A heading "## ${lid}: repair ${n}" was added at the end of ${notes}; directly under it write a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are.`, `Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block].join("\n") };
+  return { code: 0, out: [`Check (${o.id}/${lid}, reopened for review ${n}): ${check}`, `Write the new lines after this reopen, not before it. A heading "## ${lid}: repair ${n}" was added at the end of ${notes}; directly under it write a paragraph that begins "Repair (review ${n}):" and says what changed and what was looked at afterwards. Leave the sections already written as they are. Every later layer already open, apart from the one that carries the fresh review, is then reopened for review ${n} or gets a line under its heading that begins "Re-checked (review ${n}):" and says what changed upstream and what was looked at there.`, `Work order ${o.id}, layer ${at + 1} of ${layers.length + 1}. Paths are relative to the hub: ${hub}`, "", block].join("\n") };
 }
 
 // Open one layer: the gate, the stamp, then the block.
@@ -768,6 +772,20 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
       if (!re.some((r) => r.layer === l.id && r.review === Number(m[1]))) errors.push(`${at}: layer "${l.id}" has a "Repair (review ${m[1]}):" paragraph but no "reopened: ${o.id}/${l.id} review ${m[1]}" line; a repair is written after its reopen: ${cmd.replace("<layer>", l.id).replace("<review number>", m[1])}`);
     }
   }
+  // After a repair, each later layer already open (not the one carrying the fresh review) is reopened for the
+  // same review or carries "Re-checked (review N):" under a heading with its id.
+  const order = [...list(o.layers), { id: "whole", evidence_items: list(o.whole && o.whole.evidence_items) }];
+  for (const r0 of re) {
+    if (re.some((r) => r.layer === r0.layer && r.review === r0.review && r.time < r0.time)) continue;
+    const from = order.findIndex((l) => l.id === r0.layer);
+    for (const l of order.slice(from + 1)) {
+      if (final[l.id] !== "pass" || list(l.evidence_items).includes("reviewer") || !opened[l.id] || opened[l.id] >= r0.time) continue;
+      if (re.some((r) => r.layer === l.id && r.review === r0.review)) continue;
+      const line = new RegExp(`^[\\s>*_-]*(?:\\d+[.)]\\s*)?[*_]*Re-checked \\(review\\s*${r0.review}\\)`, "im");
+      if (secs.some((x) => namesWord(x.heading, l.id) && (line.test(x.heading) || line.test(x.body.join("\n"))))) continue;
+      errors.push(`${at}: layer "${r0.layer}" was reopened for review ${r0.review} while layer "${l.id}", later in the work order, was already open; reopen "${l.id}" too (${cmd.replace("<layer>", l.id).replace("<review number>", String(r0.review))}), or write under a heading with "${l.id}" a line "Re-checked (review ${r0.review}): what changed upstream and what was looked at here"`);
+    }
+  }
   for (const x of [...new Set(re.map((r) => r.layer))]) {
     const said = (review.said || {})[x];
     if (said !== undefined && /^(?:pass|carried)$/.test(said)) errors.push(`${at}: layer "${x}" was reopened for a repair (a "reopened:" line in the notes), but is recorded as a plain ${said}; a repaired layer is "fail, then pass" (or fail, not checked, partial)`);
@@ -803,6 +821,16 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
     const FILE = /[\w./-]+\.(?:md|json|mjs|js|ts|tsx|txt|ya?ml|csv|html)\b/g;
     const corrected = (i) => { const names = bl[i].match(FILE) || []; return names.length > 0 && names.every((n) => bl.slice(i + 1).some((x) => x.includes(n) && !partRead(x))); };
     for (const [i, line] of bl.entries()) if (partRead(line) && !corrected(i)) errors.push(`${at}: the notes under layer "${l.id}" say a file was read in part ("${line.trim().slice(0, 80)}"); read it to its last line, then record it`);
+    // Something left undone is a disclosure and passes, unless the line names a Load first file.
+    for (const line of bl) {
+      if (partRead(line) || !LEFT_UNDONE.test(line)) continue;
+      for (const f of list(o.load)) {
+        const base = path.basename(f);
+        const forms = [f, `${path.basename(path.dirname(f))}/${base}`];
+        if (bases.filter((b) => b === base).length === 1) forms.push(base);
+        if (forms.some((x) => new RegExp(`(?<![A-Za-z0-9_-])${esc(x)}`).test(line))) errors.push(`${at}: the notes under layer "${l.id}" leave ${f} undone ("${line.trim().slice(0, 80)}"); it is a Load first file and is read to its last line`);
+      }
+    }
   }
   return errors;
 }

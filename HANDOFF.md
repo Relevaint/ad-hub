@@ -61,6 +61,9 @@ Every session ends by updating this file, committing, and pushing. Not committed
   - A finished static ad was also built by a fresh agent on a larger model, under the version with the written-after-it-is-opened guard: pass with notes, no blocking gap, judged worth running; about 1 hour 42 minutes; only the maker looked at the finished image.
   - What these runs cover: the contract and the tool on two work orders (`ad-copy` and `static-ad`, with `readiness` before the static ad). The others were last run in the earlier trials on synthetic businesses.
   - Owner, 2026-11-16: the hub is not installed in the business repo these runs used ("not now"); and test creative is looked at as creative, not as a funnel (`people/clay.md`, Things he has corrected before).
+- **After that entry (2026-11-16):** graded runs on a real business ended finished work `not ready` because honest notes under the loading layer (an optional file left unopened, a step this session cannot make) were read as part reads, and a layer resting on late reads was said to be checked again with nothing to tell that from a skipped check; probed on a real run's own notes. Now only a part read fails under the loading layer (something left undone is a disclosure unless it names a Load first file, and "in part" counts only beside a read), and after a `--repair` every later layer already open, apart from the review layer, is reopened for that review or carries `Re-checked (review N):`, which the record checks.
+- This change came after "Where this session ended" and has not been rerun with a fresh agent at the time of this commit.
+
 
 ### Known next steps (not built)
 - The reviewed words are snapshotted when each review is requested, and the record fails any change after the last review that is not a quoted cut.
@@ -75,7 +78,6 @@ Every session ends by updating this file, committing, and pushing. Not committed
 - `--note <layer>` appends a dated correction to an earlier sealed layer, saying which layer was open.
 - A surface that names any offer term states the offer, and offer terms are written as the source names them; the claims row lists `terms:` for the checker.
 - `--record -` reads the last review's numbered open items and fails a reply that neither carries nor closes each one.
-- Every layer after the earliest reopened one carries a `Repair` or `Checked again` paragraph.
 - `--layer <id> --return <from layer>` for a return to a layer before the review, with its own heading and stamp.
 - The reply form labels one primary text per ad, so paragraphs are not read as alternatives.
 

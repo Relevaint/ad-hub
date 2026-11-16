@@ -211,8 +211,9 @@ review is requested, and the request names it. The first review reads everything
 whole brief. Each blocking finding is repaired at the layer it names, reopened with
 `--layer <layer id> --repair <review number> --notes <file>`, which adds a heading for that
 layer's repair; directly under it a paragraph beginning `Repair (review <N>):` says what
-changed and what was looked at after. A layer resting on a repaired one is checked again for what changed and says so under its
-heading; a layer no finding touched keeps its section and row; nothing written is deleted
+changed and what was looked at after. Every later layer already open (the whole output too,
+the review layer apart) is reopened for that review or carries `Re-checked (review <N>):`
+under its heading: what changed upstream, what was looked at; a layer no finding touched keeps its section and row; nothing written is deleted
 or rewritten. The `opened:` lines and their ledger record the first build once: a finding
 about them is an open item for the reply, never repaired by opening layers again, a new
 notes file or waiting between opens.
