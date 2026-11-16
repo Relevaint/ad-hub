@@ -30,7 +30,8 @@ skipped layer visible to the agent itself and to whoever reads the result.
    labelled afterward. Order is the tool's: a layer opens once the layers before it are
    written down, and each first open leaves an `opened:` line with the time in the notes
    file and in the tool's ledger beside it (`<notes file>.opened`, kept where it is), which
-   the record checker reads. `--all` prints every layer at once, for a person reading or a
+   the record checker reads. A section is written after its layer is opened: the tool refuses
+   a layer whose section is already there, and the record fails a stamp the ledger lacks. `--all` prints every layer at once, for a person reading or a
    session that cannot write a notes file at all.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
    not to polishing a later layer. After a repair, check again every later layer that

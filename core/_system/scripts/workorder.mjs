@@ -455,7 +455,7 @@ const namesWord = (text, id) => new RegExp(`(?<![a-z0-9-])${esc(id)}(?![a-z0-9-]
 
 // Evidence items: each "name: <at least three words>", in any order. A few items are short by nature
 // ("reviewer: fresh agent", "reviewed: draft-01.md", "after review: nothing changed", "audience: any").
-const ITEM_MIN = { reviewer: 2, reviewed: 1, "after review": 2, audience: 1, register: 2 };
+const ITEM_MIN = { reviewer: 2, reviewed: 1, "after review": 2, audience: 1, register: 2, "feed size": 2, "delivery size": 2, muted: 2, "with sound": 2 };
 export function itemValues(items, evidence) {
   const ev = String(evidence);
   const found = [];
@@ -567,6 +567,24 @@ export function hasRepair(secs, lid, n = null) {
   return secs.filter((s) => namesWord(s.heading, lid)).some((s) => re.test(s.heading) || re.test(s.body.join("\n")));
 }
 
+// First-build headings for a layer (they start with the layer id; a repair heading is not one) that were
+// written before it was opened: the nearest stamp above them is not a stamp of that same layer (an earlier
+// work order's section for a layer with the same id sits under that work order's own stamp).
+const ANY_STAMP = /<!--\s*(?:re)?opened:\s*([a-z0-9-]+)\/([a-z0-9-]+)[^>]*-->/g;
+export function earlySections(text, lid) {
+  const lines = String(text).split("\n");
+  const out = [];
+  let fence = false, near = null;
+  for (let i = 0; i < lines.length; i++) {
+    for (const m of lines[i].matchAll(ANY_STAMP)) near = m[2];
+    if (/^\s*```/.test(lines[i])) fence = !fence;
+    const h = !fence && lines[i].match(/^#{1,6}\s+(.+?)\s*#*\s*$/);
+    if (h && new RegExp(`^[\\s\\d.)*_\x60]*${esc(lid)}(?![a-z0-9-])`, "i").test(h[1]) && !/:\s*repair\b/i.test(h[1]) && near !== lid) out.push({ heading: h[1], line: i });
+  }
+  return out;
+}
+const stampLine = (text, id, lid) => String(text).split("\n").findIndex((l) => new RegExp(`<!--\\s*opened:\\s*${esc(id)}/${esc(lid)}\\s`).test(l));
+
 // Reopen a layer a review finding named: --layer <id> --repair <review number>.
 function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
   const layers = list(o.layers);
@@ -574,7 +592,7 @@ function repairLayer(hub, o, map, at, lid, notes, file, text, secs, n, now) {
   const re = reopenings(`${text}\n${ledgerText(file)}`, o.id);
   const order = [...layers.map((l) => l.id), "whole"];
   const open = order.slice(0, at).find((x) => re.some((r) => r.layer === x && r.review === n) && !hasRepair(secs, x, n));
-  if (open) return { code: 1, out: `Layer "${lid}" cannot be reopened for review ${n} yet: layer "${open}", earlier in the work order, was reopened for review ${n} and has no "Repair (review ${n}):" paragraph under its heading in ${notes}. Write that repair first, then reopen "${lid}".` };
+  if (open) return { code: 1, out: `Layer "${lid}" cannot be reopened for review ${n} yet: layer "${open}", earlier in the work order, was reopened for review ${n} and has no "Repair (review ${n}):" paragraph under its heading in ${notes}. Write that repair first, then reopen "${lid}"; do not save this layer's changes to the output until this layer is reopened.` };
   // A repair is written after its reopen, not before it.
   if (!re.some((r) => r.layer === lid && r.review === n) && hasRepair(secs, lid, n)) return { code: 1, out: `Layer "${lid}" already has a "Repair (review ${n}):" paragraph in ${notes}, written before the layer was reopened for review ${n}. A repair is written after its reopen: remove that paragraph, reopen the layer, read its check again, then write the repair under the heading the reopen adds.` };
   const line = `<!-- reopened: ${o.id}/${lid} review ${n} ${now.toISOString().replace(/\.\d{3}Z$/, "Z")} -->\n`;
@@ -602,6 +620,10 @@ export function openLayer(hub, o, map, lid, notes, cwd = process.cwd(), now = ne
   const missing = layers.slice(0, at).filter((l) => !written(secs, l.id));
   if (missing.length) {
     return { code: 1, out: `Layer "${lid}" is not open yet: layer "${missing[0].id}" has no section in ${notes}. Write its result under a heading with "${missing[0].id}" (15 words or more), or a section that begins "n/a", "not checked" or "partial" with the reason, then open "${lid}" again.` };
+  }
+  // A layer's section is written after the layer is opened, never before.
+  if (!(lid in stamps(`${text}\n${ledgerText(file)}`, o.id)) && earlySections(text, lid).length) {
+    return { code: 1, out: `Layer "${lid}" was never opened, but ${notes} already holds a section for it. A layer's section is written after the layer is opened: remove what was written, open "${lid}", read what it prints, then write the section.` };
   }
   if (!(lid in stamps(`${text}\n${ledgerText(file)}`, o.id))) {
     mkdirSync(path.dirname(file), { recursive: true });
@@ -632,6 +654,16 @@ function checkNotes(o, rec, final, at, cwd, review = {}) {
   const secs = sections(raw);
   // Each passed layer was opened with --layer, and the opens run in the work order's order.
   const opened = stamps(`${raw}\n${ledgerText(file)}`, o.id);
+  // The ledger is the tool's: it must be there, and every stamp in the notes must be in it, text for text.
+  if (!existsSync(ledgerOf(file))) errors.push(`${at}: there is no ledger beside the notes file (${path.basename(ledgerOf(file))}); the ledger is written by --layer and is kept beside the notes, never deleted`);
+  else { const led = ledgerText(file); for (const m of raw.matchAll(ANY_STAMP)) if (!led.includes(m[0])) errors.push(`${at}: the notes hold "${m[0]}", which the ledger does not; stamps are written by the tool, never typed`); }
+  // A passed layer's section sits below its own opened: line.
+  for (const l of [...list(o.layers), { id: "whole" }]) {
+    if (final[l.id] !== "pass") continue;
+    const at0 = stampLine(raw, o.id, l.id);
+    const early = at0 >= 0 && earlySections(raw, l.id).find((x) => x.line < at0);
+    if (early) errors.push(`${at}: layer "${l.id}" has its section ("${early.heading}") above its own "opened:" line; a layer's section is written after the layer is opened`);
+  }
   let prev = null;
   for (const l of [...list(o.layers), { id: "whole" }]) {
     if (final[l.id] === "pass" && !opened[l.id]) errors.push(`${at}: layer "${l.id}" passes, but the notes file has no "opened: ${o.id}/${l.id}" line; open each layer with --layer as it is reached, so its method and check come after the layers before it`);
@@ -765,7 +797,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     if (said && rec && rec.unreviewed && REVIEWED.test(said)) inner.errors.push(`the reply's state calls the work reviewed, but the record's review row is ${rec.unreviewed}`);
     return inner;
   }
-  if (!records.length) errors.push('no "## Layer record" section and no "Layers (<work order>): ..." line found');
+  if (!records.length) errors.push(opts.stdin && /(?:^|\s)State:\s*\S/m.test(text) ? 'the reply has a "State:" line but no record to check; end the reply with "State: <state>. Record: <path>" naming the file that holds the layer record (or give the full one-line "Layers (<work order>): ..." record)' : 'no "## Layer record" section and no "Layers (<work order>): ..." line found');
   for (const rec of records) {
     const id = forcedId || rec.id;
     const at = `layer record at line ${rec.line}`;
@@ -854,7 +886,7 @@ export function checkRecord(hub, text, forcedId, opts = {}) {
     if (list(claimed.needs).includes("review")) {
       for (const a of audiences) {
         const keys = (a.toLowerCase().match(/[a-z]{4,}/g) || []).filter((w) => !["only", "audience", "audiences", "served", "when", "with", "that", "this", "scores", "hold"].includes(w));
-        if (keys.length && !keys.some((k) => st.includes(k))) errors.push(`${at}: the review's scores hold for one audience ("audience: ${a.slice(0, 60)}"); name it after the state, for example "State: ${claimed.state} for ${a.slice(0, 40)}"`);
+        if (keys.length && !keys.some((k) => st.includes(k))) errors.push(`${at}: the review's scores hold for one audience ("audience: ${a.slice(0, 60)}"); copy that audience after the state unchanged (an audience rewritten to pass is not the reviewer's), for example "State: ${claimed.state} for ${a.slice(0, 40)}"`);
       }
     }
     const needed = list(claimed.needs);
