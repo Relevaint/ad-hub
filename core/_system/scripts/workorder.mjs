@@ -775,15 +775,19 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
   // After a repair, each later layer already open (not the one carrying the fresh review) is reopened for the
   // same review or carries "Re-checked (review N):" under a heading with its id.
   const order = [...list(o.layers), { id: "whole", evidence_items: list(o.whole && o.whole.evidence_items) }];
-  for (const r0 of re) {
-    if (re.some((r) => r.layer === r0.layer && r.review === r0.review && r.time < r0.time)) continue;
-    const from = order.findIndex((l) => l.id === r0.layer);
+  for (const n of [...new Set(re.map((r) => r.review))].sort((x, y) => x - y)) {
+    // One finding per later layer and review, named from the earliest layer reopened for that review.
+    const mine = re.filter((r) => r.review === n && order.some((l) => l.id === r.layer));
+    if (!mine.length) continue;
+    const from = Math.min(...mine.map((r) => order.findIndex((l) => l.id === r.layer)));
+    const first = mine.map((r) => r.time).sort()[0];
+    const source = order[from].id;
     for (const l of order.slice(from + 1)) {
-      if (final[l.id] !== "pass" || list(l.evidence_items).includes("reviewer") || !opened[l.id] || opened[l.id] >= r0.time) continue;
-      if (re.some((r) => r.layer === l.id && r.review === r0.review)) continue;
-      const line = new RegExp(`^[\\s>*_-]*(?:\\d+[.)]\\s*)?[*_]*Re-checked \\(review\\s*${r0.review}\\)`, "im");
+      if (final[l.id] !== "pass" || list(l.evidence_items).includes("reviewer") || !opened[l.id] || opened[l.id] >= first) continue;
+      if (mine.some((r) => r.layer === l.id)) continue;
+      const line = new RegExp(`^[\\s>*_-]*(?:\\d+[.)]\\s*)?[*_]*Re-checked \\(review\\s*${n}\\)`, "im");
       if (secs.some((x) => namesWord(x.heading, l.id) && (line.test(x.heading) || line.test(x.body.join("\n"))))) continue;
-      errors.push(`${at}: layer "${r0.layer}" was reopened for review ${r0.review} while layer "${l.id}", later in the work order, was already open; reopen "${l.id}" too (${cmd.replace("<layer>", l.id).replace("<review number>", String(r0.review))}), or write under a heading with "${l.id}" a line "Re-checked (review ${r0.review}): what changed upstream and what was looked at here"`);
+      errors.push(`${at}: layer "${source}" was reopened for review ${n} while layer "${l.id}", later in the work order, was already open; reopen "${l.id}" too (${cmd.replace("<layer>", l.id).replace("<review number>", String(n))}), or write under a heading with "${l.id}" a line "Re-checked (review ${n}): what changed upstream and what was looked at here"`);
     }
   }
   for (const x of [...new Set(re.map((r) => r.layer))]) {
@@ -828,7 +832,8 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
         const base = path.basename(f);
         const forms = [f, `${path.basename(path.dirname(f))}/${base}`];
         if (bases.filter((b) => b === base).length === 1) forms.push(base);
-        if (forms.some((x) => new RegExp(`(?<![A-Za-z0-9_-])${esc(x)}`).test(line))) errors.push(`${at}: the notes under layer "${l.id}" leave ${f} undone ("${line.trim().slice(0, 80)}"); it is a Load first file and is read to its last line`);
+        // A path as the line writes it, never a piece of one: another skill's SKILL.md is not this one.
+        if (forms.some((x) => new RegExp(`(?<![A-Za-z0-9_${x.includes("/") ? "" : "/."}-])${esc(x)}(?![A-Za-z0-9_-])`).test(line))) errors.push(`${at}: the notes under layer "${l.id}" leave ${f} undone ("${line.trim().slice(0, 80)}"); it is a Load first file and is read to its last line`);
       }
     }
   }

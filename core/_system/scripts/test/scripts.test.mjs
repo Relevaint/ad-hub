@@ -715,6 +715,11 @@ test("work orders: a record names its notes, its evidence items and every failed
     const loadFirst = loadLine("Did not open copy-and-hooks.md: not needed for this request.", 9);
     assert.equal(loadFirst.code, 1);
     assert.match(loadFirst.out, /leave core\/skills\/ad-creative\/references\/copy-and-hooks\.md undone .* it is a Load first file and is read to its last line/);
+    // A Load first file is named by a path as the line writes it, never by a piece of one: another skill's SKILL.md is not this one.
+    const otherSkill = loadLine("Not opened, not required: core/skills/ad-launch/SKILL.md (no launch in this request).", 50);
+    assert.equal(otherSkill.code, 0, otherSkill.out);
+    assert.match(loadLine("Did not open SKILL.md.", 51).out, /leave core\/skills\/ad-creative\/SKILL\.md undone/);
+    assert.equal(loadLine("Not opened: old-copy-and-hooks.md (an earlier copy).", 52).code, 0);
     ["brief.md, first 200 lines", "brief.md, lines 1 to 80", "skimmed brief.md", "brief.md was not read in full", "brief.md: not read to its last line", "read brief.md in part", "did not finish brief.md", "searched brief.md only"].forEach((line, n) => {
       assert.match(loadLine(line, 20 + n).out, /say a file was read in part/, line);
     });
@@ -1013,6 +1018,7 @@ test("work orders: a repair is reopened at the layer a finding names, and the re
     const noRc = check("rc1.md", rec(write("rc1n.md", { restamp: ["premises"], repairs: ["premises"], skipRc: ["claims"] })));
     assert.equal(noRc.code, 1);
     assert.match(noRc.out, /layer "premises" was reopened for review 1 while layer "claims", later in the work order, was already open; reopen "claims" too \(.*--layer claims --repair 1 .*\), or write under a heading with "claims" a line "Re-checked \(review 1\):/);
+    assert.equal((noRc.out.match(/while layer "claims", later in the work order/g) || []).length, 1, "one finding per later layer and review");
     assert.match(check("rc2.md", rec(write("rc2n.md", { restamp: ["premises"], repairs: ["premises"], recheck: 2 }))).out, /reopen "cast-treatment" too/, "another review's number does not count");
     const reopenedInstead = check("rc3.md", rec(write("rc3n.md", { restamp: ["premises", "claims"], repairs: ["premises", "claims"] }), { claimsV: "fail, then pass" }));
     assert.equal(reopenedInstead.code, 0, reopenedInstead.out);
