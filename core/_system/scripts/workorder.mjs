@@ -248,7 +248,7 @@ export function layerBlock(o, l, i, map, prefix = "", hub = null) {
   L.push(`- **Check:** ${l.check}`);
   L.push(`- **Evidence:** ${l.evidence}`);
   if (list(l.evidence_items).length) L.push(itemLine(l.evidence_items));
-  if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read (its earlier ads for the same offer or service among them), each read to its last line, and write an `Examples:` line naming every example the business's channel rules point at (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.");
+  if (l.reads) L.push("- Under this layer's heading in the notes file, name every file under Load first and each of the business's files read (its earlier ads for the same offer or service among them), each read to its last line, and write an `Examples:` line naming by path every example the business's channel rules point at, no patterns (or `none`, and why). The checker looks for each Load first file and the `Examples:` line there.");
   L.push(`- **If it fails:** ${l.on_fail}`, "");
   void map;
   return L.join("\n");
@@ -787,6 +787,17 @@ function checkNotes(o, rec, final, at, cwd, review = {}, own = null) {
       if (!forms.some((x) => new RegExp(`(?<![A-Za-z0-9_-])${esc(x)}`).test(body))) errors.push(`${at}: the notes under layer "${l.id}" do not name ${f}; name every file under Load first, each read to its last line`);
     }
     if (!/^[\s>*-]*`?Examples:`?\s*\S/im.test(body)) errors.push(`${at}: the notes under layer "${l.id}" have no "Examples:" line; name every example the business's channel rules point at, each read to its end, or write "Examples: none" with why`);
+    // Each example is named by path: no glob, and the path exists (absolute, from where the check runs, or from the notes file's folder).
+    for (const m of body.matchAll(/^[\s>*-]*`?Examples:`?\s*(\S.*)$/gim)) {
+      const v = m[1].trim();
+      if (/^[`"*]*none\b/i.test(v)) continue;
+      const toks = (v.match(/[^\s,;()`"]+/g) || []).map((x) => x.replace(/[.:]+$/, "")).filter((x) => x.includes("/") || /\.\w{2,5}$/.test(x) || /[*?]/.test(x));
+      if (!toks.length) errors.push(`${at}: the "Examples:" line under layer "${l.id}" names no path ("${v.slice(0, 60)}"); name each example the channel rules point at by its path, or write "Examples: none" with why`);
+      for (const x of toks) {
+        if (/[*?]/.test(x)) errors.push(`${at}: the "Examples:" line under layer "${l.id}" uses a pattern ("${x}"); name each example file or folder by its own path`);
+        else if (![path.resolve(cwd, x), path.resolve(path.dirname(file), x)].some((y) => existsSync(y))) errors.push(`${at}: the "Examples:" line under layer "${l.id}" names "${x}", which does not exist (paths are absolute, from where the check runs, or from the notes file's folder)`);
+      }
+    }
     // The last statement about a file counts: a later line naming it as read to its end corrects an earlier part read.
     const bl = body.split("\n");
     const FILE = /[\w./-]+\.(?:md|json|mjs|js|ts|tsx|txt|ya?ml|csv|html)\b/g;

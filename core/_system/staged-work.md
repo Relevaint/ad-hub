@@ -39,7 +39,8 @@ skipped layer visible to the agent itself and to whoever reads the result.
    session that cannot write a notes file at all.
 4. **Repair at the source.** A failed layer goes back where its "If it fails" line points,
    not to polishing a later layer. After a repair, check again every later layer that
-   rested on it. After a review, see [the review brief](#the-review-brief).
+   rested on it. A skipped read is repaired by reading the file and running again the layers
+   that rest on it, not by adding its name to a list. After a review, see [the review brief](#the-review-brief).
 5. **Check the whole.** Parts that each pass can still fail together. The work order's
    whole-output check is its own line in the record.
 6. **Deliver with the state the record supports.** Nothing stronger.
@@ -253,7 +254,8 @@ repaired; `findings:` names in square brackets the layers it sent work back to
 > below). Answer each check with a quoted line and a verdict:
 >
 > 1. Open every source and every rules or examples file to its last line, and name any file
->    the maker's notes say was read that is not among your paths; that is a finding.
+>    the maker's notes say was read that is not among your paths; that is a finding. List every
+>    file or folder the owner's channel rules point at: one the notes do not name is skipped.
 > 2. Every fact, price, date, name and claim traces to a source and keeps the conditions
 >    its source attaches; nothing is implied that no source supports. Read each surface a
 >    viewer can see on its own, one at a time: an offer stated without its qualifying
@@ -278,7 +280,8 @@ repaired; `findings:` names in square brackets the layers it sent work back to
 > Return numbered findings (line, rule or source, fix), each marked blocking or not; do not
 > rewrite the work. Blocking is only: a fact, price, date, condition, claim or word, stated or
 > implied, that no source supports or that drops its source's condition, wherever it is and
-> whoever passed it before; a line the owner's rules for this channel forbid; a `reworded`
+> whoever passed it before; a line or picture the owner's rules for this channel forbid (such
+> as a generated result or before and after); a required read skipped; a `reworded`
 > line; a piece `below register`; a rubric score below its floor; a sentence or argument
 > repeated across a set; a work-order layer check the output fails. Anything else (a preference, a stronger
 > alternative, anything about the stamps) is an open item for the reply, not blocking.

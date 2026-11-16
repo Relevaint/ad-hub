@@ -52,6 +52,9 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 - **Conditions seen and kept (2026-11-16):** a graded run on a real business delivered an ad whose short text, image band and headline stated the offer without the term that says which packages qualify, and cut a scope limit after the last review; the hub's rules let both through. The claims gate now separates a qualifying condition (on every surface that states the offer; a surface too short to hold it does not state the offer) from a scope limit (in the ad's own text, never cut); the claims row names each condition's words and `shown in:`, or `condition: none`; the brief reads each surface on its own; the record fails a quoted cut that contains a listed condition. Not rerun with a fresh agent at the time of this commit.
 
+- **Required reads and forbidden pictures (2026-11-16):** graded runs on a real business skipped the rejected work the owner's channel rules point at, three runs in a row, and passed a picture the owner's rules forbid as not blocking; the brief now has the reviewer list what the channel rules point at, a skipped read and a forbidden picture are blocking, a skipped read is repaired by reading and re-running the layers on it, and the `Examples:` line must name existing paths (no patterns).
+- Not rerun with a fresh agent at the time of this commit.
+
 ### Known next steps (not built)
 - The reviewed words are snapshotted when each review is requested, and the record fails any change after the last review that is not a quoted cut.
 - A second fresh look at the rendered file, or the row says `self-checked`.
@@ -63,6 +66,11 @@ Every session ends by updating this file, committing, and pushing. Not committed
 - The `Examples:` line is compared with the example folders the business's channel note names.
 - The loading layer names the business's playbook for the service, when one exists.
 - `--note <layer>` appends a dated correction to an earlier sealed layer, saying which layer was open.
+- A surface that names any offer term states the offer, and offer terms are written as the source names them; the claims row lists `terms:` for the checker.
+- `--record -` reads the last review's numbered open items and fails a reply that neither carries nor closes each one.
+- Every layer after the earliest reopened one carries a `Repair` or `Checked again` paragraph.
+- `--layer <id> --return <from layer>` for a return to a layer before the review, with its own heading and stamp.
+- The reply form labels one primary text per ad, so paragraphs are not read as alternatives.
 
 ## Previous session: 2026-11-03 Ecommerce Alley playbook review
 
