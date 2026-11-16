@@ -42,9 +42,20 @@ supports that.
    or story row shows that it was said; quoting it or retelling it in an ad also needs
    step 4.
 3. Anything unmapped is cut, or becomes a marked blank `[confirm: ...]` in the draft.
-   A mapped claim keeps the conditions its source attaches (an "as of" date, a scope, a
-   start condition, who it applies to): they appear in the ad itself, in any of its
-   fields. The landing page's small print does not carry them.
+   A mapped claim keeps the conditions its source attaches, in the ad itself; the landing
+   page's small print does not carry them. Two kinds, each read surface by surface:
+   - A **qualifying condition** is what a buyer must do or be to get what the ad offers:
+     what must be bought, by when, who qualifies, how many. It appears on every surface
+     that states the offer and that a viewer can see on its own: the image or video text,
+     each headline that states the offer, and every alternative of the primary text. A
+     description never carries a condition alone (some placements do not show it). A
+     surface too short to hold the qualifying condition does not state the offer: a
+     40-character headline that cannot say what qualifies names the benefit, not the deal.
+   - A **scope limit** is what the offered thing does not cover. It appears in the ad's own
+     text at least once, in every alternative long enough to hold it, and is never cut.
+   In the claims map, each row with a condition gives its own words and the surfaces that
+   carry it: `condition: "<its words>"; shown in: <each surface>` (and `scope limit:` the
+   same way); a row with none says `condition: none`.
 4. Testimonials and purported real customer stories: a named, real person who gave permission the business
    recorded. The record names the person and the permission to use their words in
    advertising, in the proof row or beside it; a status of `Owner-confirmed` on a review

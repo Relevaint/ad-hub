@@ -255,7 +255,9 @@ repaired; `findings:` names in square brackets the layers it sent work back to
 > 1. Open every source and every rules or examples file to its last line, and name any file
 >    the maker's notes say was read that is not among your paths; that is a finding.
 > 2. Every fact, price, date, name and claim traces to a source and keeps the conditions
->    its source attaches; nothing is implied that no source supports.
+>    its source attaches; nothing is implied that no source supports. Read each surface a
+>    viewer can see on its own, one at a time: an offer stated without its qualifying
+>    condition is blocking.
 > 3. Own words: facts carry over, sentences do not. Quote the two closest existing passages
 >    beside the lines that resemble them, each `new`, `offer term`, `client claim: <source
 >    and line>` or `reworded`, as the own-words rule defines them; the plain statement of
