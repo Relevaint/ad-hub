@@ -360,6 +360,16 @@ const woRaw = (...a) => run("workorder.mjs", ...a);
 // Most tests are about other rules, so this runner answers each printout's mark the way an agent does: the mark line
 // is copied under the layer's heading once that heading is the last one in the notes (the whole output gets its own).
 const pendingMarks = new Map();
+// The words a printout asks for, as an agent reads them off the lines its question names, in a mark line.
+const answerOf = (out) => {
+  const lines = String(out).split("\n");
+  const q = lines.find((l) => l.startsWith("Mark for this printout:"));
+  if (!q) return null;
+  const labels = [...q.matchAll(/the last word of the \*\*([^*]+)\*\* line/g)].map((m) => m[1]);
+  const lw = (l) => String(l).split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).pop() || "";
+  const words = labels.length ? labels.map((lab) => lw(lines.find((l) => l.replace(/^\s*(?:[-*]\s+)?/, "").startsWith(`**${lab}:**`)))) : [lw(lines.filter((l) => l !== q).reverse().find((l) => l.trim()))];
+  return `<!-- mark: ${words.join(" ")} -->`;
+};
 const flushMarks = (only) => {
   for (const [f, list] of pendingMarks) {
     if (only && f !== only) continue;
@@ -370,7 +380,7 @@ const flushMarks = (only) => {
       const last = [...t.matchAll(/^#{1,6}\s+(.+)$/gm)].pop();
       const names = last && new RegExp(`(?<![a-z0-9-])${p.lid}(?![a-z0-9-])`, "i").test(last[1]);
       if (!names && p.lid !== "whole") { keep.push(p); continue; }
-      appendFileSync(f, `${t && !t.endsWith("\n") ? "\n" : ""}${names ? "" : "\n## whole\n"}<!-- mark: ${p.mark} -->\n`);
+      appendFileSync(f, `${t && !t.endsWith("\n") ? "\n" : ""}${names ? "" : "\n## whole\n"}${p.mark}\n`);
     }
     if (keep.length) pendingMarks.set(f, keep); else pendingMarks.delete(f);
   }
@@ -380,8 +390,8 @@ const wo = (...a) => {
   if (a.includes("--record")) flushMarks();
   if (ni >= 0 && li >= 0) flushMarks(path.resolve(a[ni + 1]));
   const r = woRaw(...a);
-  const m = r.out && r.out.match(/<!-- mark: ([A-Z]+-\d{2}) -->/);
-  if (ni >= 0 && li >= 0 && r.code === 0 && m) { const f = path.resolve(a[ni + 1]); pendingMarks.set(f, [...(pendingMarks.get(f) || []).filter((p) => p.lid !== a[li + 1]), { lid: a[li + 1], mark: m[1] }]); }
+  const m = r.out && answerOf(r.out);
+  if (ni >= 0 && li >= 0 && r.code === 0 && m) { const f = path.resolve(a[ni + 1]); pendingMarks.set(f, [...(pendingMarks.get(f) || []).filter((p) => p.lid !== a[li + 1]), { lid: a[li + 1], mark: m }]); }
   return r;
 };
 // An Examples: line naming real files by path, as the loading layer's notes must.
@@ -1310,8 +1320,8 @@ test("work orders: a printout is read to its mark, and a re-check is made throug
   const { createHash } = await import("node:crypto");
   const { loadMap, MARK_SENTENCE } = await import("../workorder.mjs");
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-mark-"));
-  const run2 = (mark, ...a) => { const r = spawnSync(process.execPath, [path.join(scripts, "workorder.mjs"), ...a], { encoding: "utf8", env: { ...process.env, ...(mark ? { WORKORDER_MARK: mark } : {}) } }); return { code: r.status, out: r.stdout + r.stderr }; };
-  const markOf = (out) => (out.match(/<!-- mark: [A-Z]+-\d{2} -->/) || [])[0];
+  const run2 = (ask, ...a) => { const r = spawnSync(process.execPath, [path.join(scripts, "workorder.mjs"), ...a], { encoding: "utf8", env: { ...process.env, ...(ask ? { WORKORDER_ASK: ask } : {}) } }); return { code: r.status, out: r.stdout + r.stderr }; };
+  const markOf = answerOf;
   const stampCount = (f) => (fs.readFileSync(`${f}.opened`, "utf8").match(/<!-- (?:re)?opened:|<!-- rechecked:/g) || []).length;
   const check = (name, text) => { const f = path.join(tmp, name); fs.writeFileSync(f, text); return woRaw("--record", f); };
   const map = loadMap(hubRoot);
@@ -1319,45 +1329,62 @@ test("work orders: a printout is read to its mark, and a re-check is made throug
   const ac = map.work_orders.find((o) => o.id === "ad-concepts");
   const long = (id) => `Result of the ${id} layer, written as an agent writes it, in one long paragraph line: what was built and what was compared and rejected, which source lines were opened and quoted, and what the check found when it was answered from the evidence the layer names, with nothing left for later.`;
   try {
-    // A1. One mark per printout, away from the ends; a new one each time; the ledger keeps its hash only; the sentence comes first.
+    // A1. No mark is handed over; one question in the middle names the Check line and two other labeled lines (never one
+    // ending in a line count); questions vary; the ledger keeps a hash with "asked" and no word of the answer.
     const n1 = path.join(tmp, "a1.md");
-    const p1 = run2("CEDAR-11", "--id", "claims-check", "--layer", "claims-list", "--notes", n1);
+    const p1 = run2(null, "--id", "claims-check", "--layer", "claims-list", "--notes", n1);
     assert.equal(p1.code, 0, p1.out);
     const lines = p1.out.split("\n");
-    const at = lines.findIndex((l) => l === "<!-- mark: CEDAR-11 -->");
-    assert.equal(lines.filter((l) => /<!-- mark: [A-Z]+-\d{2} -->/.test(l)).length, 1);
-    assert.ok(at > 0 && at < lines.length - 1 && at >= Math.floor(lines.length / 4) && at <= Math.ceil((lines.length * 3) / 4), `mark at ${at} of ${lines.length}`);
+    assert.equal(lines.filter((l) => /<!-- mark: [A-Z]+-\d{2} -->/.test(l)).length, 0, "no mark is handed over");
+    const qs = lines.filter((l) => l.startsWith("Mark for this printout:"));
+    assert.equal(qs.length, 1);
+    const at = lines.indexOf(qs[0]);
+    assert.ok(at > 0 && at < lines.length - 1 && at >= Math.floor(lines.length / 4) && at <= Math.ceil((lines.length * 3) / 4), `question at ${at} of ${lines.length}`);
+    assert.match(qs[0], /\*\*Check\*\* line/);
+    assert.equal((qs[0].match(/the last word of the \*\*/g) || []).length, 3);
+    assert.doesNotMatch(qs[0], /\*\*Method\*\* line/, "a line ending in a line count is never asked");
+    assert.match(qs[0], /letters and digits only; case does not matter/);
     assert.ok(lines.slice(0, 3).join("\n").includes(MARK_SENTENCE));
     const led = fs.readFileSync(`${n1}.opened`, "utf8");
-    assert.match(led, new RegExp(`<!-- mark: claims-check/claims-list ${createHash("sha256").update("CEDAR-11").digest("hex").slice(0, 16)} \\S+Z -->`));
-    assert.ok(!led.includes("CEDAR-11") && !fs.readFileSync(n1, "utf8").includes("CEDAR-11"), "the mark is only in the printout");
-    const p1b = run2(null, "--id", "claims-check", "--layer", "claims-list", "--notes", n1);
-    assert.notEqual(markOf(p1b.out), markOf(p1.out));
-    // A2. The next layer waits for the mark; a made-up one does not count; a fresh printout's mark does.
+    assert.match(led, /<!-- mark: claims-check\/claims-list [0-9a-f]{16} \S+Z asked -->/);
+    for (const w of answerOf(p1.out).replace(/<!-- mark: | -->/g, "").split(" ")) assert.ok(!led.toLowerCase().includes(` ${w.toLowerCase()} `), "no word of the answer in the ledger");
+    const asked = new Set();
+    for (let k = 0; k < 10; k++) asked.add(run2(null, "--id", "claims-check", "--layer", "claims-list", "--notes", n1).out.split("\n").find((l) => l.startsWith("Mark for this printout:")));
+    assert.ok(asked.size >= 2, "questions change from printout to printout");
+    // A2. The next layer waits for the right words, in the right order; case and punctuation do not matter.
     const sec = (f, id, mark) => fs.appendFileSync(f, `\n## ${id}\n${mark ? `${mark}\n` : ""}${id === cc.layers[0].id ? `Read to the last line: ${cc.load.join(", ")}.\n${EXAMPLES}\n` : ""}${long(id)}\n`);
+    const ASK = "Check,If it fails,Build";
     const n2 = path.join(tmp, "a2.md");
-    run2("MAPLE-21", "--id", "claims-check", "--layer", "claims-list", "--notes", n2);
+    const o2 = run2(ASK, "--id", "claims-check", "--layer", "claims-list", "--notes", n2);
     sec(n2, "claims-list", null);
-    const held = run2("RAVEN-31", "--id", "claims-check", "--layer", "proof-map", "--notes", n2);
+    const held = run2(null, "--id", "claims-check", "--layer", "proof-map", "--notes", n2);
     assert.equal(held.code, 1);
-    assert.match(held.out, /Layer "claims-list" has an unanswered stamp .* its printout was not read to the mark\. Print it again .*--layer claims-list/);
+    assert.match(held.out, /Layer "claims-list" has an unanswered stamp .* the mark under "claims-list" is missing or is not what its printout asked for\. Print the layer again .*--layer claims-list .*it asks a new question/);
     assert.equal(stampCount(n2), 1, "no stamp was written");
-    fs.appendFileSync(n2, "<!-- mark: TIDE-99 -->\n");
-    assert.equal(run2(null, "--id", "claims-check", "--layer", "proof-map", "--notes", n2).code, 1, "a made-up mark does not count");
-    fs.appendFileSync(n2, "<!-- mark: MAPLE-21 -->\n");
-    assert.equal(run2("RAVEN-31", "--id", "claims-check", "--layer", "proof-map", "--notes", n2).code, 0);
+    const words = answerOf(o2.out).replace(/<!-- mark: | -->/g, "").split(" ");
+    const tryMark = (m) => { const t0 = fs.readFileSync(n2, "utf8"); fs.appendFileSync(n2, `${m}\n`); const r = run2(null, "--id", "claims-check", "--layer", "proof-map", "--notes", n2); if (r.code !== 0) fs.writeFileSync(n2, t0); return r.code; };
+    assert.equal(tryMark(`<!-- mark: ${[words[1], words[0], words[2]].join(" ")} -->`), 1, "wrong order");
+    assert.equal(tryMark(`<!-- mark: ${words[0]} ${words[1]} zebra -->`), 1, "one wrong word");
+    assert.equal(tryMark("<!-- mark: CEDAR-11 -->"), 1, "the old form");
+    assert.equal(tryMark(`<!-- mark: ${words.map((w) => `${w.toUpperCase()},`).join(" ")} -->`), 0, "case and punctuation do not matter");
     const n2b = path.join(tmp, "a2b.md");
-    run2("MAPLE-22", "--id", "claims-check", "--layer", "claims-list", "--notes", n2b);
+    run2(null, "--id", "claims-check", "--layer", "claims-list", "--notes", n2b);
     sec(n2b, "claims-list", null);
-    const again = run2("IRIS-40", "--id", "claims-check", "--layer", "claims-list", "--notes", n2b);
+    const again = run2(null, "--id", "claims-check", "--layer", "claims-list", "--notes", n2b);
     assert.equal(again.code, 0, "printing an open layer is never refused");
-    fs.appendFileSync(n2b, "<!-- mark: IRIS-40 -->\n");
+    fs.appendFileSync(n2b, `${answerOf(again.out)}\n`);
     assert.equal(run2(null, "--id", "claims-check", "--layer", "proof-map", "--notes", n2b).code, 0);
-    // proof-map's printout (RAVEN-31) is not copied in n2: a repair is refused the same way.
+    // proof-map's question is not answered in n2: a repair is refused the same way.
     sec(n2, "proof-map", null);
     const repHeld = run2(null, "--id", "claims-check", "--layer", "claims-list", "--repair", "1", "--notes", n2);
     assert.equal(repHeld.code, 1);
     assert.match(repHeld.out, /Layer "proof-map" has an unanswered stamp/);
+    // A4 (part). Notes and a ledger of the version before (WORD-NN marks, no "asked") pass as they did.
+    const nOld = path.join(tmp, "old.md");
+    const hOld = (w) => createHash("sha256").update(w).digest("hex").slice(0, 16);
+    const ids0 = [...cc.layers.map((l) => l.id), "whole"];
+    fs.writeFileSync(nOld, ids0.map((id, k) => `<!-- opened: claims-check/${id} 2026-11-16T09:1${k}:00Z -->\n## ${id}\n<!-- mark: CEDAR-1${k} -->\n${id === cc.layers[0].id ? `Read to the last line: ${cc.load.join(", ")}.\n${EXAMPLES}\n` : ""}${id === "whole" ? "" : long(id)}\n`).join("\n"));
+    fs.writeFileSync(`${nOld}.opened`, ids0.map((id, k) => `<!-- opened: claims-check/${id} 2026-11-16T09:1${k}:00Z -->\n<!-- mark: claims-check/${id} ${hOld(`CEDAR-1${k}`)} 2026-11-16T09:1${k}:00Z -->\n`).join(""));
     // A3 and A5. A record built through the tool, every mark copied below its section (seals hold), passes; one missing fails.
     const n3 = path.join(tmp, "a3.md");
     for (const id of [...cc.layers.map((l) => l.id), "whole"]) {
@@ -1367,6 +1394,7 @@ test("work orders: a printout is read to its mark, and a re-check is made throug
       else { sec(n3, id, null); fs.appendFileSync(n3, `${markOf(r.out)}\n`); }
     }
     const rec3 = (f, v = {}) => ["## Layer record", "Work order: claims-check", `Notes: ${f}`, "| Layer | Verdict | Evidence | Fix |", "| --- | --- | --- | --- |", ...cc.layers.map((l) => `| ${l.id} | ${v[l.id] || "pass"} | the ${l.id} result read line by line in the notes |  |`), "| whole | pass | the report read top to bottom |  |", "State: checked, clean", ""].join("\n");
+    assert.equal(check("rold.md", rec3(nOld)).code, 0, "notes of the version before pass as they did");
     const ok3 = check("r3.md", rec3(n3));
     assert.equal(ok3.code, 0, ok3.out);
     const full3 = fs.readFileSync(n3, "utf8");
@@ -1386,7 +1414,7 @@ test("work orders: a printout is read to its mark, and a re-check is made throug
     // A4. Notes from the version before (no mark line) are not held to marks for their older stamps; the next stamp is.
     const n4 = path.join(tmp, "a4.md");
     writeNotes(fs, n4, `<!-- opened: claims-check/claims-list 2026-11-15T09:10:00Z -->\n## claims-list\nRead to the last line: ${cc.load.join(", ")}.\n${EXAMPLES}\n${long("claims-list")}\n`);
-    const old = run2("FERN-12", "--id", "claims-check", "--layer", "proof-map", "--notes", n4);
+    const old = run2(null, "--id", "claims-check", "--layer", "proof-map", "--notes", n4);
     assert.equal(old.code, 0, old.out);
     sec(n4, "proof-map", null);
     assert.match(run2(null, "--id", "claims-check", "--layer", "policy", "--notes", n4).out, /Layer "proof-map" has an unanswered stamp/);
@@ -1405,7 +1433,7 @@ test("work orders: a printout is read to its mark, and a re-check is made throug
     const repair = (f, id = "premises", n = 1) => { const r = run2(null, "--id", "ad-concepts", "--layer", id, "--repair", String(n), "--notes", f); assert.equal(r.code, 0, r.out); fs.appendFileSync(f, `Repair (review ${n}): the ${id} result now carries the offer's end date, and the set was read again side by side.\n${markOf(r.out)}\n`); };
     const recheck = (f, id, n = 1, line = true) => { const r = run2(null, "--id", "ad-concepts", "--layer", id, "--recheck", String(n), "--notes", f); assert.equal(r.code, 0, r.out); fs.appendFileSync(f, `${line ? `Re-checked (review ${n}): premises now names the end date (its repair paragraph); the ${id} section was read again against it.\n` : ""}${markOf(r.out)}\n`); return r; };
     const SCORES = "audience: any; register: at register beside the owner's frost caption example; hook: 4, the frost image stops the scroll; glance: 4, offer reads in a second; one job: 4, one promise only; proof: 3, proof row 2 stated plainly";
-    const recB = (f, v = {}) => `Layers (ad-concepts): fundamentals pass (every Load first file read to its end) · premises fail, then pass (closest earlier: the spring ad for the same kit leads on price, this idea on frost; five compared, three rejected; the end date added after review) · cast-treatment ${v["cast-treatment"] || "pass"} (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (condition: “Order by May 1”; shown in: the image, the headline and both primary texts; claims map against proof rows) · review fail, then pass (reviewer: fresh agent given the brief word for word; findings: 2 blocking [premises], all repaired; reviewed: concepts-v1.md; after review: nothing changed; ${SCORES}) · whole pass (set read as the operator sees it). State: concept-ready. Notes: ${f}\n`;
+    const recB = (f, v = {}) => `Layers (ad-concepts): fundamentals pass (every Load first file read to its end) · premises fail, then pass (closest earlier: the spring ad for the same kit leads on price, this idea on frost; five compared, three rejected; the end date added after review) · cast-treatment ${v["cast-treatment"] || "pass"} (hands only; illustrated rejected) · visual-stop pass (frame read with copy hidden) · connection pass (read start to end) · claims pass (condition: “Order by May 1”; shown in: the image, the headline and both primary texts; claims map against proof rows) · review fail, then pass (reviewer: fresh agent given the brief word for word; findings: 2 blocking [premises], all repaired, ${v.nb || "not blocking (review 1): none"}; reviewed: concepts-v1.md; after review: nothing changed; ${SCORES}) · whole pass (set read as the operator sees it). State: concept-ready. Notes: ${f}\n${v.tail || ""}`;
     const later = ["cast-treatment", "visual-stop", "connection", "claims", "whole"];
     // B1. --recheck refuses with no reopening upstream, on a layer never opened, and while the upstream repair is unwritten.
     const b1 = build("b1.md", "connection");
@@ -1415,12 +1443,15 @@ test("work orders: a printout is read to its mark, and a re-check is made throug
     fs.appendFileSync(b1, `${markOf(rp.out)}\n`);
     assert.match(run2(null, "--id", "ad-concepts", "--layer", "connection", "--recheck", "1", "--notes", b1).out, /layer "premises", earlier in the work order, was reopened for review 1 and has no "Repair \(review 1\):" paragraph/);
     fs.appendFileSync(b1, "Repair (review 1): the premise now carries the end date, and the set was read again side by side.\n");
-    const rc1 = run2("SABLE-55", "--id", "ad-concepts", "--layer", "connection", "--recheck", "1", "--notes", b1);
+    const rc1 = run2(null, "--id", "ad-concepts", "--layer", "connection", "--recheck", "1", "--notes", b1);
     assert.equal(rc1.code, 0, rc1.out);
     assert.ok(rc1.out.includes(ac.layers.find((l) => l.id === "connection").check));
     assert.match(rc1.out, /Reopened for review 1, upstream: premises\./);
     assert.match(rc1.out, /begins "Re-checked \(review 1\):" and names what changed upstream and what was looked at here, by a file path or a quoted line/);
-    assert.ok(rc1.out.includes("<!-- mark: SABLE-55 -->"));
+    // A5. The re-check printout carries the Check and Evidence lines with their labels, and its question names the Check line.
+    assert.match(rc1.out, /^- \*\*Check:\*\* /m);
+    assert.match(rc1.out, /^- \*\*Evidence:\*\* /m);
+    assert.match(rc1.out.split("\n").find((l) => l.startsWith("Mark for this printout:")), /\*\*Check\*\* line/);
     assert.match(fs.readFileSync(b1, "utf8"), /\n## connection: re-check \(review 1\)\n<!-- rechecked: ad-concepts\/connection review 1 \S+Z -->\n$/);
     assert.match(fs.readFileSync(`${b1}.opened`, "utf8"), /<!-- rechecked: ad-concepts\/connection review 1 \S+Z -->/);
     // A2 for --recheck: refused while a stamp is unanswered (the repair's printout was not read to its mark).
@@ -1446,6 +1477,23 @@ test("work orders: a printout is read to its mark, and a re-check is made throug
     for (const id of later) recheck(b3, id);
     const allOk = check("rb3.md", recB(b3));
     assert.equal(allOk.code, 0, allOk.out);
+    // B2. What the last review did not block reaches the reply, each finding tagged [R<N>-<number>] outside the record.
+    const noNb = check("nb0.md", recB(b3, { nb: "two open items" }));
+    assert.match(noNb.out, /layer "review" gives "findings:" without its last part; end it with "not blocking \(review <N>\): <numbers, or none>"/);
+    const nb = "not blocking (review 2): 3, 5";
+    const neither = check("nb1.md", recB(b3, { nb }));
+    assert.equal((neither.out.match(/lists findings of review 2 that were not blocking/g) || []).length, 1);
+    assert.match(neither.out, /\[R2-3\], \[R2-5\] are not in the text checked; each goes in the reply as an open item in plain words ending with its tag \(this record was checked as a file: the open items sit in that file, outside the layer record, or pipe the whole reply with --record -\)/);
+    assert.match(check("nb2.md", recB(b3, { nb, tail: "\nOpen: the second headline repeats a word from the first [R2-3].\n" })).out, /\[R2-5\] is not in the text checked/);
+    assert.equal(check("nb3.md", recB(b3, { nb, tail: "\nOpen items:\n- The second headline repeats a word from the first [R2-3].\n- The card's last line could be shorter [R2-5].\n" })).code, 0);
+    assert.equal(check("nb4.md", recB(b3, { nb: "not blocking (review 2): none" })).code, 0);
+    assert.match(check("nb5.md", recB(b3, { nb }).replace("set read as the operator sees it", "set read as the operator sees it; open items [R2-3] [R2-5]")).out, /\[R2-3\], \[R2-5\] are not in the text checked/, "tags inside the record do not count");
+    assert.equal(check("nb6.md", recB(b3, { nb: "not blocking (review 2): N1", tail: "\nOpen: the hook could carry the date [R2-N1].\n" })).code, 0);
+    const piped = spawnSync(process.execPath, [path.join(scripts, "workorder.mjs"), "--record", "-"], { encoding: "utf8", input: `Three ads below.\n\nOpen: the second headline repeats a word [R2-3].\n${recB(b3, { nb: "not blocking (review 2): 3" })}` });
+    assert.equal(piped.status, 0, piped.stdout);
+    // B3. Not held to it: a ledger with no "asked" line, a pending row, a self-review, a record with Notes: none.
+    assert.equal(check("nb7.md", recB(b3, { nb: "two open items" }).replace("reviewer: fresh agent given the brief word for word", "reviewer: self, no fresh agent can be started here")).code, 0);
+    assert.equal(check("nb8.md", recB(b3, { nb: "two open items" }).replace(`Notes: ${b3}`, "Notes: none (cannot write files here)")).code, 0);
     // The later layer reopened instead: passes.
     const b4 = build("b4.md");
     repair(b4);
@@ -1472,6 +1520,36 @@ test("work orders: a printout is read to its mark, and a re-check is made throug
     fs.appendFileSync(b6, `\n## whole\n${markOf(w.out)}\n`);
     const lateOk = check("rb6.md", recB(b6));
     assert.equal(lateOk.code, 0, lateOk.out);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("work orders: every layer of every work order asks for its mark from its Check line", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const { loadMap } = await import("../workorder.mjs");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "adhub-walk-"));
+  const sec = (id) => `\n## ${id}\nResult of the ${id} layer, written as it was reached: what was built, compared and rejected, and what the check found from the evidence opened.\n`;
+  try {
+    for (const o of loadMap(hubRoot).work_orders) {
+      const f = path.join(tmp, `${o.id}.md`);
+      const ids = [...o.layers.map((l) => l.id), "whole"];
+      let prevAnswer = null;
+      for (const [k, id] of ids.entries()) {
+        if (k > 0) {
+          const held = woRaw("--id", o.id, "--layer", id, "--notes", f);
+          assert.equal(held.code, 1, `${o.id}/${id} opened before ${ids[k - 1]} was answered`);
+          fs.appendFileSync(f, `${prevAnswer}\n`);
+        }
+        const r = woRaw("--id", o.id, "--layer", id, "--notes", f);
+        assert.equal(r.code, 0, `${o.id}/${id}: ${r.out}`);
+        const q = r.out.split("\n").find((l) => l.startsWith("Mark for this printout:"));
+        assert.match(q || "", /\*\*Check\*\* line/, `${o.id}/${id} asks from its Check line`);
+        prevAnswer = answerOf(r.out);
+        if (id !== "whole") fs.appendFileSync(f, sec(id));
+      }
+    }
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
@@ -1570,7 +1648,11 @@ test("staged work: the contract keeps its rules explicit", async () => {
   assert.doesNotMatch(gate, /in any of its\s+fields/);
   // The reviewer audits the required reads; a forbidden picture and a skipped read block; a skipped read is repaired by reading.
   assert.match(text, /List every\s+>\s+file or folder the owner's channel rules point at: one the notes do not name is skipped/);
-  assert.match(text, /a line or picture the owner's rules for this channel forbid \(such\s+>\s+as a generated result or before and after\); a required read skipped;/);
+  assert.match(text, /a line or picture that breaks a rule of the owner's, whichever of\s+>\s+the owner's files states it \(channel note, voice file, never-bend list\), such as a generated\s+>\s+result or before and after; a required read skipped;/);
+  assert.doesNotMatch(text, /owner's rules for this channel forbid/);
+  // The reviewer ends with the findings line; not-blocking findings are tagged in the reply.
+  assert.match(text, /End with one line: `Findings: <how many>; blocking: <their numbers, or\s+>\s+none>; not blocking: <their numbers, or none>\.`/);
+  assert.match(text, /`findings:` ends `not blocking \(review <N>\): <numbers,\s+or none>` for the last review, and each of those goes in the reply as an open item ending\s+with its tag, `\[R<N>-<number>\]`/);
   assert.match(text, /A skipped read is repaired by reading the file and running again the layers\s+that rest on it, not by adding its name to a list/);
   // The plain statement of the offer is an offer term, in the rule and in the brief.
   assert.match(text, /the plain statement of the offer's terms \(what is bought, by when, what comes with\s+it, its conditions\) is an offer term wherever it appears/);
