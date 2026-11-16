@@ -720,6 +720,12 @@ test("work orders: a record names its notes, its evidence items and every failed
     assert.equal(otherSkill.code, 0, otherSkill.out);
     assert.match(loadLine("Did not open SKILL.md.", 51).out, /leave core\/skills\/ad-creative\/SKILL\.md undone/);
     assert.equal(loadLine("Not opened: old-copy-and-hooks.md (an earlier copy).", 52).code, 0);
+    // A disclosure is read with its own sentence: a fresh agent wrote its Load first list and a disclosure about other files on one line.
+    const onOneLine = path.join(tmp, "ld-para.md");
+    writeNotes(fs, onOneLine, notes({ fundamentals: `Load first, each read to its last line this session: ${LOAD.join("; ")}. Also the business's channel note, read whole. Not opened, not required: the gallery images (concepts only, no render).\n${EXAMPLES} The offer is the spring kit, sold until May 1.` }));
+    const para = check("rld-para.md", fixed(`Notes: ${onOneLine}`));
+    assert.equal(para.code, 0, para.out);
+    assert.match(loadLine("Read whole: the brief. Not opened: copy-and-hooks.md, ran long.", 53).out, /leave core\/skills\/ad-creative\/references\/copy-and-hooks\.md undone/);
     ["brief.md, first 200 lines", "brief.md, lines 1 to 80", "skimmed brief.md", "brief.md was not read in full", "brief.md: not read to its last line", "read brief.md in part", "did not finish brief.md", "searched brief.md only"].forEach((line, n) => {
       assert.match(loadLine(line, 20 + n).out, /say a file was read in part/, line);
     });
@@ -736,6 +742,9 @@ test("work orders: a record names its notes, its evidence items and every failed
     assert.match(globEx.out, /uses a pattern \("campaigns\/ads-\*"\)/);
     assert.match(exLine("Examples: the rejected September ads, all opened.").out, /names no path/);
     assert.equal(exLine("Examples: none, the channel rules point at no examples.").code, 0);
+    // Words in brackets on the Examples line are the writer's notes about a path, not paths.
+    const bracketed = exLine(`Examples: ${fx("business/notes/brand-notes.md")} (pointed at by social.md, which ads.md says to start from); ${fx("business/ads/offers/cake.md")} (ads.md: check hooks against it).`);
+    assert.equal(bracketed.code, 0, bracketed.out);
     const gone = check("g.md", fixed(`Notes: ${path.join(tmp, "no-such-notes.md")}`));
     assert.equal(gone.code, 1);
     assert.match(gone.out, /the notes file ".*no-such-notes\.md" was not found/);
