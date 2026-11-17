@@ -111,7 +111,7 @@ Also, when it applies:
 
 - **Build:** The ad read beside the page it sends people to.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 1 fundamentals before creative"](../core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative); [ad-creative/SKILL.md, "quality gate"](../core/skills/ad-creative/SKILL.md#quality-gate)
-- **Check:** Does the page deliver what the ad promises: the same offer, price, qualifications and next action?
+- **Check:** Does the page deliver what the ad promises, with the same offer and next action?
 - **Evidence:** The destination page beside the ad, or the gap named.
 - **If it fails:** A mismatch is fixed at the connection layer or reported to the business as a page gap. A page that cannot be seen from here is not checked: name it as an open item.
 

@@ -252,7 +252,7 @@
           "core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative",
           "core/skills/ad-creative/SKILL.md#quality-gate"
         ],
-        "check": "Does the page deliver what the ad promises: the same offer, price, qualifications and next action?",
+        "check": "Does the page deliver what the ad promises, with the same offer and next action?",
         "evidence": "The destination page beside the ad, or the gap named.",
         "on_fail": "A mismatch is fixed at the connection layer or reported to the business as a page gap. A page that cannot be seen from here is not checked: name it as an open item.",
         "returns_to": [
@@ -1967,7 +1967,9 @@
         "write the ad copy",
         "ad copy only",
         "write headlines and primary text",
-        "write a script for the ad"
+        "write a script for the ad",
+        "ad concepts and copy",
+        "concepts and copy for the ads"
       ],
       "not_for": "A copy request does not authorise generating an image or a video.",
       "owner": "ad-creative",
@@ -2113,7 +2115,11 @@
         "carousel ad",
         "make me an ad",
         "create a facebook ad",
-        "one ad for the feed"
+        "one ad for the feed",
+        "make static ads",
+        "two finished ads",
+        "static ads for the feed",
+        "an ad built around a generated photo"
       ],
       "not_for": "A row or a request that says video uses the video-ad work order. With no image tool connected this still runs: it ends at copy-ready with a production brief.",
       "owner": "ad-creative",

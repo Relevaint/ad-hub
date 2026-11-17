@@ -337,11 +337,15 @@ export function stale(hub) {
 const MATCH_MIN = 1.6;
 const MATCH_GAP = 0.4;
 
-export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP) {
+// "Use the Ad Hub for this." names the hub, not an output: its words never pick a work order.
+const PREAMBLE = words("use hub");
+const matchWords = (t) => { const w = words(t); for (const x of PREAMBLE) w.delete(x); return w; };
+
+export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP, lead = false) {
   const map = loadMap(hub);
-  const g = words(request);
+  const g = matchWords(request);
   const orders = list(map.work_orders);
-  const vocab = orders.map((o) => words([o.name, o.id.replace(/-/g, " "), ...list(o.say)].join(" ")));
+  const vocab = orders.map((o) => matchWords([o.name, o.id.replace(/-/g, " "), ...list(o.say)].join(" ")));
   const df = new Map();
   for (const v of vocab) for (const x of v) df.set(x, (df.get(x) || 0) + 1);
   const weight = (x) => Math.log(1 + orders.length / (df.get(x) || orders.length));
@@ -349,7 +353,7 @@ export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP) {
   const scored = orders.map((o, i) => {
     let best = 0;
     for (const p of list(o.say)) {
-      const w = [...words(p)];
+      const w = [...matchWords(p)];
       if (!w.length) continue;
       const hit = sum(w.filter((x) => g.has(x)));
       best = Math.max(best, (hit / sum(w)) * hit);
@@ -359,7 +363,17 @@ export function match(hub, request, min = MATCH_MIN, gap = MATCH_GAP) {
   }).sort((a, b) => b.score - a.score);
   const [top, second] = scored;
   const clear = top && top.score >= min && (!second || top.score - second.score >= gap);
-  return { map, top: clear ? top.o : null, candidates: scored.filter((x) => x.score > 0).slice(0, 5).map((x) => x.o), scored };
+  const whole = { map, top: clear ? top.o : null, candidates: scored.filter((x) => x.score > 0).slice(0, 5).map((x) => x.o), scored };
+  // A long request usually carries pasted material after the ask, and that material can outweigh it: read the ask first.
+  const raw = String(request).trim();
+  if (!lead && raw.split(/\s+/).length > 30) {
+    const sentences = raw.split(/(?<=[.!?:])\s+/);
+    for (const n of [1, 2]) {
+      const first = match(hub, sentences.slice(0, n).join(" "), min, gap, true);
+      if (first.top) return first;
+    }
+  }
+  return whole;
 }
 
 // ---------------------------------------------------------------- records

@@ -179,6 +179,9 @@ two disagree. Keep it true in the same PR as the skill:
   two layers.
 - A layer points at its method with `file#heading`. Rename the heading and the map
   together. Never paste the method into the map: each rule is stated once, in the skill.
+- The map adds no rule of its own. A layer's build, check and evidence lines say only
+  what its section says, and a finding from one run does not become a rule here
+  (Clay, 2026-11-17).
 - `n/a` needs a real reason and never carries a state: the whole-output row is never
   `n/a`, and a state cannot rest on `n/a` rows alone.
 - A state names the layers it needs before the output may be called that. `must_pass`

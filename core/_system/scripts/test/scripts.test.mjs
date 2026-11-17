@@ -410,6 +410,8 @@ test("work orders: requests reach the right output", () => {
     "How are the ads doing? Which ones should go?": "results-review",
     "Which ad is winning?": "results-review",
     "the price changed to $29, update the ads": "change-recheck",
+    // A long request: the ask comes first and pasted material must not outweigh it.
+    "Write copy for three of the planned ads. Here is everything about the business so you have it: we sell a printable garden planner with a spreadsheet that works out planting dates, customers email us about frost, we posted a video tutorial last week, the launch was in March, our tracking was set up by a freelancer, a competitor runs carousel ads, and the weekly report says results dropped.": "ad-copy",
     // Plain requests, as an operator would say them with no knowledge of the map.
     "make me three ads for the spring sale": "ad-batch",
     "make me an ad": "static-ad",
@@ -447,6 +449,16 @@ test("work orders: requests reach the right output", () => {
     "I want to start running ads for my business": "ad-program",
     "turn off the ads that are wasting money": "management-session",
     "refresh the plays library from this new source": "plays-refresh",
+    // Concepts and copy together is the copy work order, which contains the concept layers.
+    "Use the Ad Hub for this. I need ad concepts and copy for the spring offer, for Facebook and Instagram.": "ad-copy",
+    "I need ad concepts and copy for the spring offer, for Facebook and Instagram": "ad-copy",
+    "concepts and copy for the garden kit ads": "ad-copy",
+    // Plural and finished static ads; naming the hub or an approved generation does not pull the request elsewhere.
+    "Use the Ad Hub for this. Make me two finished static ads for the spring garden kit offer, for the Facebook and Instagram feed: one built right here with no generated image, and one built around a single generated photo. One paid image generation is approved for the second.": "static-ad",
+    "make two static ads for the spring sale": "static-ad",
+    "two finished ads for the garden kit": "static-ad",
+    "an ad for the feed built around a generated photo of the planner": "static-ad",
+    "Make one finished ad for the garden kit. One paid image generation is approved.": "static-ad",
   };
   for (const [request, id] of Object.entries(cases)) {
     assert.match(wo("--for", request).out, new RegExp(`^Matched: ${id}[.\\s]`), `"${request}" should reach ${id}`);

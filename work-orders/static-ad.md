@@ -2,7 +2,7 @@
 
 # Work order: Finished static image ad (`static-ad`)
 
-**When the ask is:** "make a static ad", "make an image ad", "make an ad", "create an ad", "create a finished ad", "make the ad with its image", "design an ad", "make an ad from this story", "carousel ad", "make me an ad", "create a facebook ad", "one ad for the feed"
+**When the ask is:** "make a static ad", "make an image ad", "make an ad", "create an ad", "create a finished ad", "make the ad with its image", "design an ad", "make an ad from this story", "carousel ad", "make me an ad", "create a facebook ad", "one ad for the feed", "make static ads", "two finished ads", "static ads for the feed", "an ad built around a generated photo"
 
 **Not this:** A row or a request that says video uses the video-ad work order. With no image tool connected this still runs: it ends at copy-ready with a production brief.
 
@@ -105,7 +105,7 @@ Also, when it applies:
 
 - **Build:** The ad read beside the page it sends people to.
 - **Method:** [ad-creative/references/creative-passes.md, "pass 1 fundamentals before creative"](../core/skills/ad-creative/references/creative-passes.md#pass-1-fundamentals-before-creative); [ad-creative/SKILL.md, "quality gate"](../core/skills/ad-creative/SKILL.md#quality-gate)
-- **Check:** Does the page deliver what the ad promises: the same offer, price, qualifications and next action?
+- **Check:** Does the page deliver what the ad promises, with the same offer and next action?
 - **Evidence:** The destination page beside the ad, or the gap named.
 - **If it fails:** A mismatch is fixed at the connection layer or reported to the business as a page gap. A page that cannot be seen from here is not checked: name it as an open item.
 
