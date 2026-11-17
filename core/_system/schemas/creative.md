@@ -20,21 +20,20 @@ Scope: concepts only. Untested. No media generated.
 Data: <sources used, or MODEL KNOWLEDGE (verify before spending)>
 Planned ad ID: <existing ID if any; otherwise not assigned>
 
-## Layer record
-Work order: ad-concepts
-Notes: <path to the notes file>
-Date: <YYYY-MM-DD>
-| Layer | Verdict | Evidence: what was looked at | Fix made or return |
-| --- | --- | --- | --- |
-| 1 fundamentals | | audience/situation, awareness/surface, desire, offer, proof limits, one message/action, constraints and deliverables; destination/brand sources actually reviewed, gaps and provisional choices | |
-| 2 premises | | mechanism, product-connected payoff; the materially different route rejected; closest earlier: the business's closest earlier ad for this offer or service, by path, and how this idea differs (or none on file and what was searched) | |
-| 3 cast-treatment | | cast and rendering as separate choices with reasons; the alternative considered | |
-| 4 visual-stop | | actual first frame/image, focal point, question; visual-alone stop reason for cold visual feeds, or the applicable test with its reason; hierarchy, competing details changed or kept | |
-| 5 connection | | opening/development/turn/payoff/action for video, or the complete composition for a static; key copy and CTA | |
-| 6 claims | | every claim mapped to supplied proof or left as a marked blank; where the permission behind any review or story is recorded; policy; condition: each condition's own words and shown in: every surface that carries it (scope limit: the same way), or condition: none | |
-| 7 review | | reviewer: fresh agent or self, with the reason; findings: how many, which blocked, the layers they sent work back to in square brackets, what was repaired, each repaired layer reopened with --repair (blocking found and repaired is fail, then pass); reviewed: the file or version given; after review: nothing changed, cut: each cut with its finding, or the lines changed since, each with the finding it repairs, and who re-checked them; audience: any, or the one the scores hold for; register: at register beside the owner's example quoted, or n/a: no owner examples for this channel; hook:, glance:, one job:, proof: each score with its reason; the seven verdicts with concrete reasons; batch sameness when applicable; revisions and the passes returned to | |
-| whole | | the set read as the operator sees it; nothing generated, no row promoted | |
-State: concept-ready | not ready, because ...
+## Pass record
+1. Fundamentals: audience/situation, awareness/surface, desire, offer, proof limits,
+   one message/action, constraints and deliverables; destination/brand sources actually
+   reviewed, cultural/voice cues from explicit direction, gaps and provisional choices.
+2. Premise: mechanism, product-connected payoff; materially different route rejected.
+3. Cast / rendering: separate choices and reasons; alternative treatment considered.
+4. Attention: actual first frame/image, focal point, question/interest; visual-alone
+   stop reason for cold visual feeds, or applicable test with reason; hierarchy,
+   competing details changed or intentionally retained, premise preserved.
+5. Connection: opening/development/turn/payoff/action for video; complete composition
+   for static; key copy, CTA, claims mapped to supplied proof.
+6. Review: self or independent; attention, relevance, promise/clarity, proof/policy,
+   composition/hierarchy, distinctness/execution and brand/cultural continuity verdicts;
+   batch sameness check when applicable; concrete reasons, revisions and return passes.
 
 ## Concept scores
 - Glance: n; Hook: n; One job: n; Proof: n; Finish: not applicable.
@@ -67,23 +66,16 @@ Untested. Nothing here predicts performance; the test plan says how it will be j
 - Words they use (voc IDs): ...
 - Proof available (offer file rows): ...
 
-## Layer record
-Work order: <ad-copy | static-ad | video-ad | ad-remix>
-Notes: <path to the notes file>
-Date: <YYYY-MM-DD>
-| Layer | Verdict | Evidence: what was looked at | Fix made or return |
-| --- | --- | --- | --- |
-| <one row per layer in the work order, in order> | pass / fail / n/a / not checked | <the decision and what was looked at: the premise chosen and the one rejected; cast and rendering and the alternative; the visual stop and its question; the connected turn and payoff; the review verdicts> | <what changed, or the layer it went back to> |
-| whole | | <the ad as a buyer sees it, beside the destination> | |
-State: copy-ready | creative-ready | not ready, because ...
-<This is the creative pass record. A saved concept record may supply the first six rows;
-link it, then check them again after execution. Do not replace the rows with "all passes
-passed". Check it: `node <hub>/core/_system/scripts/workorder.mjs --record <this file>`.>
+## Creative pass record
+<Fundamentals; distinct premises; independent cast/rendering selection and rejected
+alternative; visual stop and question; connected turn/payoff; separate review verdicts
+and revisions. Link a saved concept record when it supplies these, then recheck after
+execution. Do not replace this with "all passes passed".>
 
 ## Claims map
-| Claim in the ad | Proof row | Status | Condition and where it is shown |
-| --- | --- | --- | --- |
-| "<the words>" | <row from the offer's proof table> | Owner-confirmed / Observed / BLANK to confirm | condition: "<its words>"; shown in: <each surface> (scope limit: the same way), or none |
+| Claim in the ad | Proof row | Status |
+| --- | --- | --- |
+| "<the words>" | <row from the offer's proof table> | Owner-confirmed / Observed / BLANK to confirm |
 
 ## Copy
 ### Hook
@@ -130,59 +122,15 @@ passed". Check it: `node <hub>/core/_system/scripts/workorder.mjs --record <this
 - Verdict: copy-ready (render pending) | creative-ready for approval | not yet, because ...
 ```
 
-## Template: `creative/<batch>/batch-review.md`
-
-Written by `ad-creative` when a batch is made together (work order `ad-batch`). It holds
-the checks no single ad's file can: whether the ads differ the way their rows say, and
-whether each ad promises what its page delivers.
-
-```markdown
----
-batch: <yymm>-<letter>
-offer: <slug>
-updated: YYYY-MM-DD
-updated-by: ad-creative
----
-
-# Batch review: <batch>
-
-## The ads
-| ID | State | Hook, first frame | Cast and treatment | What the row says it tests |
-| --- | --- | --- | --- | --- |
-
-## Distinctness
-<Hooks, first frames, casts, settings and styles side by side. Accidental sameness
-corrected, or the matched pair named as deliberate.>
-
-## Ad against destination
-| ID | Destination | Same offer, price, qualifications and next action? | Gap |
-| --- | --- | --- | --- |
-
-## Withheld
-- <ID>: <the layer that failed, and what it needs>
-
-## Layer record
-Work order: ad-batch
-Notes: <path to the notes file>
-Date: <YYYY-MM-DD>
-| Layer | Verdict | Evidence: what was looked at | Fix made or return |
-| --- | --- | --- | --- |
-| 1 briefs |  |  |  |
-| 2 ads |  |  |  |
-| 3 distinctness |  |  |  |
-| 4 destination |  |  |  |
-| 5 rows |  |  |  |
-| whole |  |  |  |
-State: batch concept-ready | batch copy-ready | batch creative-ready | batch partly ready
-```
-
 ## Notes
 
-- Every file here ends with its layer record: one row per layer of its work order
-  ([staged work](../staged-work.md)). The record is the proof trail for the status the
-  ledger row carries.
 - Shapes are named by ratio in the file name: `4x5`, `1x1`, `9x16`. The platform layer
   says which the placements need.
 - A file at `copy-ready` has incomplete production or inspection; `creative-ready` has every shape required by the authorized placement scope made
   and inspected. A single preview does not complete a broader planned placement set. The ledger row says the same thing.
 - Nothing in this folder is a performance record. Results live in `ads/results/`.
+
+## Layer record
+
+The file ends with the layer record of its work order (`ad-copy, static-ad, video-ad, ad-remix`): the work order prints
+the template, and [staged work](../staged-work.md) says how it is kept.

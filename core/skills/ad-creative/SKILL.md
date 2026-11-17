@@ -12,7 +12,7 @@ when_to_use:
   - check this copy for claims and policy
 metadata:
   adhub:
-    version: 0.5.0
+    version: 0.4.0
     layer: creative
     reads:
       - offers/
@@ -61,20 +61,15 @@ gated on proof.
 
 ## Work order
 
-Every output of this skill is built in layers under
-[staged work](../../_system/staged-work.md): build one layer, answer its check from the
-evidence it names, write its line in the layer record, then open the next with `--layer`
-as it is reached. Get the work order before starting:
+Get the work order for the output before starting, and work it one layer at a time under
+[staged work](../../_system/staged-work.md):
 
 ```
 node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
 ```
 
-or open it from [work-orders/](../../../work-orders/README.md). This skill owns
-`ad-batch`, `ad-concepts`, `ad-copy`, `static-ad`, `video-ad`, `ad-remix`, `claims-check`. The creative passes and the claims gate are the first layers of every creative work order. Where the work order writes copy, the copy per placement (and a video's script) comes before the adversarial review, so the review reads the words the buyer will see; production and review of the actual render follow. A video adds the build layers in `references/video-build.md`.
-The method below is what each layer points at, and the quality gate is the whole-output
-check. Do not draft the finished output and check it afterward. Report the state the
-record supports, nothing stronger.
+or open it from [work-orders/](../../../work-orders/README.md). Open each layer with
+`--layer` as it is reached; each points at a section below. This skill owns `ad-batch`, `ad-concepts`, `ad-copy`, `static-ad`, `video-ad`, `ad-remix`, `claims-check`. A video also follows the parts in [references/video-build.md](references/video-build.md).
 
 ## Modes
 
@@ -98,14 +93,12 @@ record supports, nothing stronger.
 
 Read `references/creative-passes.md`, `references/opening-dynamics.md`,
 `references/copy-and-hooks.md`, `references/composition-review.md` and
-`references/claims-and-policy.md` before drafting, and `references/video-build.md` for
-any video that will be produced or briefed.
+`references/claims-and-policy.md` before drafting.
 The required sequence is fundamentals -> premises -> independent casting/treatment ->
-visual stop -> connected hook/turn/offer -> (the copy per placement, when copy is asked
-for) -> adversarial concept review -> authorized production/render review. Each pass is a layer in the work order: it produces its line in
-the layer record and has a return path. Do not collapse them into one checklist performed
-after writing. Steps below supply the brief, truth checks, copy and production mechanics
-inside those passes.
+visual stop -> connected hook/turn/offer -> adversarial concept review -> authorized
+production/render review. Each pass produces a short decision record and has a return
+path. Do not collapse them into one checklist performed after writing. Steps below
+supply the brief, truth checks, copy and production mechanics inside those passes.
 
 
 ### 1. Take the brief from the row
@@ -154,9 +147,7 @@ Complete Passes 2–4 of `references/creative-passes.md` before polishing langua
 compare distinct premises, choose cast separately from rendering, and test the actual
 opening image. Pass 5 connects the opening, turn, product payoff and action. Pass 6
 rejects failures before presenting concepts or producing assets; use its explicit
-thresholds and revision paths. Concepts mode stops there. When copy is asked for, it is
-written after Pass 5 and the claims gate and before Pass 6, so the review reads every
-field the buyer will see.
+thresholds and revision paths. Concepts mode stops there.
 
 For production copy, the hook first. A hook is three things at once, what the viewer reads, what they hear,
 and what is in the first frame (Observed, hooks review); write all three, even for a
@@ -188,9 +179,6 @@ production brief (shot list, on-screen text, first frame, sound, shapes), the ro
 (`meta-system/references/placements.md` for Meta) for the chosen shape's specs. When a
 batch explicitly needs both feed and vertical, make a dedicated vertical edit, not a
 crop (Observed, course review); a one-image request does not authorize extra ratios.
-A video is built in the parts of `references/video-build.md`, each checked before the
-next: script and sequence, first frame, scenes, captions and sound, the edit, placement
-versions, the watched export.
 Text and logos stay inside the safe zones; captions burned in so the ad reads with sound off. Generated imagery may change a
 background or a setting; it never misrepresents the product, the place or a person, and
 generated text and figures are checked letter by letter.
@@ -230,9 +218,6 @@ through `ad-launch`.
 
 Before writing the summary, check every ad:
 
-- The layer record is complete for the work order: every layer has a row, every pass
-  names what was looked at, and the state is one the rows support
-  (`workorder.mjs --record <file>` passes). "All passes passed" is not a record.
 - Required creative passes recorded; cast and rendering chosen independently.
 - Destination/brand sources reviewed or gaps stated; casting, setting, visual language
   and voice grounded in the explicit brief. Batch checked for unintentional sameness
@@ -268,10 +253,8 @@ Do not show every worksheet unless requested. If saved, use the concept record i
 
 Copy and production: files first, inside the business repo's `ads/creative/<batch>/`:
 
-- `<ID>.md` per ad from `core/_system/schemas/creative.md`: brief, layer record, claims
-  map, copy per placement, asset table, checks, production brief where needed.
-- `batch-review.md` for a batch, from the same schema: distinctness across the batch and
-  each ad against its destination, with the batch's layer record.
+- `<ID>.md` per ad from `core/_system/schemas/creative.md`: brief, claims map, copy per
+  placement, asset table, checks, production brief where needed.
 - `<ID>-<shape>.<ext>` per shape made and inspected, beside it.
 - Drafts without IDs under `creative/<yymm>-drafts/`, named `draft-01.md` onward.
 

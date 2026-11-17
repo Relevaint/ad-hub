@@ -15,14 +15,8 @@ Example: `song-2610-007`.
   ad: after `song-2609-006`, the next ad planned in October is `song-2610-007`.
 - Read an ID from the right: the last parts are the revision, then `nnn`, then `yymm`;
   everything before is the offer slug, which may contain hyphens.
-- `ad-strategy` creates IDs. Nobody renames one.
-- A changed ad. Before it has been approved or has run (`planned`, `copy-ready`,
-  `creative-ready`), it is corrected in place under the same ID: its layer record is
-  updated and its status drops to what the new record supports. Once it has been
-  approved or has run, it is never edited: the change gets a revision suffix or a new
-  ID from `ad-strategy`, so the approval and the results stay with the version that
-  earned them. (Clarified 2026-11-15. The earlier wording, "a changed ad gets a revision
-  suffix or a new ID, never an edited one", could be read either way.)
+- `ad-strategy` creates IDs. Nobody renames one. A changed ad gets a revision suffix
+  or a new ID, never an edited one.
 
 ## Row
 

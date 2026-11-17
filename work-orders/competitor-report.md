@@ -8,7 +8,7 @@
 **Part of:** [`ad-program`](ad-program.md)
 **Live account:** read-only library search through the business's own connector, where one exists
 
-Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: open it with `--layer` when it is reached, build that layer only, answer its check from the evidence named, write its result under a heading with the layer's id in the notes file and its line in the layer record, then move on. Do not draft the finished output first and check it afterward. Every file this page lists, and every file of the business's that the request rests on (its brief, its rules for this channel, the examples those rules point at), is read to its last line. `head`, a line range, a search or a reader that stops at a line limit is a read in part, and a file read in part is not read.
+Build this one layer at a time, in order, under [staged work](../core/_system/staged-work.md). For each layer: build that layer only, answer its check from the evidence named, write its line in the layer record, then move on. Do not draft the finished output first and check it afterward.
 
 ## Load first
 
@@ -27,22 +27,68 @@ Also, when it applies:
 
 ## Layers
 
-1. **Set the question** (`question`): One line: what we are trying to learn, for this offer and these customer types.
-2. **Pull each advertiser's active ads** (`advertisers`): Per advertiser: active ad count, oldest start date, starts in the last ninety days, format mix, versions, landing pages.
-3. **Read the ads worth keeping** (`breakdowns`): A breakdown of each kept ad: hook as text, first frame and sound; style; message and proof; offer and ask; call-out; format.
-4. **Click through** (`pages`): Each kept ad's landing page read: headline, proof shown, offer, the one ask, friction, and where page and ad disagree.
-5. **Keep observed apart from inferred** (`observed-inferred`): Every line labelled Observed with link and date, or Inferred.
-6. **Patterns and gaps** (`patterns`): What everyone says, what nobody says, and each pattern written as a candidate for ad-strategy with how it would be adapted.
-7. **The swipe file** (`swipe`): One entry per kept ad, with its link, the date seen, a screenshot when one could be taken, and why it was kept.
-8. **Whole output** (`whole`): the assembled output, checked last.
+### 1. Set the question (`question`)
 
-Open the first layer:
+- **Build:** One line: what we are trying to learn, for this offer and these customer types.
+- **Method:** [competitor-ads/SKILL.md, "1 set the question"](../core/skills/competitor-ads/SKILL.md#1-set-the-question); [competitor-ads/SKILL.md, "who to look at"](../core/skills/competitor-ads/SKILL.md#who-to-look-at)
+- **Check:** Does the question say what will be learned, and are the advertisers chosen in the stated order rather than by fame?
+- **Evidence:** The question and the who-and-why table.
+- **If it fails:** Restate it; drop the giants whose brand makes their ads misleading models.
 
-```
-node <hub>/core/_system/scripts/workorder.mjs --id competitor-report --layer question --notes <notes file>
-```
+### 2. Pull each advertiser's active ads (`advertisers`)
 
-A layer's method, check and evidence are printed when it is opened, and it opens once every layer before it has its section in the notes file. `--all` prints every layer at once: it is for a person reading, and for a session that cannot write a notes file at all.
+- **Build:** Per advertiser: active ad count, oldest start date, starts in the last ninety days, format mix, versions, landing pages.
+- **Method:** [competitor-ads/SKILL.md, "2 pull each advertisers active ads"](../core/skills/competitor-ads/SKILL.md#2-pull-each-advertisers-active-ads); [competitor-ads/references/reading-an-ad.md, "the measures claude workflows review"](../core/skills/competitor-ads/references/reading-an-ad.md#the-measures-claude-workflows-review); [competitor-ads/SKILL.md, "when the library cannot be opened"](../core/skills/competitor-ads/SKILL.md#when-the-library-cannot-be-opened)
+- **Check:** Is every measure Observed with a library link and the date seen, with an empty result retried once and counts marked as lower bounds where only search worked?
+- **Evidence:** The library pages opened, or the plain statement that the library could not be opened and what was read instead.
+- **If it fails:** Record what was actually seen and label the data line to match. Nothing from the library is written as Observed when it was not opened.
+
+### 3. Read the ads worth keeping (`breakdowns`)
+
+- **Build:** A breakdown of each kept ad: hook as text, first frame and sound; style; message and proof; offer and ask; call-out; format.
+- **Method:** [competitor-ads/SKILL.md, "3 read the ads worth keeping"](../core/skills/competitor-ads/SKILL.md#3-read-the-ads-worth-keeping); [competitor-ads/references/reading-an-ad.md, "what counts as seen"](../core/skills/competitor-ads/references/reading-an-ad.md#what-counts-as-seen)
+- **Check:** Is each kept ad broken down from what was actually seen, with every unwatched video marked not seen and nothing described from a thumbnail?
+- **Evidence:** Each kept ad's page or screenshot, and its watched or not-seen field.
+- **If it fails:** An incomplete breakdown stays marked incomplete and cannot feed a pattern as fact.
+
+### 4. Click through (`pages`)
+
+- **Build:** Each kept ad's landing page read: headline, proof shown, offer, the one ask, friction, and where page and ad disagree.
+- **Method:** [competitor-ads/SKILL.md, "4 click through"](../core/skills/competitor-ads/SKILL.md#4-click-through)
+- **Check:** Was each kept ad's landing page opened and read, with any that could not be opened recorded as not reached?
+- **Evidence:** The pages opened, by URL and date.
+- **If it fails:** Mark the page not reached; the ad's offer and ask stay as seen in the ad only.
+
+### 5. Keep observed apart from inferred (`observed-inferred`)
+
+- **Build:** Every line labelled Observed with link and date, or Inferred.
+- **Method:** [competitor-ads/SKILL.md, "5 keep observed apart from inferred"](../core/skills/competitor-ads/SKILL.md#5-keep-observed-apart-from-inferred); [competitor-ads/SKILL.md, "what a public ad library can and cannot tell you"](../core/skills/competitor-ads/SKILL.md#what-a-public-ad-library-can-and-cannot-tell-you)
+- **Check:** Is every line either Observed with link and date or labelled Inferred, with no spend, result or word like winning written about any competitor's ad?
+- **Evidence:** The file searched for unlabelled claims and for profitable, winning, working and best-performing.
+- **If it fails:** Relabel or remove the line.
+
+### 6. Patterns and gaps (`patterns`)
+
+- **Build:** What everyone says, what nobody says, and each pattern written as a candidate for ad-strategy with how it would be adapted.
+- **Method:** [competitor-ads/SKILL.md, "6 patterns and gaps"](../core/skills/competitor-ads/SKILL.md#6-patterns-and-gaps)
+- **Check:** Does each pattern name the advertisers it was seen at and how it would be adapted, resting only on complete observations?
+- **Evidence:** Each pattern traced to its swipe entries and observed rows.
+- **If it fails:** A pattern resting on an unseen video or an unopened page is cut or marked a lead.
+
+### 7. The swipe file (`swipe`)
+
+- **Build:** One entry per kept ad, with its link, the date seen, a screenshot when one could be taken, and why it was kept.
+- **Method:** [competitor-ads/SKILL.md, "7 the swipe file"](../core/skills/competitor-ads/SKILL.md#7-the-swipe-file)
+- **Check:** Does each entry carry its link, date and what it teaches, with competitor words quoted only inside the entry?
+- **Evidence:** The swipe folder read entry by entry.
+- **If it fails:** Complete or drop the entry.
+
+### Whole output (`whole`)
+
+- **Method:** [competitor-ads/SKILL.md, "quality gate"](../core/skills/competitor-ads/SKILL.md#quality-gate)
+- **Check:** Could ad-strategy weigh these patterns knowing exactly what was seen and what was not, with no competitor copy handed over as the business's own?
+- **Evidence:** competitors.md read top to bottom, including the not-seen section.
+- **If it fails:** Fix the layer that overstated what was seen.
 
 ## When something changes
 
@@ -61,7 +107,7 @@ An old pass does not carry over. Check these again; leave unaffected work alone.
 | report ready | **`question`**, **`advertisers`**, **`breakdowns`**, **`pages`**, **`observed-inferred`**, **`patterns`**, `swipe`, **`whole`** | Observed from the library with links and dates; what was not seen is listed. |
 | not ready | nothing yet | A layer failed or could not be checked; say which and what it needs. |
 
-A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. Any layer that failed, was not checked or is partial, the whole row included, is named by its id after `State:`; the checker fails a record that leaves one out. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
+A layer in bold must be `pass`, or `carried` from an earlier record; `n/a` is not accepted there. The others may also be `n/a` with the reason. The whole-output row is never `n/a`, and no state stands on `n/a` rows alone. A layer outside the list that failed or was not checked is named beside the state. A state takes no exceptions (`rechecked, except the live ads`): claim the weaker state and name what remains.
 
 ## Layer record
 
@@ -70,7 +116,6 @@ Where it goes: At the end of ads/research/competitors.md, under ## Layer record.
 ```markdown
 ## Layer record
 Work order: competitor-report
-Notes: <path to the notes file>
 Date: <YYYY-MM-DD>
 | Layer | Verdict | Evidence: what was looked at | Fix made or return |
 | --- | --- | --- | --- |
@@ -85,14 +130,12 @@ Date: <YYYY-MM-DD>
 State:
 ```
 
-One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). `partial` (part of the check was made: say what was done and what remains; it counts as not checked for every state). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery. Before sending, run the record through `workorder.mjs --record <file>` (or `--record -` for a reply); a record that fails is fixed, not sent.
-
-Notes: the file that holds each layer's result under a heading with the layer's id, written as the work proceeds (the job, the premises kept and rejected, the claims, the reviewer's findings and the repairs). It is this output's own file when it writes one; otherwise a scratch file outside the hub, and outside the business repo unless the business says outputs go there. Only a session that cannot write files writes `Notes: none (why)`. The checker opens the file: every passed layer needs its heading with at least 15 words under it and the `opened:` line `--layer` wrote when it was opened, in the work order's order, and the loading layer names every file under Load first.
+One verdict per row: `pass` (name what was looked at), `fail` (name the fix or where it went back), `n/a` (say why it does not apply), `not checked` (say why and who can check it), `carried` (it passed in an earlier record and nothing it rests on changed: name that record's date). A pass whose evidence says the check was not made is a `not checked`. `not checked` is only for a check that cannot be made in this session (no tool, no access, a person's approval): a check that is in your hands is made before delivery.
 
 In a reply with no file, put the record on its own line, starting with `Layers (competitor-report):`, every layer in order with a few words of evidence in brackets:
 
 ```
-Layers (competitor-report): question pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>. Notes: <path>
+Layers (competitor-report): question pass (what was looked at) · <next layer> not checked (why, and who can) · ... · whole pass (what was looked at). State: <state>
 ```
 
 Check it before you send it: `node <hub>/core/_system/scripts/workorder.mjs --record <file>`, or pipe the reply in with `--record -`.

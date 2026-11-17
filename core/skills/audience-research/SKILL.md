@@ -10,7 +10,7 @@ when_to_use:
   - voice of customer
 metadata:
   adhub:
-    version: 0.2.0
+    version: 0.1.0
     layer: research
     reads:
       - offers/
@@ -52,20 +52,15 @@ the offer by the thing sold, and say that `start-here` records it. One offer at 
 
 ## Work order
 
-Every output of this skill is built in layers under
-[staged work](../../_system/staged-work.md): build one layer, answer its check from the
-evidence it names, write its line in the layer record, then open the next with `--layer`
-as it is reached. Get the work order before starting:
+Get the work order for the output before starting, and work it one layer at a time under
+[staged work](../../_system/staged-work.md):
 
 ```
 node <hub>/core/_system/scripts/workorder.mjs --for "<the request>"
 ```
 
-or open it from [work-orders/](../../../work-orders/README.md). This skill owns
-`audience-report`.
-The method below is what each layer points at, and the quality gate is the whole-output
-check. Do not draft the finished output and check it afterward. Report the state the
-record supports, nothing stronger.
+or open it from [work-orders/](../../../work-orders/README.md). Open each layer with
+`--layer` as it is reached; each points at a section below. This skill owns `audience-report`.
 
 ## Where buyers speak
 
@@ -151,10 +146,7 @@ there. No authority file: skip the source, list it as not reached, and say why.
 
 ## Quality gate
 
-Before writing the summary, check the files, in two steps: the lines first (each traced
-to the page or file it was read on), then the types (each traced to its lines). A type
-the lines do not support is demoted to a lead or sent back for more lines. It is never
-reworded to sound supported.
+Before writing the summary, check the files:
 
 - Every claim in `research/audience.md` cites IDs from `research/voc.md`. Every line in
   `voc.md` has a source, a date, and a link or a file in the repo.

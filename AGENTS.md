@@ -136,8 +136,8 @@ Run everything from the repo root.
 | Command | What it does | Verified |
 | --- | --- | --- |
 | none | No install step: the scripts use only Node's standard library. | 2026-10-10 |
-| `npm test` | Runs the helper-script tests against synthetic fixtures, then checks the real hub: every freshness header valid, every built skill passes `route.mjs --check`, every regression case well formed, the installer and its hook work on a scratch business folder, the work-order map is valid (`workorder.mjs --check`) and its generated pages are current. | 2026-11-15, all passing on Node 22.23.4 |
-| `node core/_system/scripts/workorder.mjs --write` | Regenerates `work-orders/` from `core/_system/work-orders.json`. Run it after any edit to the map; the gate fails when the pages are out of date. | 2026-11-15 |
+| `npm test` | Runs the helper-script tests against synthetic fixtures, then checks the real hub: every freshness header valid, every built skill passes `route.mjs --check`, every regression case well formed, the installer and its hook work on a scratch business folder, the work-order map is valid (`workorder.mjs --check`) and its generated pages are current. | 2026-11-17, 35 of 35 passing on Node 22.23.4 |
+| `node core/_system/scripts/workorder.mjs --write` | Regenerates `work-orders/` from `core/_system/work-orders.json`. Run it after any edit to the map; the gate fails when the pages are out of date. `--for` / `--id` print a work order's summary, `--layer <id>` one layer, `--all` the whole page. | 2026-11-17 |
 
 **Build gate: `npm test` must pass before every commit.** It covers the scripts and the structure of the hub, not the quality of a skill's output. For every change also re-read the diff, confirm every relative link you added points at a real file, confirm no template placeholder is left in `AGENTS.md` or `HANDOFF.md` (the check in clay-config `NEW-PROJECT.md`), and keep the README layout and task table matching what actually exists. There is no CI, so the gate runs only when an agent runs it. The regression cases in `core/_system/regression/` are the acceptance test for each skill (`core/_system/CONVENTIONS.md` section 11); running them needs a fresh agent, not `npm test`.
 
@@ -168,8 +168,6 @@ Doctrine item 10 applies. In addition for this project:
 - The truth rule is a hard rule: claims, testimonials, stories, numbers, urgency and scarcity must be real and traceable to the business's proof, and AI-made people are never presented as customers (README hard rule 4, `core/_system/spend-authority.md`).
 - Voice belongs to the business. Skills read each business's voice and context from that business's repo, by meaning. The hub carries no brand voice; test businesses are synthetic and brand-neutral. The owner-authorized composition gallery is a narrow exception for generated, branded teaching images, not a source of current offer facts or performance evidence.
 - Skill text follows `core/_system/CONVENTIONS.md` section 1: plain, confident, operator to operator, no hype, no filler, each rule stated once.
-
-Every output of every skill is built the same way: in layers, each checked before the next relies on it, with a layer record (2.17). The creative passes above are the first layers of every creative work order; where the work order writes copy, the copy comes before the rejection pass, so the review reads the words the buyer will see.
 
 ### 2.10 Identity facts, source of truth
 
@@ -349,12 +347,10 @@ The Marketing-Hub location was also left blank in that message. Section 2.15 now
 
 ### 2.17 Staged work and the output map
 
-Owner requirement (Clay, 2026-11-15). The problem it answers: agents entered the hub, saw the skills, and applied part of them; asked to be creative, follow the structure and judge the audience fit in one pass, they locked onto one and reported the work as done.
+Owner requirement (Clay, 2026-11-15): an agent finds the output asked for, is told which skill owns it and what to read, and builds it one layer at a time with a check after each, so steps are not skipped. The skills' own method is the authority; the map points at it and adds no rule of its own (Clay, 2026-11-17).
 
-- **One contract:** `core/_system/staged-work.md`. Build one layer, check it against its one question, repair it where it failed, then build the next. Check the assembled output as a whole. A part passing does not pass its parent. When something upstream changes, what rested on it is checked again and nothing else is redone.
-- **One map:** `core/_system/work-orders.json` holds one entry per output the hub makes, with its layers in order. Each layer points at its method in the owner skill; the method is never copied into the map. `work-orders/` is generated from it.
-- **One record:** every output ends with a layer record (one row per layer: verdict, what was looked at, fix), in the file the output writes or as one line in the reply. `node core/_system/scripts/workorder.mjs --record <file>` fails on a missing layer, a pass with no evidence, or a state the rows do not support.
-- **States are claims.** `copy-ready`, `creative-ready`, `test seen`, `live` and the rest each name the layers that must have passed. A prepared list is never reported as carried out, and a concept is never reported as an asset.
-- **Layer checks are the agent's own work,** not approval requests. Spend authority, the approvals log and the business's sign-off on proof are unchanged.
-- **When a skill changes, the map changes in the same PR:** a new output or mode gets a work order; a renamed heading is renamed where a layer points at it. `npm test` fails otherwise.
+- **The contract:** `core/_system/staged-work.md`. Find the work order, load what it lists, open each layer with `--layer` as it is reached, build it and check it from something actually looked at, repair at the source, check the whole, report only the state the checks support.
+- **The map:** `core/_system/work-orders.json`, one entry per output with its layers in order. Each layer points at its method in the owner skill; the method is never copied into the map. `work-orders/` is generated from it.
+- **The record:** a compact layer record (one row per layer: verdict, what was looked at, fix), in the file the output writes or as one line in the reply. `workorder.mjs --record` checks it.
+- **When a skill changes, the map changes in the same PR:** a renamed heading is renamed where a layer points at it. `npm test` fails otherwise.
 - Tested structure is not tested performance. A complete layer record shows no layer was skipped. It does not show the ad will win.

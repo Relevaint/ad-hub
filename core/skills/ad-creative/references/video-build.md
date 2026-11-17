@@ -1,107 +1,82 @@
 # Video build: from a passed concept to a watched file
 
-Load for any video ad that will be produced or handed off as a production brief. Part 1,
-the script, is written after Pass 5 and before Pass 6 in
-[creative-passes.md](creative-passes.md), so the review reads every spoken and on-screen
-line; Parts 2 to 7 follow once Pass 6 passes. It splits Pass 7 for video into parts, because a video is several things that fail separately: a
-sequence that does not progress, a first frame nobody stops for, a scene that drifts, a
-caption with a wrong word, sound that fights the voice, a cut that buries the turn, a
-shape that crops the product out.
+Load for any video ad that will be produced or handed off as a production brief, after
+the concept has passed Pass 6 in [creative-passes.md](creative-passes.md). It arranges
+what `SKILL.md` (steps 4 to 6) and Pass 7 already say about video into parts, so each part
+is checked before the next is built on it. It adds no rule of its own, no production tool
+and no model advice.
 
-These are hub defaults, written 2026-11-15 and not yet run on a produced video. Improve
-on a part when the production in front of you argues for it, and say why in one line.
-What stays fixed is the order: each part is checked before the next is built on it, and
-the finished file is watched.
-
-This file adds no production tool and no model advice. Production tools are whatever the
-operator has connected (`SKILL.md`, step 5). When nothing here can produce the video, the
-script, the first frame and the plan for the remaining parts become the production brief,
-the row stays `copy-ready`, and the record says which parts were not made.
+Production tools are whatever the operator has connected (`SKILL.md`, step 5). When
+nothing here can produce the video, the output is the copy plus a production brief (shot
+list, on-screen text, first frame, sound, shapes), the row stays `copy-ready`, and the
+reply says so.
 
 ## Part 1. Script and sequence
 
-Write the whole ad as timed beats before any asset: opening, development, turn, product
-payoff, action. For each beat: what is seen, what is heard, what is on screen, how long.
-Every spoken and on-screen line carries only what the claims map allows; these lines
-become the copy the captions are checked against. The fields each placement needs
-(primary text, headline, description) are written after the beats, not before.
+The sequence from Pass 5: opening, development, turn, product payoff, action. State when
+the product enters and which question it answers. The hook is what the viewer reads, what
+they hear and what is in the first frame; write all three.
 
-**Check:** read the beats in order with nothing else. Does each beat change what the
-viewer knows or wants, does the turn earn the product, and could the beats be shuffled
-without losing anything? If they could, it is a list, not a sequence.
+**Check:** does the turn earn the reveal, with the product payoff connected to the
+opening rather than attached to an unrelated scene?
 
-**If it fails:** fix the sequence here. A payoff that does not answer the opening goes
-back to Pass 5. Never polish a shot to rescue a sequence.
+**If it fails:** back to Pass 5.
 
 ## Part 2. First frame
 
-Compose the actual first frame as a still: focal point, action or contrast, what is
-readable in it.
+The actual first frame, described and composed.
 
-**Check:** the Pass 4 test on this frame at feed size: the visual-alone stop test for a
-cold visual feed, or the selected opening dynamic's test with the reason recorded.
+**Check:** the Pass 4 test on this frame: the visual-alone stop test for a cold visual
+feed, or the selected opening dynamic's test with the reason recorded.
 
-**If it fails:** recompose the frame, or return to Pass 4 when the idea of the frame is
-the problem.
+**If it fails:** recompose the frame, or return to Pass 4.
 
 ## Part 3. Scenes
 
-Make or gather each scene: supplied footage, generated scenes, or both. One scene per
-beat or run of beats.
+Supplied footage, generated scenes, or both, for the sequence.
 
-**Check, per scene:** it shows what its beat needs, at the length the beat has. **Check,
-across scenes:** the same person, product and place stay the same from scene to scene
-(face, clothing, colour, light, the product's shape and label); a demonstration shows what
-the product really does; a generated person is never presented as a customer; nothing in
-a scene adds a claim the claims map does not carry.
+**Check:** cast and treatment stay consistent, the product demonstration is true, and
+generated imagery never misrepresents the product, the place or a person.
 
-**If it fails:** remake that scene. Drift that shows in every scene means the reference
-for the person or product is the problem: fix the reference first, then the scenes that
-used it.
+**If it fails:** remake the scene, or return to the concept if the idea cannot survive
+production (Pass 7).
 
 ## Part 4. Captions and sound, together
 
-Burned-in captions and on-screen text, voice, music and effects. They are checked
-together because each can undo the other.
+Burned-in captions and on-screen text, and the sound.
 
-**Check:** captions and on-screen text match the gated copy letter by letter and sit
-inside the safe zones; the ad makes sense with the sound off; with the sound on, every
-line is audible over the music; required strings are present where the format has room.
+**Check:** the ad reads with the sound off; text and logos sit inside the safe zones;
+generated text is checked letter by letter; every claim is identical to the gated draft.
 
-**If it fails:** fix the layer that is wrong. A caption fix does not regenerate a good
-scene; a music change does not re-record a good voice. A spoken or on-screen line the
-reviewed script and copy do not hold goes back to the review as a re-check.
+**If it fails:** fix the caption, text or sound that is wrong.
 
 ## Part 5. The edit
 
-Assemble the scenes against the sequence from Part 1.
+The scenes assembled against the sequence from Part 1.
 
-**Check:** the hook lands in the first frame and first three seconds; the turn lands;
-no beat was dropped or reordered by accident; the product payoff is on screen long enough
-to read; the length fits the placement.
+**Check:** the hook lands in the first frame and first three seconds; frames and
+transitions carry no competing movement or overlays; the turn and payoff are preserved.
 
-**If it fails:** the material is good and the assembly is not: recut. Go back to a
-scene only when the cut shows the scene is the cause.
+**If it fails:** recut, or go back to the scene that causes it.
 
 ## Part 6. Placement versions
 
-Each authorised shape is its own edit, not a crop of another (Observed, course review).
-Only the shapes the request authorises.
+Produce only the requested number of assets and shapes. When a batch explicitly needs
+both feed and vertical, the vertical is a dedicated edit, not a crop (Observed, course
+review).
 
-**Check, per version:** the subject and the product are in frame, text is inside that
-shape's safe zones, and nothing is cut off.
+**Check, per version:** nothing is cut off and text sits inside that shape's safe zones.
 
 **If it fails:** recompose that version. A missing planned shape is named, not made
 beyond scope.
 
 ## Part 7. Watch the export
 
-Play the final exported file of every version from start to finish at the size it will
-be seen, once with sound and once muted.
+Watch the final file at the size it will be seen, to verify its pacing, and re-run the
+gates on the execution (Pass 7).
 
-**Check:** it plays, the pacing holds, the claims on screen are the gated ones, and it
-does the one job in the ledger row. Frames sampled from a file, a timeline preview and a
-file's existence are not a watch.
+**Check:** does the watched file do the one job in the ledger row, with the claims on
+screen the gated ones?
 
-**If it fails, or cannot be played here:** an unplayed file is unverified. Say so, leave
-the row at `copy-ready`, and name who can watch it.
+**If it fails, or cannot be played here:** an unplayed file is unverified. Say so and
+leave the row at `copy-ready`.
