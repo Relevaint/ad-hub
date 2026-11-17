@@ -49,19 +49,6 @@ Proposed. No line behind these yet; `ad-strategy` may test them as bold ads.
 
 ## Not reached, and next refresh
 - <source>: <why>. Next run: <what would settle the open questions>.
-
-## Layer record
-Work order: audience-report
-Notes: <path to the notes file>
-Date: <YYYY-MM-DD>
-| Layer | Verdict | Evidence: what was looked at | Fix made or return |
-| --- | --- | --- | --- |
-| 1 question |  |  |  |
-| 2 source-walk |  |  |  |
-| 3 customer-types |  |  |  |
-| 4 findings |  |  |  |
-| whole |  |  |  |
-State: findings ready | leads only | model knowledge only
 ```
 
 ## Notes
@@ -71,3 +58,8 @@ State: findings ready | leads only | model knowledge only
 - A type is a situation, never a protected attribute. In a regulated category, point at
   the business's compliance file here and do not restate its rules.
 - Illustrative numbers in this template are not real.
+
+## Layer record
+
+The file ends with the layer record of its work order (`audience-report`): the work order prints
+the template, and [staged work](../staged-work.md) says how it is kept.

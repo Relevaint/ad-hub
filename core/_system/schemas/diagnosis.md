@@ -48,14 +48,6 @@ Shaped by: <files read, with dates; what was missing>
 | ID | Customer type | Awareness | Format | Style | Breadth | Origin | Risk | Spend | Result on the deciding metric |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 <Classes missing from the table are the production list.>
-
-## Layer record
-Work order: ad-audit
-Notes: <path to the notes file>
-Date: <YYYY-MM-DD>
-<Only when the audit was run on its own (work order `ad-audit`): rows classify, compare,
-missing and whole, then the state. A diagnosis written as part of a plan is covered by
-the test plan's own layer record.>
 ```
 
 ## Notes
@@ -66,3 +58,8 @@ the test plan's own layer record.>
   exist, say the names are the business's own description.
 - Nothing here changes a live ad. A finding that an ad should be paused goes to the
   rulebook in the test plan and waits for `ad-manage`'s session.
+
+## Layer record
+
+The file ends with the layer record of its work order (`ad-audit`): the work order prints
+the template, and [staged work](../staged-work.md) says how it is kept.

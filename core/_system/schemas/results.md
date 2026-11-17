@@ -84,36 +84,21 @@ Question asked: "<the operator's words>"
 - <evidence needed, and roughly how long at the current spend>
 
 Numbers checked twice: yes, on YYYY-MM-DD.
-
-## Layer record
-Work order: results-review
-Notes: <path to the notes file>
-Date: <YYYY-MM-DD>
-| Layer | Verdict | Evidence: what was looked at | Fix made or return |
-| --- | --- | --- | --- |
-| 1 snapshot |  |  |  |
-| 2 metric |  |  |  |
-| 3 explain |  |  |  |
-| 4 rollups |  |  |  |
-| 5 outside-events |  |  |  |
-| 6 hand-backs |  |  |  |
-| 7 learnings |  |  |  |
-| whole |  |  |  |
-State: call above the bar | direction only | inconclusive
 ```
 
 ## The weekly creative report
 
 A review file named `results/<date>-weekly.md` with these sections in place of "By ad"
 onward: Where the money went; Movers over seven days; New hits; Lessons; Hit rate (a
-table of batch, launched, met the bar, rate); Second pass done; then the layer record of
-work order `weekly-creative-report`.
+table of batch, launched, met the bar, rate); Second pass done.
 
 ## Notes
 
 - A review pauses nothing and moves nothing. Its hand-backs carry the evidence.
-- `inconclusive` is a finished state, not a failure: the review says what would settle
-  the question and when. When the second pass finds an error, the record says whether an
-  input, the arithmetic or an inference was wrong.
 - A learning line has a sample size and a source or it is not written.
 - Results never leave the business repo. The hub holds no business's numbers.
+
+## Layer record
+
+The file ends with the layer record of its work order (`results-review, weekly-creative-report`): the work order prints
+the template, and [staged work](../staged-work.md) says how it is kept.

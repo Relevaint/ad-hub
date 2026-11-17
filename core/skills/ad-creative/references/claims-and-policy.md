@@ -18,48 +18,20 @@ Anything a reader could take as a fact about the business, the product or its re
 - any statement about what the product does or does not do
 
 Implied claims count: a photo of a crowd implies customers; a lab coat implies a
-credential; "trusted by" implies a count. Naming a problem and then presenting the offer as
-the answer implies the offer fixes it: cut or reword the line unless the offer file
-supports that.
+credential; "trusted by" implies a count.
 
 ## The gate
 
 1. List every claim the ad will make or imply.
-   Start with the ad's promise in one sentence, as a stranger reads the headline and the
-   picture together: "buy this and ___". That blank is a claim and needs a proof row
-   like any other. A problem named with the product shown as its answer is that promise.
-   When the headline names a problem, the blank says what happens to that problem;
-   anything beyond what the product does is named in the claims map as a residual reading.
 2. Map each to its source. Facts about the offer itself (what it is, what it costs, how
    it is delivered, the refund or guarantee terms as stated, where the ad sends people)
-   come from the offer file's `Owner-confirmed` lines. A fact about the offer stated only in
-   the business's own files (its README, its site copy) is first recorded in the offer
-   file as `Owner-confirmed`, with that file and line as its source; until then it is a
-   marked blank, and an asset showing it is not `creative-ready`. Anything that supports a claim
+   come from the offer file's `Owner-confirmed` lines. Anything that supports a claim
    about quality, results, trust or scale (a rating, a review, a credential, a number of
    customers, a story, a result) comes from the offer's proof table, `Owner-confirmed`
-   or `Observed` with its source. A `Proposed` line is not proof of anything. A review
-   or story row shows that it was said; quoting it or retelling it in an ad also needs
-   step 4.
+   or `Observed` with its source. A `Proposed` line is not proof of anything.
 3. Anything unmapped is cut, or becomes a marked blank `[confirm: ...]` in the draft.
-   A mapped claim keeps the conditions its source attaches, in the ad itself; the landing
-   page's small print does not carry them. Two kinds, each read surface by surface:
-   - A **qualifying condition** is what a buyer must do or be to get what the ad offers:
-     what must be bought, by when, who qualifies, how many. It appears on every surface
-     that states the offer and that a viewer can see on its own: the image or video text,
-     each headline that states the offer, and every alternative of the primary text. A
-     description never carries a condition alone (some placements do not show it). A
-     surface too short to hold the qualifying condition does not state the offer: a
-     40-character headline that cannot say what qualifies names the benefit, not the deal.
-   - A **scope limit** is what the offered thing does not cover. It appears in the ad's own
-     text at least once, in every alternative long enough to hold it, and is never cut.
-   In the claims map, each row with a condition gives its own words and the surfaces that
-   carry it: `condition: "<its words>"; shown in: <each surface>` (and `scope limit:` the
-   same way); a row with none says `condition: none`.
 4. Testimonials and purported real customer stories: a named, real person who gave permission the business
-   recorded. The record names the person and the permission to use their words in
-   advertising, in the proof row or beside it; a status of `Owner-confirmed` on a review
-   row is not that permission. No permission, no use, in any disguise, paraphrase or composite. Say so in
+   recorded. No permission, no use, in any disguise, paraphrase or composite. Say so in
    one line and offer what is cleared. Clearly fictional sketches, casts and
    illustrative demonstration details are allowed, not disguised private stories or
    invented customer evidence. The scene cannot imply unproved product capabilities.

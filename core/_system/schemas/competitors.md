@@ -55,22 +55,6 @@ For ad-strategy. Origin tag: modelled on a competitor. Adapt the structure, neve
 
 ## Not seen, and next refresh
 - <what could not be opened or watched, and why>. Next run: ...
-
-## Layer record
-Work order: competitor-report
-Notes: <path to the notes file>
-Date: <YYYY-MM-DD>
-| Layer | Verdict | Evidence: what was looked at | Fix made or return |
-| --- | --- | --- | --- |
-| 1 question |  |  |  |
-| 2 advertisers |  |  |  |
-| 3 breakdowns |  |  |  |
-| 4 pages |  |  |  |
-| 5 observed-inferred |  |  |  |
-| 6 patterns |  |  |  |
-| 7 swipe |  |  |  |
-| whole |  |  |  |
-State: report ready | report ready, library not opened
 ```
 
 ## Template: `research/swipe/<yyyymmdd>-<advertiser-slug>-<nn>.md`
@@ -115,3 +99,8 @@ screenshot: <same base name>.png | none
 - A screenshot is kept only when the platform took it. No file, no `screenshot:` value
   other than `none`.
 - Delete nothing on a later run; add entries and update the tables with the new date.
+
+## Layer record
+
+The file ends with the layer record of its work order (`competitor-report`): the work order prints
+the template, and [staged work](../staged-work.md) says how it is kept.

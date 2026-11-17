@@ -52,21 +52,6 @@ Planned YYYY-MM-DD. Rows are in ads/ledger.md; this table repeats the plan for r
 
 ## Assumptions
 - <each one once, with what will replace it>
-
-## Layer record
-Work order: test-plan
-Notes: <path to the notes file>
-Date: <YYYY-MM-DD>
-| Layer | Verdict | Evidence: what was looked at | Fix made or return |
-| --- | --- | --- | --- |
-| 1 diagnosis |  |  |  |
-| 2 offer-check |  |  |  |
-| 3 gaps |  |  |  |
-| 4 plays |  |  |  |
-| 5 batch |  |  |  |
-| 6 test-design |  |  |  |
-| whole |  |  |  |
-State: plan ready | batch held
 ```
 
 ## Notes
@@ -77,4 +62,8 @@ State: plan ready | batch held
   reading.
 - The rulebook is applied by `ad-manage` at a session. Nothing in this file pauses an
   ad or moves budget by itself.
-- Each dated section ends with its own layer record ([staged work](../staged-work.md)).
+
+## Layer record
+
+The file ends with the layer record of its work order (`test-plan`): the work order prints
+the template, and [staged work](../staged-work.md) says how it is kept.

@@ -46,8 +46,9 @@ offer: <slug>
   sent`. It is the record of what was asked for, never evidence that anything changed.
 - Platform identifiers returned by a creation are recorded in the entry; `ad-setup`
   carries them into the platform file's baseline at its next run.
-- The last entry a launch or a session writes ends with that run's `## Layer record`
-  ([staged work](../staged-work.md)): the layers of its work order (`launch`,
-  `management-session`, `rollback`, or `daily-watch` when it used the emergency stop) and
-  the state, which keeps "prepared", "created paused" and "confirmed on the platform"
-  apart. The record is written with the entry; an entry is still never edited afterwards.
+
+## Layer record
+
+The last entry a run writes ends with the layer record of its work order (`launch`,
+`management-session`, `rollback`): the work order prints
+the template, and [staged work](../staged-work.md) says how it is kept.
