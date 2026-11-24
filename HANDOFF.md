@@ -6,6 +6,16 @@ Every session ends by updating this file, committing, and pushing. Not committed
 
 ## Last Session
 
+- **When:** 2026-11-24, operator rules.
+- **Operator:** Clay.
+- **Platform:** Claude Code (remote), started from his master thread. Branch `clay/operating-frame-and-shot-rules`.
+- **What changed.** Clay's working instructions now apply to every operator: the operating frame at the top of `AGENTS.md` Section 1; the least-friction paragraph with the copy test merged into rule 1 (ad-hub did not carry it before); and a new "Operator rules" section in `README.md` (frame, copy and disclaimers, funny work), which is what business sessions read. One pointer line in `AGENTS.md` 2.9.
+- **Clay's rulings (2026-11-24).** The frame is not additional permission to act. Hard rule 4 (the truth rule) and the claims gate stay as they are. Required text with a fixed place goes in that place, exactly as written.
+- **Gate:** `npm test` passes (35 of 35).
+- **Next:** unchanged from the block below.
+
+## Previous session: 2026-11-17, back to the original ask
+
 - **When:** 2026-11-17, back to the original ask.
 - **Operator:** Clay.
 - **Platform:** Claude Code (remote).
